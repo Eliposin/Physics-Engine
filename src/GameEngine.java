@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -14,6 +16,12 @@ public class GameEngine {
 
 	float x = 400, y = 300;
 	float rotation = 0.0f;
+
+	float red = 0.5f;
+	float green = 0.5f;
+	float blue = 1.0f;
+	
+	Random random = new Random();
 
 	public void start() {
 
@@ -57,7 +65,7 @@ public class GameEngine {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		// set the color of the quad (R,G,B,A)
-		GL11.glColor3f(0.5f, 0.5f, 1.0f);
+		GL11.glColor3f(red, green, blue);
 
 		// draw quad
 		GL11.glPushMatrix();
@@ -88,27 +96,43 @@ public class GameEngine {
 			y = mouseY;
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			System.out.println("SPACE KEY IS DOWN");
+		while (Keyboard.next()) {
+
+			if (Keyboard.getEventKeyState()) {
+
+				if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
+
+					System.out.println("Space Key Pressed");
+					blue = random.nextFloat();
+					red = random.nextFloat();
+					green = random.nextFloat();
+				}
+			} else {
+
+				if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
+
+					System.out.println("Space Key Released");
+				}
+			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			System.out.println("W Key Pressed");
+			System.out.println("W is Down");
 			y += 1 * delta;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			System.out.println("A Key Pressed");
+			System.out.println("A is Down");
 			x -= 1 * delta;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			System.out.println("S Key Pressed");
+			System.out.println("S is Down");
 			y -= 1 * delta;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			System.out.println("D Key Pressed");
+			System.out.println("D is Down");
 			x += 1 * delta;
 		}
-		
+
 		if (x > 1279) {
 			x = 1279;
 		}

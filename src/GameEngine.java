@@ -12,15 +12,18 @@ public class GameEngine {
 
 	int fps;
 	long lastFPS = 0;
-	long lastFrame;
+	long lastFrame = getTime();
 
-	float x = 400, y = 300;
+	float x = 400, y = 300;	
 	float rotation = 0.0f;
+	
+	float locX = 800, locY = 600;
+	float lastLocX = locX, lastLocY = locY;
 
 	float red = 0.5f;
 	float green = 0.5f;
 	float blue = 1.0f;
-	
+
 	Random random = new Random();
 
 	public void start() {
@@ -79,22 +82,36 @@ public class GameEngine {
 		GL11.glVertex2f(x + 50, y + 50);
 		GL11.glVertex2f(x - 50, y + 50);
 		GL11.glEnd();
+
+		GL11.glBegin(GL11.GL_LINE_LOOP);
+		GL11.glVertex2f(locX - 100, locY - 100);
+		GL11.glVertex2f(locX + 100, locY - 100);
+		GL11.glVertex2f(locX + 100, locY + 100);
+		GL11.glVertex2f(locX - 100, locY + 100);
+		GL11.glEnd();
 		GL11.glPopMatrix();
 
 	}
 
 	public void update(int delta) {
 
-		rotation += 0.3f * delta;
+		//rotation += 0.3f * delta;
+		
+		//locX = Physics.deltaX(delta, 0.0f, 0.2f, -1f, locX);
+		//locY = Physics.deltaY(0.0f, 0.2f, -1f, locY);
+		
+		
 
 		if (Mouse.isButtonDown(0)) {
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
 
 			System.out.println("MOUSE DOWN @ X: " + mouseX + " Y: " + mouseY);
-			x = mouseX;
-			y = mouseY;
+			locX = mouseX;
+			locY = mouseY;
 		}
+		
+		
 
 		while (Keyboard.next()) {
 
@@ -133,22 +150,21 @@ public class GameEngine {
 			x += 1 * delta;
 		}
 
-		if (x > 1279) {
-			x = 1279;
+		if (x > 1230) {
+			x = 1230;
 		}
-		if (x < 0) {
-			x = 0;
+		if (x < 50) {
+			x = 50;
 		}
-		if (y > 719) {
-			y = 719;
+		if (y > 670) {
+			y = 670;
 		}
-		if (y < 0) {
-			y = 0;
+		if (y < 50) {
+			y = 50;
 		}
 
 		updateFPS();
-
-	}
+	}	
 
 	public long getTime() {
 

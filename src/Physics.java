@@ -19,9 +19,9 @@ public class Physics {
 		collideX(locX, 100, 1180);
 		
 		speed = (lastLocX - locX);
-		speed *= boundX;
 		speed += acceleration;
-		speed -= speed * resistance / 10;		
+		speed -= speed * resistance / 10;
+		speed *= boundX;
 		
 		//speed = speed + 2;
 		System.out.println("speed is " + speed);
@@ -47,9 +47,9 @@ public class Physics {
 		collideY(locY, 100, 620);
 		
 		speed = (lastLocY - locY);
-		speed *= boundY;
 		speed += acceleration;
-		speed -= speed * resistance / 10;		
+		speed -= speed * resistance / 10;
+		speed *= boundY;
 		
 		if (maxSpeed != -1) {
 			if (Math.abs(speed) >= maxSpeed) {

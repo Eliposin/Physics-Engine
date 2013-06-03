@@ -115,6 +115,47 @@ public class Vector {
 		return newVector;
 	}
 	
+	public static float dotVector(float[] vector1, float[] vector2) {
+		
+		float[][] coords;
+		coords = new float[3][3];
+		
+		float scalar;
+		float x, y, z;
+		
+		coords[0] = toCartesian(vector1);
+		coords[1] = toCartesian(vector2);
+		
+		x = coords[0][0] * coords[1][0];
+		y = coords[0][1] * coords[1][1];
+		z = coords[0][2] * coords[1][2];
+		
+		scalar = (x + y + z) / vector1[0] * vector2[0];
+		
+		return scalar;
+	}
+	
+	public static float[] crossVector(float[] vector1, float[] vector2) {
+		
+		float[] newVector;
+		float[][] coords;
+		newVector = new float[3];
+		coords = new float[3][3];
+		
+		float x, y, z;
+		
+		coords[0] = toCartesian(vector1);
+		coords[1] = toCartesian(vector2);
+		
+		x = coords[0][1] * coords[1][2] - coords[0][2] * coords[1][1]; // c_x = a_y * b_z - a_z * b_y
+		y = coords[0][2] * coords[1][0] - coords[0][0] * coords[1][2]; // c_y = a_z * b_x - a_x * b_z
+		z = coords[0][0] * coords[1][1] - coords[0][1] * coords[1][0]; // c_z = a_x * b_y - a_y * b_x
+		
+		newVector = toSpherical(x, y, z);
+		
+		return newVector;
+	}
+	
 	public static float[] scaleVector(float[] vector, float scalar) {
 		
 		vector[0] *= scalar;

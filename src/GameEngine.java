@@ -97,8 +97,8 @@ public class GameEngine {
 
 		//rotation += 0.3f * delta;
 		
-		//locX = Physics.deltaX(delta, 0.0f, 0.2f, -1f, locX);
-		//locY = Physics.deltaY(0.0f, 0.2f, -1f, locY);
+		locX = Physics.deltaX(delta, 0.0f, 0.2f, -1f, locX);
+		locY = Physics.deltaY(0.0f, 0.2f, -1f, locY);
 		
 		
 

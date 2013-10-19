@@ -1,3 +1,4 @@
+package com;
 
 public class Vector {
 	
@@ -43,8 +44,14 @@ public class Vector {
 		vector = new float[3];
 		
 		vector[0] = (float)Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)); // magnitude
-		vector[1] = (float)Math.atan(y / x); // azimuthal
-		vector[2] = (float)Math.acos(z / vector[0]); // polar
+		vector[1] = (float)Math.atan2(y, x); // azimuthal
+		
+		if(vector[0] != 0) {
+			vector[2] = (float)Math.acos(z / vector[0]); // polar
+		} else {
+			vector[2] = 0;
+		}
+		
 
 		return vector;
 	}
@@ -55,7 +62,7 @@ public class Vector {
 		vector = new float[3];
 		
 		vector[0] = (float)Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)); // magnitude
-		vector[1] = (float)Math.atan(y / x); // azimuthal
+		vector[1] = (float)Math.atan2(y, x); // azimuthal
 		vector[2] = (float)Math.PI / 2; // polar
 		
 		return vector;
@@ -67,8 +74,12 @@ public class Vector {
 		vector = new float[3];
 		
 		vector[0] = (float)Math.sqrt(Math.pow(coords[0], 2) + Math.pow(coords[1], 2) + Math.pow(coords[2], 2)); // magnitude
-		vector[1] = (float)Math.atan(coords[1] / coords[0]); // azimuthal
-		vector[2] = (float)Math.acos(coords[2] / vector[0]); // polar
+		vector[1] = (float)Math.atan2(coords[1], coords[0]); // azimuthal
+		if (vector[0] != 0) {
+			vector[2] = (float)Math.acos(coords[2] / vector[0]); // polar
+		} else {
+			vector[2] = 0;
+		}
 		
 		return vector;
 	}
@@ -78,7 +89,7 @@ public class Vector {
 		float[] newVector;
 		float[][] coords;
 		newVector = new float[3];
-		coords = new float[3][3];
+		coords = new float[2][3];
 		
 		float x, y, z;
 		
@@ -99,7 +110,7 @@ public class Vector {
 		float[] newVector;
 		float[][] coords;
 		newVector = new float[3];
-		coords = new float[3][3];
+		coords = new float[2][3];
 		
 		float x, y, z;
 		
@@ -156,9 +167,9 @@ public class Vector {
 		return newVector;
 	}
 	
-	public static float[] scaleVector(float[] vector, float scalar) {
+	public static float[] scaleVector(float[] vector, float scalar, int i) {
 		
-		vector[0] *= scalar;
+		vector[i] *= scalar;
 		
 		return vector;
 	}

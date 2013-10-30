@@ -12,6 +12,7 @@ public class KeyInput implements Runnable{
 	public static int decline  = Keyboard.KEY_PRIOR;
 	public static int modify = Keyboard.KEY_LSHIFT;
 	public static int debug = Keyboard.KEY_E;
+	public static int Grid = Keyboard.KEY_G;
 	
 	public static int mouseX, mouseY;
 	
@@ -25,6 +26,7 @@ public class KeyInput implements Runnable{
 	public static boolean declineDown;
 	public static boolean modifyDown;
 	public static boolean debugDown;
+	public static boolean GridDown;
 
 	public void run() {
 		

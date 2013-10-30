@@ -84,7 +84,7 @@ public class Vector {
 		return vector;
 	}
 	
-	public static float[] addVector(float[] vector1, float[] vector2) {
+	public static float[] sAddVector(float[] vector1, float[] vector2) {
 		
 		float[] newVector;
 		float[][] coords;
@@ -105,7 +105,34 @@ public class Vector {
 		return newVector;
 	}
 	
-	public static float[] subVector(float[] vector1, float[] vector2) {
+	public static float[] cAddVector(float[] vector1, float[] vector2) {
+		
+		float[] newVector = new float[3];
+		int vectorLength = 0;
+		
+		if (vector1.length == vector2.length) {
+			
+			vectorLength = vector1.length; 
+			
+		} else {
+			
+			System.out.println("Vector type mismatch");
+			System.out.println("vector1 length: " + vector1.length + " vector2 length: " + vector2.length);
+			
+			return null;
+			
+		}
+		
+		for (int i = 0; i < vectorLength; i++) {
+			
+			newVector[i] = vector1[i] + vector2[i];
+			
+		}
+		
+		return newVector;
+	}
+	
+	public static float[] sSubVector(float[] vector1, float[] vector2) {
 		
 		float[] newVector;
 		float[][] coords;
@@ -126,27 +153,76 @@ public class Vector {
 		return newVector;
 	}
 	
-	public static float dotVector(float[] vector1, float[] vector2) {
+	public static float[] cSubVector(float[] vector1, float[] vector2) {
 		
-		float[][] coords;
-		coords = new float[3][3];
+		float[] newVector = new float[3];
+		int vectorLength = 0;
+		
+		if (vector1.length == vector2.length) {
+			
+			vectorLength = vector1.length; 
+			
+		} else {
+			
+			System.out.println("Vector type mismatch");
+			System.out.println("vector1 length: " + vector1.length + " vector2 length: " + vector2.length);
+			
+			return null;
+			
+		}
+		
+		for (int i = 0; i < vectorLength; i++) {
+			
+			newVector[i] = vector1[i] - vector2[i];
+			
+		}
+		
+		return newVector;
+	}
+	
+	public static float sDotVector(float[] vector1, float[] vector2) {
 		
 		float scalar;
-		float x, y, z;
+		float angle;
 		
-		coords[0] = toCartesian(vector1);
-		coords[1] = toCartesian(vector2);
+		angle = (float) Math.acos(Math.sin(vector1[1]) * 
+				Math.sin(vector1[1]) * Math.cos(vector1[2] - 
+						vector2[2]) + Math.cos(vector1[1]) * 
+						Math.cos(vector2[1]));
 		
-		x = coords[0][0] * coords[1][0];
-		y = coords[0][1] * coords[1][1];
-		z = coords[0][2] * coords[1][2];
-		
-		scalar = (x + y + z) / vector1[0] * vector2[0];
+		scalar = (float) (vector1[0] * vector2[0] * Math.cos(angle));
 		
 		return scalar;
 	}
 	
-	public static float[] crossVector(float[] vector1, float[] vector2) {
+	public static float cDotVector(float[] vector1, float[] vector2) {
+		
+		float scalar = 0;
+		int vectorLength = 0;
+		
+		if (vector1.length == vector2.length) {
+			
+			vectorLength = vector1.length; 
+			
+		} else {
+			
+			System.out.println("Vector type mismatch");
+			System.out.println("vector1 length: " + vector1.length + " vector2 length: " + vector2.length);
+			
+			return (Float) null;
+			
+		}
+		
+		for (int i = 0; i < vectorLength; i++) {
+			
+			scalar += vector1[i] * vector2[i];
+			
+		}
+		
+		return scalar;
+	}
+	
+	public static float[] sCrossVector(float[] vector1, float[] vector2) {
 		
 		float[] newVector;
 		float[][] coords;
@@ -167,9 +243,31 @@ public class Vector {
 		return newVector;
 	}
 	
-	public static float[] scaleVector(float[] vector, float scalar, int i) {
+	public static float[] cCrossVector(float[] vector1, float[] vector2) {
+		
+		float[] newVector = new float[3];
+		
+		newVector[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1]; // c_x = a_y * b_z - a_z * b_y
+		newVector[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2]; // c_y = a_z * b_x - a_x * b_z
+		newVector[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0]; // c_z = a_x * b_y - a_y * b_x
+		
+		return newVector;
+	}
+	
+	public static float[] sScaleVector(float[] vector, float scalar, int i) {
 		
 		vector[i] *= scalar;
+		
+		return vector;
+	}
+	
+	public static float[] cScaleVector(float[] vector, float scalar) {
+		
+		for (int i = 0; i < vector.length; i++) {
+			
+			vector[i] *= scalar;
+			
+		}
 		
 		return vector;
 	}

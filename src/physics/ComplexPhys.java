@@ -53,7 +53,7 @@ public class ComplexPhys {
 
 	}
 
-	public static void UpdatePhysics(int delta) {
+	public static void UpdatePhysics(float delta) {
 
 		int index = 0;
 

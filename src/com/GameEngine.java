@@ -21,8 +21,8 @@ public class GameEngine {
 	int frame = 0;
 	int delta;
 	
-	public static int height = 1000;
-	public static int width = 1000;
+	public static int height = 800;
+	public static int width = 1200;
 
 	int fps;
 	int setFPS = 120;
@@ -45,8 +45,8 @@ public class GameEngine {
 	
 	int[] graphData = new int[width];
 	
-	float[] gravity = {0, -1, 0};
-	float[] gravity2 = {0, -1, 0};
+	float[] gravity = {0, -9.8f, 0};
+	float[] gravity2 = {0, -9.8f, 0};
 	float[] attr = {1000, 0f, 1f};
 	
 	Logger boxLogger;
@@ -89,13 +89,6 @@ public class GameEngine {
 //		GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 //		button.initGL();
 		
-		gravity = new float[3];
-		gravity[0] = 0;
-		gravity[1] = -1f;
-		gravity[2] = 0;
-		gravity = Vector.toSpherical(gravity);
-		gravity[0] = 1 / gravity[0];
-		
 //		float[] attr = new float[3];
 //		attr[0] = 1000;
 //		attr[1] = 1.15f;
@@ -136,6 +129,23 @@ public class GameEngine {
 //		GL11.glTranslatef(x, y, 0);
 //		GL11.glRotatef(rotation, 0f, 0f, 1f);
 //		GL11.glTranslatef(-x, -y, 0);
+		
+		//draw a grid every 10 pixels
+		
+//		if KeyInput.modify
+		GL11.glBegin(GL11.GL_LINES);
+		for (int i = 0; i < height / 100; i++) {
+			GL11.glVertex2f(0, i * 100);
+			GL11.glVertex2f(width, i * 100);
+		}
+		GL11.glEnd();
+		
+		GL11.glBegin(GL11.GL_LINES);
+		for (int i = 0; i < width / 100; i++) {
+			GL11.glVertex2f(i * 100, 0);
+			GL11.glVertex2f(i * 100, height);
+		}
+		GL11.glEnd();
 
 		GL11.glBegin(GL11.GL_QUADS);
 		GL11.glVertex2f(x - 50, y - 50);
@@ -191,156 +201,157 @@ public class GameEngine {
 		GL11.glEnd();
 		
 		
-		int place = 0;
-		int x = 20, y = 500;
-		switch (3) {
-		
-		case 0: GL11.glBegin(GL11.GL_QUADS);
-		
-				GL11.glVertex2f(2 + x + (12 * place),0 + y);
-				GL11.glVertex2f(8 + x + (12 * place),0 + y);
-				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-				
-				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-				GL11.glVertex2f(10 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-				
-				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),14 + y);
-				GL11.glVertex2f(2 + x + (12 * place),14 + y);
-				
-				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-				GL11.glVertex2f(0 + x + (12 * place),12 + y);
-				
-				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-				GL11.glVertex2f(4 + x + (12 * place),4 + y);
-				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-				GL11.glVertex2f(2 + x + (12 * place),6 + y);
-				
-				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-				GL11.glVertex2f(6 + x + (12 * place),6 + y);
-				GL11.glVertex2f(6 + x + (12 * place),8 + y);
-				GL11.glVertex2f(4 + x + (12 * place),8 + y);
-				
-				GL11.glVertex2f(6 + x + (12 * place),8 + y);
-				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-				GL11.glVertex2f(8 + x + (12 * place),10 + y);
-				GL11.glVertex2f(6 + x + (12 * place),10 + y);
-				
-				GL11.glEnd();
-				break;
-		
-		case 1:	GL11.glBegin(GL11.GL_QUADS);
-		
-				GL11.glVertex2f(0 + x + (12 * place),0 + y);
-				GL11.glVertex2f(10 + x + (12 * place),0 + y);
-				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-				
-				GL11.glVertex2f(6 + x + (12 * place),2 + y);
-				GL11.glVertex2f(6 + x + (12 * place),14 + y);
-				GL11.glVertex2f(4 + x + (12 * place),14 + y);
-				GL11.glVertex2f(4 + x + (12 * place),2 + y);
-				
-				GL11.glVertex2f(4 + x + (12 * place),12 + y);
-				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-				GL11.glVertex2f(2 + x + (12 * place),10 + y);
-				GL11.glVertex2f(4 + x + (12 * place),10 + y);
-				
-				GL11.glEnd();
-				break;
-				
-		case 2: GL11.glBegin(GL11.GL_QUADS);
-		
-				GL11.glVertex2f(0 + x + (12 * place),0 + y);
-				GL11.glVertex2f(10 + x + (12 * place),0 + y);
-				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-		
-				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-				GL11.glVertex2f(0 + x + (12 * place),4 + y);
-				
-				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-				GL11.glVertex2f(4 + x + (12 * place),4 + y);
-				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-				GL11.glVertex2f(2 + x + (12 * place),6 + y);
-				
-				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-				GL11.glVertex2f(8 + x + (12 * place),6 + y);
-				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-				GL11.glVertex2f(4 + x + (12 * place),8 + y);
-				
-				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-				GL11.glVertex2f(10 + x + (12 * place),8 + y);
-				GL11.glVertex2f(10 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-				
-				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),14 + y);
-				GL11.glVertex2f(2 + x + (12 * place),14 + y);
-				
-				GL11.glVertex2f(0 + x + (12 * place),10 + y);
-				GL11.glVertex2f(2 + x + (12 * place),10 + y);
-				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-				GL11.glVertex2f(0 + x + (12 * place),12 + y);
-				
-				GL11.glEnd();
-				break;
-				
-		case 3: GL11.glBegin(GL11.GL_QUADS);
-		
-				GL11.glVertex2f(2 + x + (12 * place),0 + y);
-				GL11.glVertex2f(8 + x + (12 * place),0 + y);
-				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-				
-				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-				GL11.glVertex2f(10 + x + (12 * place),6 + y);
-				GL11.glVertex2f(8 + x + (12 * place),6 + y);
-				
-				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-				GL11.glVertex2f(8 + x + (12 * place),6 + y);
-				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-				GL11.glVertex2f(4 + x + (12 * place),8 + y);
-				
-				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-				GL11.glVertex2f(10 + x + (12 * place),8 + y);
-				GL11.glVertex2f(10 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-				
-				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-				GL11.glVertex2f(8 + x + (12 * place),14 + y);
-				GL11.glVertex2f(2 + x + (12 * place),14 + y);
-				
-				GL11.glVertex2f(0 + x + (12 * place),10 + y);
-				GL11.glVertex2f(2 + x + (12 * place),10 + y);
-				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-				GL11.glVertex2f(0 + x + (12 * place),12 + y);
-				
-				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-				GL11.glVertex2f(0 + x + (12 * place),4 + y);
-				
-				GL11.glEnd();
-				break;
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-		}
+//		Numbers
+//		int place = 0;
+//		int x = 20, y = 500;
+//		switch (3) {
+//		
+//		case 0: GL11.glBegin(GL11.GL_QUADS);
+//		
+//				GL11.glVertex2f(2 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
+//				
+//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
+//				
+//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),14 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),14 + y);
+//				
+//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(0 + x + (12 * place),12 + y);
+//				
+//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),4 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),6 + y);
+//				
+//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(6 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(6 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),8 + y);
+//				
+//				GL11.glVertex2f(6 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),10 + y);
+//				GL11.glVertex2f(6 + x + (12 * place),10 + y);
+//				
+//				GL11.glEnd();
+//				break;
+//		
+//		case 1:	GL11.glBegin(GL11.GL_QUADS);
+//		
+//				GL11.glVertex2f(0 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
+//				
+//				GL11.glVertex2f(6 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(6 + x + (12 * place),14 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),14 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),2 + y);
+//				
+//				GL11.glVertex2f(4 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),10 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),10 + y);
+//				
+//				GL11.glEnd();
+//				break;
+//				
+//		case 2: GL11.glBegin(GL11.GL_QUADS);
+//		
+//				GL11.glVertex2f(0 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
+//		
+//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
+//				GL11.glVertex2f(0 + x + (12 * place),4 + y);
+//				
+//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),4 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),6 + y);
+//				
+//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),8 + y);
+//				
+//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
+//				
+//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),14 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),14 + y);
+//				
+//				GL11.glVertex2f(0 + x + (12 * place),10 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),10 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(0 + x + (12 * place),12 + y);
+//				
+//				GL11.glEnd();
+//				break;
+//				
+//		case 3: GL11.glBegin(GL11.GL_QUADS);
+//		
+//				GL11.glVertex2f(2 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),0 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
+//				
+//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),6 + y);
+//				
+//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),6 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(4 + x + (12 * place),8 + y);
+//				
+//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),8 + y);
+//				GL11.glVertex2f(10 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
+//				
+//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(8 + x + (12 * place),14 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),14 + y);
+//				
+//				GL11.glVertex2f(0 + x + (12 * place),10 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),10 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
+//				GL11.glVertex2f(0 + x + (12 * place),12 + y);
+//				
+//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
+//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
+//				GL11.glVertex2f(0 + x + (12 * place),4 + y);
+//				
+//				GL11.glEnd();
+//				break;
+//		case 4:
+//		case 5:
+//		case 6:
+//		case 7:
+//		case 8:
+//		case 9:
+//		}
 		
 		if (debugToggle == true) {
 			
@@ -364,12 +375,12 @@ public class GameEngine {
 				
 				graphData[frame] = delta * 2;
 				
+				GL11.glBegin(GL11.GL_LINES);
 				for (int i = 0; i < width; i++) {
-					GL11.glBegin(GL11.GL_LINES);
 					GL11.glVertex2f(i, height);
 					GL11.glVertex2f(i, height - graphData[i]);
-					GL11.glEnd();
 				}
+				GL11.glEnd();
 				
 				if (frame < width - 50) {
 					graphData[frame + 50] = 0;
@@ -387,7 +398,7 @@ public class GameEngine {
 
 	public void update(int delta) throws IOException {
 
-//		 rotation += 0.3f * delta;
+//		rotation += 0.3f * delta;
 		
 //		gravity[0] = x - location[0];
 //		gravity[1] = y - location[1];
@@ -418,15 +429,15 @@ public class GameEngine {
 		ComplexPhys.UpdatePhysics(delta);
 		location = ComplexPhys.getLocation("Box");
 		location2 = ComplexPhys.getLocation("Square");
-		vector = ComplexPhys.getPhysObject("Box").getPhysics().getVector();
-		vector2 = ComplexPhys.getPhysObject("Square").getPhysics().getVector();
+		vector = ComplexPhys.getPhysObject("Box").getPhysics().getVelocity();
+		vector2 = ComplexPhys.getPhysObject("Square").getPhysics().getVelocity();
 		
 		
 		boxLogger.LogLine(ComplexPhys.getLocation("Box"));
 		squareLogger.LogLine(ComplexPhys.getLocation("Square"));
 		
 		
-		float boxRebound = 1.943f * ComplexPhys.getPhysObject("Box").getAttributes().attributes[2];
+		float boxRebound = 2 * ComplexPhys.getPhysObject("Box").getAttributes().attributes[2];
 		if (location[0] < 100) {
 			vector[0] *= -1;
 			location[0] += boxRebound * vector[0];
@@ -443,7 +454,7 @@ public class GameEngine {
 			location[1] += boxRebound * vector[1];
 		}
 		
-		float squareRebound = 1.943f * ComplexPhys.getPhysObject("Square").getAttributes().attributes[2];
+		float squareRebound = 2f * ComplexPhys.getPhysObject("Square").getAttributes().attributes[2];
 		if (location2[0] < 25) {
 			vector2[0] *= -1;
 			location2[0] += squareRebound * vector2[0];

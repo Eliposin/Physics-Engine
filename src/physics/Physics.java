@@ -2,52 +2,54 @@ package physics;
 import com.Vector;
 
 public class Physics  {
-
-	float[] lastLocation = new float[3];
-	float[] vector = new float[3];
-	float speed;
+	
+	float[] location = {0, 0, 0};
+	float[] velocity = {0, 0, 0};
+	float[] acceleration = {0, 0, 0};
 
 	public Physics() {
 		
 	}
 	
-	public float[] getVector() {
-		return vector;
+	public float[] getlocation() {
+		return velocity;
+	}
+	
+	public float[] getVelocity() {
+		return velocity;
+	}
+	
+	public float[] getAcceleration() {
+		return velocity;
 	}
 	
 	public float getSpeed() {
+		
+		float speed;
+		
+		speed = (float) Math.abs(Math.sqrt(Math.pow(velocity[0], 2) + 
+				Math.pow(velocity[1], 2) + Math.pow(velocity[2], 2)));
+		
+		System.out.println("Speed is " + speed + " m/s");
+		
 		return speed;
 	}
 	
 
-	public float[] Update(int delta, float mass, float resistance, float rebound, float[] acceleration, float[] location) {
-
-		float[] vDelta = new float[3];
-
-		vDelta[0] = location[0] - lastLocation[0];
-		vDelta[1] = location[1] - lastLocation[1];
-		vDelta[2] = location[2] - lastLocation[2];
-
-		vDelta = Vector.toSpherical(vDelta);
-
-		vDelta = Resistance(vDelta, resistance, mass);
-		vDelta = Acceleration(vDelta, acceleration, delta);
-//		vDelta = Delta(vDelta, delta);
+	public float[] Update(float delta, float mass, float resistance, float rebound, float[] acceleration, float[] location) {
 		
-//		System.out.println("Speed is: " + vDelta[0]);
-		speed = vDelta[0];
+		float[] deltaX = Vector.cSubVector(location, this.location);
+		float[] deltaV = Vector.cSubVector(acceleration, this.acceleration);
 
-		vDelta = Vector.toCartesian(vDelta);
+//		deltaX = Resistance(deltaX, resistance, mass);
+		deltaX = Acceleration(deltaX, acceleration, delta);
+//		deltaX = Delta(deltaX, delta);
 		
-		vector = vDelta;
-
-		lastLocation[0] = location[0];
-		lastLocation[1] = location[1];
-		lastLocation[2] = location[2];
-
-		location[0] += vDelta[0];
-		location[1] += vDelta[1];
-		location[2] += vDelta[2];
+		this.location = location.clone();
+		this.velocity = deltaX.clone();
+		this.acceleration = deltaV.clone();
+		
+		location = Vector.cAddVector(location, deltaX);
 		
 		return location;
 		
@@ -62,11 +64,11 @@ public class Physics  {
 		// Correct for special case in beginning.
 		if (lastDelta != -1) {
 
-			vDelta = Vector.scaleVector(vDelta, delta, 0);
+			vDelta = Vector.sScaleVector(vDelta, delta, 0);
 
 		}
 
-		vDelta = Vector.scaleVector(vDelta, delta, 0);
+		vDelta = Vector.sScaleVector(vDelta, delta, 0);
 
 		lastDelta = delta;
 
@@ -74,17 +76,19 @@ public class Physics  {
 
 	}
 	
-	public float[] Acceleration(float[] vDelta, float[] direction, int delta) {
+	public float[] Acceleration(float[] deltaX, float[] acceleration, float delta) {
 		
-		vDelta = Vector.addVector(vDelta, direction);
+		deltaX = Vector.cAddVector(deltaX, Vector.cScaleVector(acceleration.clone(), ((float) delta / 1000)));
 		
-		return vDelta;
+		return deltaX;
 	}
 	
-	public float[] Resistance(float[] vDelta, float resistance, float mass) {
+	public float[] Resistance(float[] deltaX, float resistance, float mass) {
 		
-		vDelta[0] -= vDelta[0] * resistance / mass;
+		deltaX = Vector.cSubVector(deltaX, Vector.cScaleVector(deltaX, resistance / mass));
 		
-		return vDelta;
+//		vDelta[0] -= vDelta[0] * resistance / mass;
+		
+		return deltaX;
 	}
 }

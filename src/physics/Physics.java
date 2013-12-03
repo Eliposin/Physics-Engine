@@ -8,7 +8,7 @@ public class Physics  {
 	public float mass = 100f; //grams
 	public float drag = 1f; //coefficient of drag
 	public float restitution = 1f; // coefficient of restitution
-	public float[] location = {0, 0, 0}; // centimeters
+	public float[] location = {400, 600, 0}; // centimeters
 	public float[] velocity = {0, 0, 0}; // centimeters per second
 	public float[] acceleration = {0, 0, 0}; // centimeters per second squared
 
@@ -80,17 +80,14 @@ public class Physics  {
 
 	public float[] update(float delta) {
 		
-//		float[] deltaX = Vector.cSubVector(location, this.location);
-		float[] deltaX = {0, 0, 0};
-		float[] deltaV = Vector.cSubVector(acceleration, this.acceleration);
+		float[] deltaX = velocity;
+//		float[] deltaX = {0, 0, 0};
 
 //		deltaX = Resistance(deltaX, resistance, mass);
 		deltaX = Acceleration(deltaX, acceleration, delta);
 //		deltaX = Delta(deltaX, delta);
 		
-		this.location = location.clone();
 		this.velocity = deltaX.clone();
-		this.acceleration = deltaV.clone();
 		
 		location = Vector.cAddVector(location, deltaX);
 		
@@ -130,6 +127,8 @@ public class Physics  {
 			deltaX = Vector.cAddVector(deltaX, Vector.cScaleVector(force.clone(), ((float) delta / 1000) / mass));
 			
 		}
+		
+		forceBuffer.clear();
 		
 		return deltaX;
 	}

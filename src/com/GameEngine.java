@@ -36,7 +36,7 @@ public class GameEngine {
 	public static float green = 0.5f;
 	public static float blue = 1.0f;
 	
-	float[] location = new float[3];
+	float[] location = {400, 600, 0};
 	float[] location2 = new float[3];
 	float[] vector = new float[3];
 	float[] vector2 = new float[3];
@@ -151,19 +151,19 @@ public class GameEngine {
 //		GL11.glTranslatef(-x, -y, 0);
 		
 		//draw a grid every 10 pixels
-//		GL11.glBegin(GL11.GL_LINES);
-//		for (int i = 0; i < height / 100; i++) {
-//			GL11.glVertex2f(0, i * 100);
-//			GL11.glVertex2f(width, i * 100);
-//		}
-//		GL11.glEnd();
-//		
-//		GL11.glBegin(GL11.GL_LINES);
-//		for (int i = 0; i < width / 100; i++) {
-//			GL11.glVertex2f(i * 100, 0);
-//			GL11.glVertex2f(i * 100, height);
-//		}
-//		GL11.glEnd();
+		GL11.glBegin(GL11.GL_LINES);
+		for (int i = 0; i < height / 100; i++) {
+			GL11.glVertex2f(0, i * 100);
+			GL11.glVertex2f(width, i * 100);
+		}
+		GL11.glEnd();
+		
+		GL11.glBegin(GL11.GL_LINES);
+		for (int i = 0; i < width / 100; i++) {
+			GL11.glVertex2f(i * 100, 0);
+			GL11.glVertex2f(i * 100, height);
+		}
+		GL11.glEnd();
 
 		GL11.glBegin(GL11.GL_QUADS);
 		GL11.glVertex2f(x - 50, y - 50);
@@ -449,8 +449,7 @@ public class GameEngine {
 	public void update(int delta) throws IOException {
 		
 		button.run();
-		
-		ComplexPhys.UpdatePhysics(delta);
+
 		location = ComplexPhys.getLocation("Box");
 		location2 = ComplexPhys.getLocation("Square");
 		vector = ComplexPhys.getPhysObject("Box").getVelocity();
@@ -498,33 +497,26 @@ public class GameEngine {
 		if (debugToggle == true) {
 			
 		}
+
+		float[] f2 = {0, -9800, 0};
+		ComplexPhys.getPhysObject("Box").addForce(f2);
 		
 //		System.out.println("delta is: " + delta);
 
 		if (Mouse.isButtonDown(0)) {
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
-
-//			System.out.println("MOUSE DOWN @ X: " + mouseX + " Y: " + mouseY);
 			
-//			if (((location[0] - 100) < mouseX && mouseX < (location[0] + 100))
-//					&& ((location[1] - 100) < mouseY && mouseY < (location[1] + 100))) {
-//				
-//				location[0] = mouseX;
-//				location[1] = mouseY;
-//				
-//			}
-//			
-//			if (((location2[0] - 25) < mouseX && mouseX < (location2[0] + 25))
-//					&& ((location2[1] - 25) < mouseY && mouseY < (location2[1] + 25))) {
-//				
-//				location2[0] = mouseX;
-//				location2[1] = mouseY;
-//				
-//			}
+//			location[0] = mouseX;
+//			location[1] = mouseY;
 			
-			location[0] = mouseX;
-			location[1] = mouseY;
+			float[] f = new float[3];
+			
+			f[0] = (mouseX - location[0] - ComplexPhys.getPhysObject("Box").velocity[0]) * 1000000 / delta;
+			f[1] = (mouseY - location[1] - ComplexPhys.getPhysObject("Box").velocity[1]) * 1000000 / delta;
+			f[2] = 0;
+			
+			ComplexPhys.getPhysObject("Box").addForce(f);
 			
 		}
 		
@@ -660,7 +652,9 @@ public class GameEngine {
 			y = 50;
 		}
 
+
 		updateFPS();
+		ComplexPhys.UpdatePhysics(delta);
 	}
 
 	public long getTime() {

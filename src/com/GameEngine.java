@@ -9,12 +9,12 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.Sys;
 import com.Logger;
-//import com.KeyInput;
-//import gui.GLButton;
+import effects.Trail;
+import com.KeyInput;
+import gui.Button;
 
 
 import physics.ComplexPhys;
-import physics.PhysAttributes;
 
 public class GameEngine {
 	
@@ -31,11 +31,10 @@ public class GameEngine {
 	boolean debugToggle = true;
 
 	float x = 400, y = 300;
-	float rotation = 0.0f;
 
-	float red = 0.5f;
-	float green = 0.5f;
-	float blue = 1.0f;
+	public static float red = 0.5f;
+	public static float green = 0.5f;
+	public static float blue = 1.0f;
 	
 	float[] location = new float[3];
 	float[] location2 = new float[3];
@@ -51,9 +50,10 @@ public class GameEngine {
 	
 	Logger boxLogger;
 	Logger squareLogger;
-	
-	PhysAttributes attributes;
-	PhysAttributes attributes2;
+	int trailLength = 250;
+	Trail trail = new Trail(trailLength);
+	KeyInput keyInput = new KeyInput();
+	Button button = new Button(400, 600);
 
 	Random random = new Random();
 
@@ -82,6 +82,8 @@ public class GameEngine {
 			Display.sync(setFPS);
 			Display.update();
 		}
+		
+		close();
 	}
 	
 	public void initialise() throws IOException {
@@ -94,15 +96,33 @@ public class GameEngine {
 //		attr[1] = 1.15f;
 //		attr[2] = 1;
 		
-		attributes = new PhysAttributes(location, attr, gravity);
-		attributes2 = new PhysAttributes(location2, attr, gravity2);
+		(new Thread(keyInput)).start();
 		
-		ComplexPhys.addPhysics("Box", attributes);
-		ComplexPhys.addPhysics("Square", attributes2);
+//		attributes = new PhysAttributes(location, attr, gravity);
+//		attributes2 = new PhysAttributes(location2, attr, gravity2);
+		
+		ComplexPhys.addPhysics("Box", attr[0], attr[1], attr[2]);
+		ComplexPhys.addPhysics("Square", attr[0], attr[1], attr[2]);
 //		ComplexPhys.enablePhysics("Square", false);
 		
 		boxLogger = new Logger("Box");
 		squareLogger = new Logger("Square");
+		
+	}
+	
+	public void close() {
+		
+		try {
+			boxLogger.close();
+			squareLogger.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		keyInput.close();
+		
+		System.out.println("closed");
 		
 	}
 
@@ -120,9 +140,9 @@ public class GameEngine {
 
 		// Clear the screen and depth buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-		// set the color of the quad (R,G,B,A)
+		
 		GL11.glColor3f(red, green, blue);
+		
 
 //		 draw quad
 //		GL11.glPushMatrix();
@@ -131,21 +151,19 @@ public class GameEngine {
 //		GL11.glTranslatef(-x, -y, 0);
 		
 		//draw a grid every 10 pixels
-		
-//		if KeyInput.modify
-		GL11.glBegin(GL11.GL_LINES);
-		for (int i = 0; i < height / 100; i++) {
-			GL11.glVertex2f(0, i * 100);
-			GL11.glVertex2f(width, i * 100);
-		}
-		GL11.glEnd();
-		
-		GL11.glBegin(GL11.GL_LINES);
-		for (int i = 0; i < width / 100; i++) {
-			GL11.glVertex2f(i * 100, 0);
-			GL11.glVertex2f(i * 100, height);
-		}
-		GL11.glEnd();
+//		GL11.glBegin(GL11.GL_LINES);
+//		for (int i = 0; i < height / 100; i++) {
+//			GL11.glVertex2f(0, i * 100);
+//			GL11.glVertex2f(width, i * 100);
+//		}
+//		GL11.glEnd();
+//		
+//		GL11.glBegin(GL11.GL_LINES);
+//		for (int i = 0; i < width / 100; i++) {
+//			GL11.glVertex2f(i * 100, 0);
+//			GL11.glVertex2f(i * 100, height);
+//		}
+//		GL11.glEnd();
 
 		GL11.glBegin(GL11.GL_QUADS);
 		GL11.glVertex2f(x - 50, y - 50);
@@ -198,6 +216,18 @@ public class GameEngine {
 		GL11.glVertex2f(location2[0] + 23.492315f, location2[1] - 8.550504f);
 		GL11.glVertex2f(location2[0] + 24.620193f, location2[1] - 4.3412046f);
 		GL11.glVertex2f(location2[0] + 25.0f, location2[1] - 6.1232338E-15f);
+		GL11.glEnd();
+		
+		float[] trailf = {0,0,0};
+		
+		GL11.glBegin(GL11.GL_LINE_STRIP);
+		for (int i = 0; i < trailLength-1; i++) {
+			
+			trailf = trail.getTrail(i);
+			
+			GL11.glVertex3f(trailf[0], trailf[1], trailf[2]);
+			
+		}
 		GL11.glEnd();
 		
 		
@@ -392,52 +422,46 @@ public class GameEngine {
 			frame++;
 		}
 		
+		float[][] shape;
+		float[] color;
+		int type;
+		for (int i = 0; i < DrawBuffer.drawBuffer.size(); i++) {
+			shape = DrawBuffer.drawBuffer.get(i);
+			type = (int) shape[0][0];
+			color = shape[1];
+			
+			GL11.glColor3f(color[0], color[1], color[2]);
+			GL11.glBegin(type);
+			for (int j = 2; j < shape.length ; j++) {
+				
+				GL11.glVertex3f(shape[j][0], shape[j][1], shape[j][2]);
+				
+			}
+			GL11.glEnd();
+		}
+		
+		DrawBuffer.clear();
+		
 		
 //		GL11.glPopMatrix();
 	}
 
 	public void update(int delta) throws IOException {
-
-//		rotation += 0.3f * delta;
 		
-//		gravity[0] = x - location[0];
-//		gravity[1] = y - location[1];
-//		gravity[2] = 0;
-//		
-//		gravity = Vector.toSpherical(gravity);
-//		gravity[0] = 100 / gravity[0];
-//		
-//		attributes = new PhysAttributes(location, attr, gravity);
-//		
-//		ComplexPhys.setAttributes("Box", attributes);
-//		
-//		gravity2[0] = x - location2[0];
-//		gravity2[1] = y - location2[1];
-//		gravity2[2] = 0;
-//		
-//		gravity2 = Vector.toSpherical(gravity2);
-//		gravity2[0] = 100 / gravity2[0];
-//		
-//		attributes2 = new PhysAttributes(location2, attr, gravity2);
-//		
-//		ComplexPhys.setAttributes("Square", attributes2);
-//		
-//		attributes2 = new PhysAttributes(location2, attr, gravity2);
-//		
-//		ComplexPhys.setAttributes("Square", attributes2);
+		button.run();
 		
 		ComplexPhys.UpdatePhysics(delta);
 		location = ComplexPhys.getLocation("Box");
 		location2 = ComplexPhys.getLocation("Square");
-		vector = ComplexPhys.getPhysObject("Box").getPhysics().getVelocity();
-		vector2 = ComplexPhys.getPhysObject("Square").getPhysics().getVelocity();
+		vector = ComplexPhys.getPhysObject("Box").getVelocity();
+		vector2 = ComplexPhys.getPhysObject("Square").getVelocity();
 		
 		
 		boxLogger.LogLine(ComplexPhys.getLocation("Box"));
 		squareLogger.LogLine(ComplexPhys.getLocation("Square"));
+		trail.updateTrail(location);
 		
-		
-		float boxRebound = 2 * ComplexPhys.getPhysObject("Box").getAttributes().attributes[2];
+		float boxRebound = 2 * ComplexPhys.getPhysObject("Box").restitution;
 		if (location[0] < 100) {
 			vector[0] *= -1;
 			location[0] += boxRebound * vector[0];
@@ -454,7 +478,7 @@ public class GameEngine {
 			location[1] += boxRebound * vector[1];
 		}
 		
-		float squareRebound = 2f * ComplexPhys.getPhysObject("Square").getAttributes().attributes[2];
+		float squareRebound = 2f * ComplexPhys.getPhysObject("Square").restitution;
 		if (location2[0] < 25) {
 			vector2[0] *= -1;
 			location2[0] += squareRebound * vector2[0];
@@ -511,6 +535,16 @@ public class GameEngine {
 			location2[0] = mouseX;
 			location2[1] = mouseY;
 		}
+		
+		if (KeyInput.debugDown == true) {
+			if (debugToggle == false) {
+				debugToggle = true;
+				System.out.println("debug is ON");
+			} else {
+				debugToggle = false;
+				System.out.println("debug is OFF");
+			}
+		}
 
 		while (Keyboard.next()) {
 
@@ -520,13 +554,13 @@ public class GameEngine {
 
 					System.out.println("E Key Pressed");
 					
-					if (debugToggle == false) {
-						debugToggle = true;
-						System.out.println("debug is ON");
-					} else {
-						debugToggle = false;
-						System.out.println("debug is OFF");
-					}
+//					if (debugToggle == false) {
+//						debugToggle = true;
+//						System.out.println("debug is ON");
+//					} else {
+//						debugToggle = false;
+//						System.out.println("debug is OFF");
+//					}
 					
 				}
 

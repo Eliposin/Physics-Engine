@@ -32,6 +32,10 @@ public class Logger {
 		file.createNewFile();
 
 	}
+	
+	public void close() throws IOException {
+		writer.close();
+	}
 
 	public void LogLine(double[] values) throws IOException {
 

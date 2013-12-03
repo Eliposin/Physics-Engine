@@ -272,21 +272,4 @@ public class Vector {
 		return vector;
 	}
 	
-	public static float toDegrees(float radians) {
-		
-		float degrees;
-		
-		degrees = (float)(radians * 180 / Math.PI);
-		
-		return degrees;
-	}
-	
-	public static float toRadians(float degrees) {
-		
-		float radians;
-		
-		radians = (float)(degrees * Math.PI / 180);
-		
-		return radians;
-	}
 }

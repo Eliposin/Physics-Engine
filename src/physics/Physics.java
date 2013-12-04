@@ -1,11 +1,12 @@
 package physics;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
+import com.GameEngine;
 import com.Vector;
 
 public class Physics  {
 	
-	public float mass = 100f; //grams
+	public float mass = 1000f; //grams
 	public float drag = 1f; //coefficient of drag
 	public float restitution = 1f; // coefficient of restitution
 	public float[] location = {400, 600, 0}; // centimeters
@@ -124,7 +125,7 @@ public class Physics  {
 		for (int i = 0; i < forceBuffer.size(); i++) {
 			
 			force = forceBuffer.get(i);
-			deltaX = Vector.cAddVector(deltaX, Vector.cScaleVector(force.clone(), ((float) delta / 1000) / mass));
+			deltaX = Vector.cAddVector(deltaX, Vector.cScaleVector(force.clone(), ((float) delta / GameEngine.timeScale) / mass));
 			
 		}
 		

@@ -1,4 +1,5 @@
 package com;
+
 import java.io.IOException;
 import java.util.Random;
 import org.lwjgl.LWJGLException;
@@ -12,14 +13,14 @@ import com.Logger;
 import effects.Trail;
 import com.KeyInput;
 import gui.Button;
-
-
 import physics.ComplexPhys;
+import physics.Physics;
 
 public class GameEngine {
 	
 	int frame = 0;
 	int delta;
+	public static float timeScale = 1000; // 1 second real-time is 1000 / (timeScale) seconds in engine
 	
 	public static int height = 800;
 	public static int width = 1200;
@@ -142,7 +143,6 @@ public class GameEngine {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		
 		GL11.glColor3f(red, green, blue);
-		
 
 //		 draw quad
 //		GL11.glPushMatrix();
@@ -460,40 +460,6 @@ public class GameEngine {
 		squareLogger.LogLine(ComplexPhys.getLocation("Square"));
 		trail.updateTrail(location);
 		
-		float boxRebound = 2 * ComplexPhys.getPhysObject("Box").restitution;
-		if (location[0] < 100) {
-			vector[0] *= -1;
-			location[0] += boxRebound * vector[0];
-		} else if ( location[0] > width - 100) {
-			vector[0] *= -1;
-			location[0] += boxRebound * vector[0];
-		}
-		
-		if (location[1] < 100) {
-			vector[1] *= -1;
-			location[1] += boxRebound * vector[1];
-		} else if (location[1] > height - 100) {
-			vector[1] *= -1;
-			location[1] += boxRebound * vector[1];
-		}
-		
-		float squareRebound = 2f * ComplexPhys.getPhysObject("Square").restitution;
-		if (location2[0] < 25) {
-			vector2[0] *= -1;
-			location2[0] += squareRebound * vector2[0];
-		} else if ( location2[0] > width - 25) {
-			vector2[0] *= -1;
-			location2[0] += squareRebound * vector2[0];
-		}
-		
-		if (location2[1] < 25) {
-			vector2[1] *= -1;
-			location2[1] += squareRebound * vector2[1];
-		} else if (location2[1] > height - 25) {
-			vector2[1] *= -1;
-			location2[1] += squareRebound * vector2[1];
-		}
-		
 		if (debugToggle == true) {
 			
 		}
@@ -511,10 +477,10 @@ public class GameEngine {
 //			location[1] = mouseY;
 			
 			float[] f = new float[3];
+			Physics phys = ComplexPhys.getPhysObject("Box");
 			
-			f[0] = (mouseX - location[0] - ComplexPhys.getPhysObject("Box").velocity[0]) * 1000000 / delta;
-			f[1] = (mouseY - location[1] - ComplexPhys.getPhysObject("Box").velocity[1]) * 1000000 / delta;
-			f[2] = 0;
+			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
+			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
 			
 			ComplexPhys.getPhysObject("Box").addForce(f);
 			

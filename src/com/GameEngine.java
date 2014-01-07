@@ -1,5 +1,12 @@
 package com;
 
+/*
+ * 	Physics Engine
+ * 	Christopher Dombroski
+ * 	
+ * 	https://github.com/Nyrmburk/Physics-Engine
+ */
+
 import java.io.IOException;
 import java.util.Random;
 import org.lwjgl.LWJGLException;
@@ -18,41 +25,39 @@ import physics.Physics;
 
 public class GameEngine {
 	
-	int frame = 0;
-	int delta;
-	public static float timeScale = 1000; // 1 second real-time is 1000 / (timeScale) seconds in engine
+	int delta;	// change in milliseconds since the last frame
+	public static float timeScale = 1000;	// 1 second real-time is 1000 / (timeScale) seconds in engine
 	
-	public static int height = 800;
-	public static int width = 1200;
+	public static int width = 1200;	// window width
+	public static int height = 800;	// window height
+	
+	public static float scale = 100f;	// number of pixels in 1 meter
 
-	int fps;
-	int setFPS = 120;
-	long lastFPS = 0;
-	long lastFrame = getTime();
-	boolean debugToggle = true;
-
-	float x = 400, y = 300;
+	int fps;	// Actual frames per second
+	int setFPS = 120;	// Desired frames per second
+	long lastFPS = 0;	// last frame's fps
+	long lastFrame = getTime();	// last frame's time of creation
+	int frame = 0;	// current frame number
+	
+	boolean debugToggle = true; 	// use the debug menu
 
 	public static float red = 0.5f;
 	public static float green = 0.5f;
 	public static float blue = 1.0f;
 	
-	float[] location = {400, 600, 0};
-	float[] location2 = new float[3];
-	float[] vector = new float[3];
-	float[] vector2 = new float[3];
-	float speed;
+	float[] location = {400, 600, 0};	// location of the first object. need to change soon.
+	float[] location2 = new float[3];	// location of the second object. ^^
 	
-	int[] graphData = new int[width];
+	int[] graphData = new int[width];	// A list of frametime data.
 	
-	float[] gravity = {0, -9.8f, 0};
-	float[] gravity2 = {0, -9.8f, 0};
-	float[] attr = {1000, 0f, 1f};
+	float[] attr = {1000, 0f, 1f};	// The attributes of the objects for physics. {Mass, Drag, Restitution} 
 	
 	Logger boxLogger;
 	Logger squareLogger;
-	int trailLength = 250;
-	Trail trail = new Trail(trailLength);
+	
+	int trailLength = 250;	// max positions to use for creating a trail.
+	Trail trail = new Trail(trailLength);	// create a trail
+	
 	KeyInput keyInput = new KeyInput();
 	Button button = new Button(400, 600);
 
@@ -92,19 +97,8 @@ public class GameEngine {
 //		GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 //		button.initGL();
 		
-//		float[] attr = new float[3];
-//		attr[0] = 1000;
-//		attr[1] = 1.15f;
-//		attr[2] = 1;
-		
-		(new Thread(keyInput)).start();
-		
-//		attributes = new PhysAttributes(location, attr, gravity);
-//		attributes2 = new PhysAttributes(location2, attr, gravity2);
-		
 		ComplexPhys.addPhysics("Box", attr[0], attr[1], attr[2]);
 		ComplexPhys.addPhysics("Square", attr[0], attr[1], attr[2]);
-//		ComplexPhys.enablePhysics("Square", false);
 		
 		boxLogger = new Logger("Box");
 		squareLogger = new Logger("Square");
@@ -117,11 +111,8 @@ public class GameEngine {
 			boxLogger.close();
 			squareLogger.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		keyInput.close();
 		
 		System.out.println("closed");
 		
@@ -143,43 +134,67 @@ public class GameEngine {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		
 		GL11.glColor3f(red, green, blue);
-
-//		 draw quad
-//		GL11.glPushMatrix();
-//		GL11.glTranslatef(x, y, 0);
-//		GL11.glRotatef(rotation, 0f, 0f, 1f);
-//		GL11.glTranslatef(-x, -y, 0);
 		
 		//draw a grid every 10 pixels
 		GL11.glBegin(GL11.GL_LINES);
-		for (int i = 0; i < height / 100; i++) {
-			GL11.glVertex2f(0, i * 100);
-			GL11.glVertex2f(width, i * 100);
+		for (int i = 0; i < height / scale; i++) {
+			GL11.glVertex2f(0, i * scale);
+			GL11.glVertex2f(width, i * scale);
 		}
 		GL11.glEnd();
 		
 		GL11.glBegin(GL11.GL_LINES);
-		for (int i = 0; i < width / 100; i++) {
-			GL11.glVertex2f(i * 100, 0);
-			GL11.glVertex2f(i * 100, height);
+		for (int i = 0; i < width / scale; i++) {
+			GL11.glVertex2f(i * scale, 0);
+			GL11.glVertex2f(i * scale, height);
 		}
 		GL11.glEnd();
-
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2f(x - 50, y - 50);
-		GL11.glVertex2f(x + 50, y - 50);
-		GL11.glVertex2f(x + 50, y + 50);
-		GL11.glVertex2f(x - 50, y + 50);
-		GL11.glEnd();
-
-		GL11.glBegin(GL11.GL_LINE_LOOP);
-		GL11.glVertex2f(location[0] - 100, location[1] - 100);
-		GL11.glVertex2f(location[0] + 100, location[1] - 100);
-		GL11.glVertex2f(location[0] + 100, location[1] + 100);
-		GL11.glVertex2f(location[0] - 100, location[1] + 100);
+		
+		// Circle 1
+		//TODO Create a vertex buffer and simplify all this into one draw call.
+		GL11.glBegin(GL11.GL_POLYGON);
+		GL11.glVertex2f(location[0] + 24.620193f, location[1] + 4.3412046f);
+		GL11.glVertex2f(location[0] + 23.492315f, location[1] + 8.550504f);
+		GL11.glVertex2f(location[0] + 21.650635f, location[1] + 12.5f);
+		GL11.glVertex2f(location[0] + 19.151112f, location[1] + 16.06969f);
+		GL11.glVertex2f(location[0] + 16.06969f, location[1] + 19.151112f);
+		GL11.glVertex2f(location[0] + 12.5f, location[1] + 21.650635f);
+		GL11.glVertex2f(location[0] + 8.550504f, location[1] + 23.492315f);
+		GL11.glVertex2f(location[0] + 4.3412046f, location[1] + 24.620193f);
+		GL11.glVertex2f(location[0] + 1.5308084E-15f, location[1] + 25.0f);
+		GL11.glVertex2f(location[0] + -4.3412046f, location[1] + 24.620193f);
+		GL11.glVertex2f(location[0] + -8.550504f, location[1] + 23.492315f);
+		GL11.glVertex2f(location[0] + -12.5f, location[1] + 21.650635f);
+		GL11.glVertex2f(location[0] + -16.06969f, location[1] + 19.151112f);
+		GL11.glVertex2f(location[0] + -19.151112f, location[1] + 16.06969f);
+		GL11.glVertex2f(location[0] + -21.650635f, location[1] + 12.5f);
+		GL11.glVertex2f(location[0] + -23.492315f, location[1] + 8.550504f);
+		GL11.glVertex2f(location[0] + -24.620193f, location[1] + 4.3412046f);
+		GL11.glVertex2f(location[0] + -25.0f, location[1] + 3.0616169E-15f);
+		GL11.glVertex2f(location[0] + -24.620193f, location[1] + -4.3412046f);
+		GL11.glVertex2f(location[0] + -23.492315f, location[1] + -8.550504f);
+		GL11.glVertex2f(location[0] + -21.650635f, location[1] + -12.5f);
+		GL11.glVertex2f(location[0] + -19.151112f, location[1] + -16.06969f);
+		GL11.glVertex2f(location[0] + -16.06969f, location[1] + -19.151112f);
+		GL11.glVertex2f(location[0] + -12.5f, location[1] + -21.650635f);
+		GL11.glVertex2f(location[0] + -8.550504f, location[1] + -23.492315f);
+		GL11.glVertex2f(location[0] + -4.3412046f, location[1] + -24.620193f);
+		GL11.glVertex2f(location[0] + -4.5924254E-15f, location[1] + -25.0f);
+		GL11.glVertex2f(location[0] + 4.3412046f, location[1] + -24.620193f);
+		GL11.glVertex2f(location[0] + 8.550504f, location[1] + -23.492315f);
+		GL11.glVertex2f(location[0] + 12.5f, location[1] + -21.650635f);
+		GL11.glVertex2f(location[0] + 16.06969f, location[1] + -19.151112f);
+		GL11.glVertex2f(location[0] + 19.151112f, location[1] + -16.06969f);
+		GL11.glVertex2f(location[0] + 21.650635f, location[1] + -12.5f);
+		GL11.glVertex2f(location[0] + 23.492315f, location[1] + -8.550504f);
+		GL11.glVertex2f(location[0] + 24.620193f, location[1] + -4.3412046f);
+		GL11.glVertex2f(location[0] + 25.0f, location[1] + -6.1232338E-15f);
 		GL11.glEnd();
 		
-		GL11.glBegin(GL11.GL_POLYGON);
+		
+		// Circle 2
+		//TODO Create a vertex buffer and simplify all this into one draw call.
+		GL11.glBegin(GL11.GL_LINE_LOOP);
 		GL11.glVertex2f(location2[0] + 24.620193f, location2[1] + 4.3412046f);
 		GL11.glVertex2f(location2[0] + 23.492315f, location2[1] + 8.550504f);
 		GL11.glVertex2f(location2[0] + 21.650635f, location2[1] + 12.5f);
@@ -219,7 +234,6 @@ public class GameEngine {
 		GL11.glEnd();
 		
 		float[] trailf = {0,0,0};
-		
 		GL11.glBegin(GL11.GL_LINE_STRIP);
 		for (int i = 0; i < trailLength-1; i++) {
 			
@@ -230,173 +244,10 @@ public class GameEngine {
 		}
 		GL11.glEnd();
 		
-		
-//		Numbers
-//		int place = 0;
-//		int x = 20, y = 500;
-//		switch (3) {
-//		
-//		case 0: GL11.glBegin(GL11.GL_QUADS);
-//		
-//				GL11.glVertex2f(2 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-//				
-//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-//				
-//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),14 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),14 + y);
-//				
-//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(0 + x + (12 * place),12 + y);
-//				
-//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),4 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),6 + y);
-//				
-//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(6 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(6 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),8 + y);
-//				
-//				GL11.glVertex2f(6 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),10 + y);
-//				GL11.glVertex2f(6 + x + (12 * place),10 + y);
-//				
-//				GL11.glEnd();
-//				break;
-//		
-//		case 1:	GL11.glBegin(GL11.GL_QUADS);
-//		
-//				GL11.glVertex2f(0 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-//				
-//				GL11.glVertex2f(6 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(6 + x + (12 * place),14 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),14 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),2 + y);
-//				
-//				GL11.glVertex2f(4 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),10 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),10 + y);
-//				
-//				GL11.glEnd();
-//				break;
-//				
-//		case 2: GL11.glBegin(GL11.GL_QUADS);
-//		
-//				GL11.glVertex2f(0 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-//		
-//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-//				GL11.glVertex2f(0 + x + (12 * place),4 + y);
-//				
-//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),4 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),6 + y);
-//				
-//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),8 + y);
-//				
-//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-//				
-//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),14 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),14 + y);
-//				
-//				GL11.glVertex2f(0 + x + (12 * place),10 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),10 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(0 + x + (12 * place),12 + y);
-//				
-//				GL11.glEnd();
-//				break;
-//				
-//		case 3: GL11.glBegin(GL11.GL_QUADS);
-//		
-//				GL11.glVertex2f(2 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),0 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-//				
-//				GL11.glVertex2f(8 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),6 + y);
-//				
-//				GL11.glVertex2f(4 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),6 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(4 + x + (12 * place),8 + y);
-//				
-//				GL11.glVertex2f(8 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),8 + y);
-//				GL11.glVertex2f(10 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-//				
-//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(8 + x + (12 * place),14 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),14 + y);
-//				
-//				GL11.glVertex2f(0 + x + (12 * place),10 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),10 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),12 + y);
-//				GL11.glVertex2f(0 + x + (12 * place),12 + y);
-//				
-//				GL11.glVertex2f(0 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),2 + y);
-//				GL11.glVertex2f(2 + x + (12 * place),4 + y);
-//				GL11.glVertex2f(0 + x + (12 * place),4 + y);
-//				
-//				GL11.glEnd();
-//				break;
-//		case 4:
-//		case 5:
-//		case 6:
-//		case 7:
-//		case 8:
-//		case 9:
-//		}
-		
+		// Draw more stuff if debug toggle is on
 		if (debugToggle == true) {
 			
-			GL11.glBegin(GL11.GL_LINES);
-			GL11.glVertex3f(100, 100, 100);
-			GL11.glVertex3f(vector[0] + 100, vector[1] + 100, vector[2] + 100);
-			GL11.glEnd();
-			
-			GL11.glBegin(GL11.GL_LINE_LOOP);
-			GL11.glVertex2f(0, 0);
-			GL11.glVertex2f(width - 1, 0);
-			GL11.glVertex2f(width - 1, height - 1);
-			GL11.glVertex2f(0, height - 1);
-			GL11.glEnd();
-			
+			// Draw a frametime graph at the top of the screen
 			if (frame <= width) {
 				
 				if (frame == width) {
@@ -422,6 +273,9 @@ public class GameEngine {
 			frame++;
 		}
 		
+		
+		// Have any number of objects from any thread get drawn.
+		//TODO check and see if opengl has anything like this built-in
 		float[][] shape;
 		float[] color;
 		int type;
@@ -448,33 +302,31 @@ public class GameEngine {
 
 	public void update(int delta) throws IOException {
 		
-		button.run();
+//		button.run();	// test out a button I've been working on
 
+//		keyInput.refresh();
+		
+		//	Set the location of the physics objects to something the renderer can easily get at
 		location = ComplexPhys.getLocation("Box");
 		location2 = ComplexPhys.getLocation("Square");
-		vector = ComplexPhys.getPhysObject("Box").getVelocity();
-		vector2 = ComplexPhys.getPhysObject("Square").getVelocity();
 		
-		
+		//	log the object's current location
 		boxLogger.LogLine(ComplexPhys.getLocation("Box"));
 		squareLogger.LogLine(ComplexPhys.getLocation("Square"));
 		trail.updateTrail(location);
 		
 		if (debugToggle == true) {
-			
+			//TODO put stuff here
 		}
 
-		float[] f2 = {0, -9800, 0};
+		// give the object a force of gravity
+		float[] f2 = {0, (float) (-9.8 * 1000), 0};
 		ComplexPhys.getPhysObject("Box").addForce(f2);
 		
-//		System.out.println("delta is: " + delta);
-
+		// move the object using force; precisely calculated to the pixel
 		if (Mouse.isButtonDown(0)) {
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
-			
-//			location[0] = mouseX;
-//			location[1] = mouseY;
 			
 			float[] f = new float[3];
 			Physics phys = ComplexPhys.getPhysObject("Box");
@@ -494,7 +346,9 @@ public class GameEngine {
 			location2[1] = mouseY;
 		}
 		
+		//TODO Make KeyInput work better.
 		if (KeyInput.debugDown == true) {
+			
 			if (debugToggle == false) {
 				debugToggle = true;
 				System.out.println("debug is ON");
@@ -502,6 +356,7 @@ public class GameEngine {
 				debugToggle = false;
 				System.out.println("debug is OFF");
 			}
+			
 		}
 
 		while (Keyboard.next()) {
@@ -512,13 +367,13 @@ public class GameEngine {
 
 					System.out.println("E Key Pressed");
 					
-//					if (debugToggle == false) {
-//						debugToggle = true;
-//						System.out.println("debug is ON");
-//					} else {
-//						debugToggle = false;
-//						System.out.println("debug is OFF");
-//					}
+					if (debugToggle == false) {
+						debugToggle = true;
+						System.out.println("debug is ON");
+					} else {
+						debugToggle = false;
+						System.out.println("debug is OFF");
+					}
 					
 				}
 
@@ -585,42 +440,9 @@ public class GameEngine {
 			}
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			System.out.println("W is Down");
-			y += 1 * delta;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			System.out.println("A is Down");
-			x -= 1 * delta;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			System.out.println("S is Down");
-			y -= 1 * delta;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			System.out.println("D is Down");
-			x += 1 * delta;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		}		
-
-		if (x > width - 50) {
-			x = width - 50;
-		}
-		if (x < 50) {
-			x = 50;
-		}
-		if (y > height - 50) {
-			y = height - 50;
-		}
-		if (y < 50) {
-			y = 50;
-		}
-
-
 		updateFPS();
 		ComplexPhys.UpdatePhysics(delta);
+		
 	}
 
 	public long getTime() {
@@ -630,16 +452,18 @@ public class GameEngine {
 	}
 
 	public int getDelta() {
-
+		// Get the amount of milliseconds that has passed since the last frame.
 		long time = getTime();
 		int delta = (int) (time - lastFrame);
 		lastFrame = time;
-
+		
+//		System.out.println("delta: " + delta);
 		return delta;
 
 	}
 
 	public void updateFPS() {
+		// Calculate the FPS
 		if (getTime() - lastFPS > 1000) {
 			System.out.println("FPS: " + fps);
 			fps = 0; // reset the FPS counter

@@ -19,6 +19,7 @@ import org.lwjgl.Sys;
 import com.Logger;
 import effects.Trail;
 import com.KeyInput;
+import com.Loader;
 import gui.Button;
 import physics.ComplexPhys;
 import physics.Physics;
@@ -96,6 +97,8 @@ public class GameEngine {
 		initGL();
 //		GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 //		button.initGL();
+		
+		Loader.read("o");
 		
 		ComplexPhys.addPhysics("Box", attr[0], attr[1], attr[2]);
 		ComplexPhys.addPhysics("Square", attr[0], attr[1], attr[2]);

@@ -58,6 +58,7 @@ public class GameEngine {
 	
 	int trailLength = 250;	// max positions to use for creating a trail.
 	Trail trail = new Trail(trailLength);	// create a trail
+//	Trail trail2 = new Trail(trailLength);
 	
 	KeyInput keyInput = new KeyInput();
 	Button button = new Button(400, 600);
@@ -93,12 +94,12 @@ public class GameEngine {
 		close();
 	}
 	
-	public void initialise() throws IOException {
+	private void initialise() throws IOException {
 		initGL();
 //		GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 //		button.initGL();
 		
-		Loader.read("o");
+		Loader.read("Object_Test");
 		
 		ComplexPhys.addPhysics("Box", attr[0], attr[1], attr[2]);
 		ComplexPhys.addPhysics("Square", attr[0], attr[1], attr[2]);
@@ -247,6 +248,17 @@ public class GameEngine {
 		}
 		GL11.glEnd();
 		
+//		float[] trailf2 = {0,0,0};
+//		GL11.glBegin(GL11.GL_LINE_STRIP);
+//		for (int i = 0; i < trailLength-1; i++) {
+//			
+//			trailf2 = trail2.getTrail(i);
+//			
+//			GL11.glVertex3f(trailf2[0], trailf2[1], trailf2[2]);
+//			
+//		}
+//		GL11.glEnd();
+		
 		// Draw more stuff if debug toggle is on
 		if (debugToggle == true) {
 			
@@ -317,6 +329,7 @@ public class GameEngine {
 		boxLogger.LogLine(ComplexPhys.getLocation("Box"));
 		squareLogger.LogLine(ComplexPhys.getLocation("Square"));
 		trail.updateTrail(location);
+//		trail2.updateTrail(location2);
 		
 		if (debugToggle == true) {
 			//TODO put stuff here
@@ -325,6 +338,7 @@ public class GameEngine {
 		// give the object a force of gravity
 		float[] f2 = {0, (float) (-9.8 * 1000), 0};
 		ComplexPhys.getPhysObject("Box").addForce(f2);
+		ComplexPhys.getPhysObject("Square").addForce(f2);
 		
 		// move the object using force; precisely calculated to the pixel
 		if (Mouse.isButtonDown(0)) {
@@ -337,7 +351,7 @@ public class GameEngine {
 			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
 			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
 			
-			ComplexPhys.getPhysObject("Box").addForce(f);
+			phys.addForce(f);
 			
 		}
 		
@@ -345,8 +359,13 @@ public class GameEngine {
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
 			
-			location2[0] = mouseX;
-			location2[1] = mouseY;
+			float[] f = new float[3];
+			Physics phys = ComplexPhys.getPhysObject("Square");
+			
+			f[0] = (mouseX - location2[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
+			f[1] = (mouseY - location2[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
+			
+			phys.addForce(f);
 		}
 		
 		//TODO Make KeyInput work better.

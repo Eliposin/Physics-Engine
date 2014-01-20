@@ -16,6 +16,7 @@ public class KeyInput {
 	public int modify = Keyboard.KEY_LSHIFT;
 	public int debug = Keyboard.KEY_E;
 	public int grid = Keyboard.KEY_G;
+	public int settings = Keyboard.KEY_T;
 
 	public static int mouseX, mouseY; // Mouse location.
 
@@ -31,6 +32,7 @@ public class KeyInput {
 	public static boolean modifyDown;
 	public static boolean debugDown;
 	public static boolean gridDown;
+	public static boolean settingsDown;
 
 	// Update the key's status
 	public void refresh() {
@@ -79,6 +81,10 @@ public class KeyInput {
 				if (Keyboard.getEventKey() == grid) {
 					gridDown = true;
 				}
+				if (Keyboard.getEventKey() == settings) {
+					settingsDown = true;
+					//TODO call editSettings Method in Com.Settings
+				}
 			} else {
 				if (Keyboard.getEventKey() == forward) {
 					forwardDown = false;
@@ -106,6 +112,9 @@ public class KeyInput {
 				}
 				if (Keyboard.getEventKey() == grid) {
 					gridDown = false;
+				}
+				if (Keyboard.getEventKey() == settings) {
+					settingsDown = false;
 				}
 			}
 		}

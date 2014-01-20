@@ -42,6 +42,7 @@ public class Loader {
 		 */
 
 		float[] output = new float[3];
+		@SuppressWarnings("unused")
 		String[] holder = new String[5];
 		String dataType = "";
 		char[] charHolder = new char[100];
@@ -115,6 +116,7 @@ public class Loader {
 		return output;
 	}
 
+	@SuppressWarnings("unused")
 	private static String[] getStringArray(String text,
 			ArrayList<Integer> whiteSpace) {
 		String[] output = new String[whiteSpace.size() - 1];

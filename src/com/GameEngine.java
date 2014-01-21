@@ -129,6 +129,9 @@ public class GameEngine {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, width, 0, height, 100, -100);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+		
 
 	}
 

@@ -3,11 +3,15 @@ package com;
 import java.io.*;
 import java.util.ArrayList;
 
+import org.lwjgl.opengl.GL11;
+
 public class Loader {
 
 	public static void read(String inputFileName) {
 		File f = new File("scenes\\" + inputFileName + ".obj");
 		BufferedReader read = null;
+
+		float[] vertices = new float[1];
 
 		try {
 			String currentLine;
@@ -15,8 +19,9 @@ public class Loader {
 			read = new BufferedReader(reader);
 
 			while ((currentLine = read.readLine()) != null) {
-				fileParser(currentLine);
+				vertices = concat(vertices, fileParser(currentLine));
 				// System.out.println(currentLine);
+
 			}
 
 		} catch (IOException e) {
@@ -128,5 +133,14 @@ public class Loader {
 		}
 
 		return output;
+	}
+
+	private static float[] concat(float[] A, float[] B) {
+		int aLen = A.length;
+		int bLen = B.length;
+		float[] C = new float[aLen + bLen];
+		System.arraycopy(A, 0, C, 0, aLen);
+		System.arraycopy(B, 0, C, aLen, bLen);
+		return C;
 	}
 }

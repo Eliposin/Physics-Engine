@@ -8,7 +8,10 @@ package com;
  */
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.Random;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -316,6 +319,14 @@ public class GameEngine {
 		
 		
 //		GL11.glPopMatrix();
+	}
+	
+	public void vertexBuffer(float[] vertices) {
+		
+		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
+		verticesBuffer.put(vertices);
+		verticesBuffer.flip();
+		
 	}
 
 	public void update(int delta) throws IOException {

@@ -10,7 +10,6 @@ package com;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Random;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;

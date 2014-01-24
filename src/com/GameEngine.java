@@ -21,6 +21,7 @@ import org.lwjgl.Sys;
 import com.Logger;
 import effects.Trail;
 import com.KeyInput;
+import com.Settings;
 import com.Loader;
 import gui.Button;
 import physics.ComplexPhys;
@@ -472,6 +473,9 @@ public class GameEngine {
 
 					System.out.println("Space Key Released");
 				}
+			}
+			if(Keyboard.getEventKey() == Keyboard.KEY_T){
+				com.Settings.editSettings();
 			}
 		}
 

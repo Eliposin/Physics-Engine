@@ -83,7 +83,6 @@ public class KeyInput {
 				}
 				if (Keyboard.getEventKey() == settings) {
 					settingsDown = true;
-					//TODO call editSettings Method in Com.Settings
 				}
 			} else {
 				if (Keyboard.getEventKey() == forward) {

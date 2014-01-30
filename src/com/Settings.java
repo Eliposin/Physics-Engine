@@ -31,11 +31,11 @@ public class Settings {
 		initialize();
 	}
 
-	void initialize() {
+	void initialize() throws LWJGLException {
 		settingsFrame = new JFrame();
 		settingsFrame.setAutoRequestFocus(true);
 		settingsFrame.setBounds(100, 100, 450, 300);
-		settingsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		settingsFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		settingsFrame.getContentPane().setLayout(new GridLayout(4, 4, 0, 0));
 		
 		JLabel lblFPS = new JLabel("Current FPS");
@@ -50,17 +50,19 @@ public class Settings {
 		settingsFrame.getContentPane().add(chkBox);
 		//Checks to see if check box is selected.  If selected, makes full screen.
 		if(chkBox.isSelected()){
-			GameEngine.height = Display.getHeight();
-			GameEngine.width = Display.getWidth();
-			try {
-				Display.setFullscreen(true);
-			} catch (LWJGLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		
+				;
+				Display.update();
+				if(Display.isFullscreen()){
+					System.out.println("It worked");
+				}
+				else{
+					System.out.println("something went wrong");
+				}
+			} 
 			
 		}
 		
 		
-	}
+	
 }

@@ -336,8 +336,8 @@ public class GameEngine {
 //		keyInput.refresh();
 		
 		//	Set the location of the physics objects to something the renderer can easily get at
-		location = ComplexPhys.getLocation("Box");
-		location2 = ComplexPhys.getLocation("Square");
+		location = Vector.cScaleVector(ComplexPhys.getLocation("Box").clone(), scale);
+		location2 = Vector.cScaleVector(ComplexPhys.getLocation("Square").clone(), scale);
 		
 		//	log the object's current location
 		boxLogger.LogLine(ComplexPhys.getLocation("Box"));
@@ -362,8 +362,8 @@ public class GameEngine {
 			float[] f = new float[3];
 			Physics phys = ComplexPhys.getPhysObject("Box");
 			
-			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
-			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
+			f[0] = (mouseX - location[0] - phys.velocity[0] / delta * timeScale) * timeScale * phys.mass / delta;
+			f[1] = (mouseY - location[1] - phys.velocity[1] / delta * timeScale) * timeScale * phys.mass / delta;
 			
 			phys.addForce(f);
 			
@@ -376,8 +376,8 @@ public class GameEngine {
 			float[] f = new float[3];
 			Physics phys = ComplexPhys.getPhysObject("Square");
 			
-			f[0] = (mouseX - location2[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
-			f[1] = (mouseY - location2[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
+			f[0] = (mouseX - location2[0] - phys.velocity[0] / delta) * timeScale * phys.mass / delta;
+			f[1] = (mouseY - location2[1] - phys.velocity[1] / delta) * timeScale * phys.mass / delta;
 			
 			phys.addForce(f);
 		}
@@ -475,6 +475,7 @@ public class GameEngine {
 				}
 			}
 			if(Keyboard.getEventKey() == Keyboard.KEY_T){
+				
 				com.Settings.editSettings();
 			}
 		}

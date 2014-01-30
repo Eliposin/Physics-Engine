@@ -10,6 +10,7 @@ public class Physics  {
 	public float drag = 1f; //coefficient of drag
 	public float restitution = 1f; // coefficient of restitution
 	public float[] location = {0, 0, 0}; // centimeters
+	public float[] lastLocation = {0, 0, 0};
 	public float[] velocity = {0, 0, 0}; // centimeters per second
 	public float[] acceleration = {0, 0, 0}; // centimeters per second squared
 
@@ -79,16 +80,17 @@ public class Physics  {
 
 	public float[] update(float delta) {
 		
-		float[] deltaX = velocity;
+		float[] deltaX = Vector.cSubVector(location, lastLocation);
+		velocity = Vector.cScaleVector(deltaX, GameEngine.timeScale / delta);
 //		float[] deltaX = {0, 0, 0};
 
 //		deltaX = drag(deltaX, resistance, mass);
-		deltaX = force(deltaX, acceleration, delta);
+		velocity = force(velocity, delta);
 //		deltaX = Delta(deltaX, delta);
 		
-		this.velocity = deltaX.clone();
-		
-		location = Vector.cAddVector(location, deltaX);
+		lastLocation = location.clone();
+		location = Vector.cAddVector(location, Vector.cScaleVector(velocity, delta / GameEngine.timeScale));
+		System.out.println(location[1]);
 		
 		return location;
 		
@@ -115,7 +117,7 @@ public class Physics  {
 
 	}
 	
-	public float[] force(float[] deltaX, float[] acceleration, float delta) {
+	public float[] force(float[] velocity, float delta) {
 //		 deltaX += a*deltaT/1000
 //		deltaX = Vector.cAddVector(deltaX, Vector.cScaleVector(acceleration.clone(), ((float) delta / 1000)));
 		
@@ -123,7 +125,7 @@ public class Physics  {
 		for (int i = 0; i < forceBuffer.size(); i++) {
 			
 			force = forceBuffer.get(i);
-			deltaX = Vector.cAddVector(deltaX,
+			velocity = Vector.cAddVector(velocity,
 					Vector.cScaleVector(force.clone(),
 							((float) delta / GameEngine.timeScale) / mass));
 			
@@ -131,7 +133,7 @@ public class Physics  {
 		
 		forceBuffer.clear();
 		
-		return deltaX;
+		return velocity;
 	}
 	
 	public float[] drag(float[] deltaX, float resistance, float mass) {

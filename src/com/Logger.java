@@ -11,11 +11,12 @@ public class Logger {
 
 		File directory = new File("logs\\");
 		File file = new File("logs\\" + fileName + ".csv");
-		this.file = file;
-		writer = new FileWriter(file);
-
+		
 		directory.mkdir();
 		file.createNewFile();
+		
+		this.file = file;
+		writer = new FileWriter(file);
 
 		LogLine(fieldNames);
 
@@ -25,11 +26,12 @@ public class Logger {
 
 		File directory = new File("logs\\");
 		File file = new File("logs\\" + fileName + ".csv");
-		this.file = file;
-		writer = new FileWriter(file);
-
+		
 		directory.mkdir();
 		file.createNewFile();
+		
+		this.file = file;
+		writer = new FileWriter(file);
 
 	}
 	

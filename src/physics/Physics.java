@@ -80,41 +80,16 @@ public class Physics  {
 
 	public float[] update(float delta) {
 		
-		float[] deltaX = Vector.cSubVector(location, lastLocation);
-		velocity = Vector.cScaleVector(deltaX, GameEngine.timeScale / delta);
-//		float[] deltaX = {0, 0, 0};
-
-//		deltaX = drag(deltaX, resistance, mass);
 		velocity = force(velocity, delta);
-//		deltaX = Delta(deltaX, delta);
 		
 		lastLocation = location.clone();
 		location = Vector.cAddVector(location, Vector.cScaleVector(velocity, delta / GameEngine.timeScale));
-		System.out.println(location[1]);
+		
+		float[] deltaX = Vector.cSubVector(location, lastLocation);
+		velocity = Vector.cScaleVector(deltaX, GameEngine.timeScale / delta);
 		
 		return location;
 		
-	}
-
-	public float[] Delta(float[] vDelta, int delta) {
-		// Attempt to fix issues with varying framerates and physics. This is
-		// not perfect.
-
-		int lastDelta = -1;
-
-		// Correct for special case in beginning.
-		if (lastDelta != -1) {
-
-			vDelta = Vector.sScaleVector(vDelta, delta, 0);
-
-		}
-
-		vDelta = Vector.sScaleVector(vDelta, delta, 0);
-
-		lastDelta = delta;
-
-		return vDelta;
-
 	}
 	
 	public float[] force(float[] velocity, float delta) {

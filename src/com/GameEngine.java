@@ -35,7 +35,7 @@ public class GameEngine {
 	public static int width = 1200;	// window width
 	public static int height = 800;	// window height
 	
-	public static float scale = 100f;	// number of pixels in 1 meter
+	public static float scale = 50f;	// number of pixels in 1 meter
 
 	int fps;	// Actual frames per second
 	int setFPS = 120;	// Desired frames per second
@@ -340,8 +340,12 @@ public class GameEngine {
 		location2 = Vector.cScaleVector(ComplexPhys.getLocation("Square").clone(), scale);
 		
 		//	log the object's current location
-		boxLogger.LogLine(ComplexPhys.getLocation("Box"));
-		squareLogger.LogLine(ComplexPhys.getLocation("Square"));
+		Physics phys2 = ComplexPhys.getPhysObject("Box");
+		float log[] = {phys2.getVelocity()[0], phys2.getVelocity()[1], phys2.getVelocity()[2], delta};
+		boxLogger.LogLine(log);
+		phys2 = ComplexPhys.getPhysObject("Square");
+		float log2[] = {phys2.getlocation()[0], phys2.getlocation()[1], phys2.getlocation()[2], delta};
+		squareLogger.LogLine(log2);
 		trail.updateTrail(location);
 //		trail2.updateTrail(location2);
 		
@@ -362,8 +366,8 @@ public class GameEngine {
 			float[] f = new float[3];
 			Physics phys = ComplexPhys.getPhysObject("Box");
 			
-			f[0] = (mouseX - location[0] - phys.velocity[0] / delta * timeScale) * timeScale * phys.mass / delta;
-			f[1] = (mouseY - location[1] - phys.velocity[1] / delta * timeScale) * timeScale * phys.mass / delta;
+			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
+			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
 			
 			phys.addForce(f);
 			
@@ -376,8 +380,8 @@ public class GameEngine {
 			float[] f = new float[3];
 			Physics phys = ComplexPhys.getPhysObject("Square");
 			
-			f[0] = (mouseX - location2[0] - phys.velocity[0] / delta) * timeScale * phys.mass / delta;
-			f[1] = (mouseY - location2[1] - phys.velocity[1] / delta) * timeScale * phys.mass / delta;
+			f[0] = (mouseX - location2[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
+			f[1] = (mouseY - location2[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
 			
 			phys.addForce(f);
 		}
@@ -409,6 +413,13 @@ public class GameEngine {
 					} else {
 						debugToggle = false;
 						System.out.println("debug is OFF");
+					}
+					
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					
 				}
@@ -486,7 +497,7 @@ public class GameEngine {
 	}
 
 	public long getTime() {
-
+		
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 
 	}
@@ -496,6 +507,16 @@ public class GameEngine {
 		long time = getTime();
 		int delta = (int) (time - lastFrame);
 		lastFrame = time;
+		
+		if (delta == 0){
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			delta = 1;
+		}
 		
 //		System.out.println("delta: " + delta);
 		return delta;

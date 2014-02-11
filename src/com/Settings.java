@@ -55,9 +55,9 @@ public class Settings {
 		settingsFrame.getContentPane().add(checkFullScreen);
 		
 		//Checks to see if check box is selected.  If selected, makes full screen.
-		Display.setDisplayMode();
-		Display.setFullscreen(checkFullScreen.isSelected());
-		Display.update();
+//		Display.setDisplayMode();
+//		Display.setFullscreen(checkFullScreen.isSelected());
+//		Display.update();
 		}
 		
 		

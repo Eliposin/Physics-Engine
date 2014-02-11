@@ -71,7 +71,8 @@ public class GameEngine {
 	public void start() throws IOException {
 
 		try {
-			Display.setDisplayMode(new DisplayMode(width, height));
+			Display.setDisplayMode(new DisplayMode(width-1, height));
+			Display.setTitle("Physics Engine");
 			Display.create();
 		} catch (LWJGLException e) {
 			e.printStackTrace();

@@ -38,7 +38,7 @@ public class GameEngine {
 	public static float scale = 50f;	// number of pixels in 1 meter
 
 	int fps;	// Actual frames per second
-	int setFPS = 120;	// Desired frames per second
+	static int setFPS = 120;	// Desired frames per second
 	long lastFPS = 0;	// last frame's fps
 	long lastFrame = getTime();	// last frame's time of creation
 	int frame = 0;	// current frame number

@@ -2,6 +2,8 @@ package com;
 
 import javax.swing.JFrame;
 import javax.swing.JCheckBox;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 import java.awt.GridLayout;
 
@@ -41,26 +43,21 @@ public class Settings {
 		JLabel lblFPS = new JLabel("Current FPS");
 		settingsFrame.getContentPane().add(lblFPS);
 		
-		JLabel lblNumFPS = new JLabel("25 fps");
+		JLabel lblNumFPS = new JLabel(String.valueOf(GameEngine.setFPS));
 		settingsFrame.getContentPane().add(lblNumFPS);
+		
+		JTextPane newFPS = new JTextPane();
+		settingsFrame.getContentPane().add(newFPS);
 		
 		JLabel lblChkFullScreen = new JLabel("Toggle Full Screen");
 		settingsFrame.getContentPane().add(lblChkFullScreen);
-		JCheckBox chkBox = new JCheckBox();
-		settingsFrame.getContentPane().add(chkBox);
-		//Checks to see if check box is selected.  If selected, makes full screen.
-		if(chkBox.isSelected()){
+		JCheckBox checkFullScreen = new JCheckBox();
+		settingsFrame.getContentPane().add(checkFullScreen);
 		
-				;
-				Display.update();
-				if(Display.isFullscreen()){
-					System.out.println("It worked");
-				}
-				else{
-					System.out.println("something went wrong");
-				}
-			} 
-			
+		//Checks to see if check box is selected.  If selected, makes full screen.
+		Display.setDisplayMode();
+		Display.setFullscreen(checkFullScreen.isSelected());
+		Display.update();
 		}
 		
 		

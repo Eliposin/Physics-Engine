@@ -10,7 +10,7 @@ public class Physics  {
 	public float drag = 1f; //coefficient of drag
 	public float restitution = 1f; // coefficient of restitution
 	public float[] location = {0, 0, 0}; // centimeters
-	public float[] lastLocation = {0, 0, 0};
+	private float[] lastLocation = {0, 0, 0};
 	public float[] velocity = {0, 0, 0}; // centimeters per second
 	public float[] acceleration = {0, 0, 0}; // centimeters per second squared
 
@@ -79,6 +79,7 @@ public class Physics  {
 	
 
 	public float[] update(float delta) {
+		
 		
 		velocity = force(velocity, delta);
 		

@@ -7,6 +7,7 @@ public class ComplexPhys {
 	static ArrayList<String> physName = new ArrayList<String>();
 	static ArrayList<Physics> physObject = new ArrayList<Physics>();
 	static ArrayList<Boolean> isActive = new ArrayList<Boolean>();
+	static ArrayList<Float[]> AABB = new ArrayList<Float[]>();
 
 	public static int addPhysics(String name, float mass, float drag,
 			float restitution) {

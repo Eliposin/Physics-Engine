@@ -7,6 +7,10 @@ public class Entity {
 	float[] normals;
 	float[] textures; //float??
 	
+//	float charge;
+//	float density;
+//	
+//	Not sure if these should go in Entity or PhysObject. But both should be implemented in some form
 	String name;
 	
 	short type;

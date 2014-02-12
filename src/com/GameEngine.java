@@ -532,4 +532,18 @@ public class GameEngine {
 		}
 		fps++;
 	}
+
+	/**
+	 * @return the setFPS
+	 */
+	public static int getSetFPS() {
+		return setFPS;
+	}
+
+	/**
+	 * @param setFPS the setFPS to set
+	 */
+	public static void setSetFPS(int setFPS) {
+		GameEngine.setFPS = setFPS;
+	}
 }

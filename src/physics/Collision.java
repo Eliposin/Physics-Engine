@@ -2,8 +2,8 @@ package physics;
 
 public class Collision {
 
-	public boolean AABBCollide() {
-
+	public boolean AABBCollide(float[] vertciesOne, float[] vertciesTwo) {
+		
 		return true;
 	}
 
@@ -25,4 +25,7 @@ public class Collision {
 
 	}
 
+	
+	
+	
 }

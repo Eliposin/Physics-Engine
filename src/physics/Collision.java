@@ -2,7 +2,6 @@ package physics;
 
 public class Collision {
 
-<<<<<<< HEAD
 	float[] AABB = new float[6];
 	float[] distance = new float[3];
 	boolean overlap = false;
@@ -21,11 +20,11 @@ public class Collision {
 		}
 
 		return overlap;
-=======
+	}
+		
 	public boolean AABBCollide(float[] vertciesOne, float[] vertciesTwo) {
 		
 		return true;
->>>>>>> 6c39114cbe4d335f7fe41c819497cdb2be4d4954
 	}
 
 	public void buildAABB(float[] vertices) {

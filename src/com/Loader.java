@@ -47,7 +47,7 @@ public class Loader {
 		 */
 
 		float[] output = new float[3];
-		String[] holder = new String[5];
+//		String[] holder = new String[5];
 		String dataType = "";
 		char[] charHolder = new char[100];
 		ArrayList<Integer> whiteSpace = new ArrayList<Integer>();

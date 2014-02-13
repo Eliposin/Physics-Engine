@@ -21,7 +21,9 @@ public class Entity {
 //	final short CONSTRAINT_ROD = 3;
 //	final short CONSTRAINT_SPRING = 4;
 	
+	public static void stuff() {
 	
+	}
 	
 	Physics physObject;
 	

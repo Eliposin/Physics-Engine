@@ -7,22 +7,28 @@ public class Manager {
 	static ArrayList<String> EntityName = new ArrayList<String>();
 	static ArrayList<Entity> Entity = new ArrayList<Entity>();
 	static ArrayList<Boolean> isActive = new ArrayList<Boolean>();
+	
+	public final short SHAPE = 0;
+	public final short CONSTRAINT_STRING = 1;
+	public final short CONSTRAINT_ELASTIC = 2;
+	public final short CONSTRAINT_ROD = 3;
+	public final short CONSTRAINT_SPRING = 4;
 
-	public static int addPhysics(String name, float mass, float drag,
-			float restitution) {
+	public static int addEntity(String name, short type, 
+			float[] vertices, float[] normals, float[] textures) {
 
 		int index;
 
 		EntityName.add(name);
 		index = EntityName.indexOf(name);
 		isActive.add(index, true);
-		Entity.add(new Entity(/*TODO add the stuff*/));
+		Entity.add(new Entity(name, type, vertices, normals, textures));
 
 		return index;
 
 	}
 
-	public static void removePhysics(String name) {
+	public static void removeEntity(String name) {
 
 		int index;
 
@@ -32,7 +38,7 @@ public class Manager {
 
 	}
 
-	public static void enablePhysics(String name, boolean enable) {
+	public static void enableEntity(String name, boolean enable) {
 
 		int index;
 

@@ -5,26 +5,19 @@ import physics.Physics;
 public class Entity {
 	float[] vertices;
 	float[] normals;
-	float[] textures; //float??
-	
-//	float charge;
-//	float density;
-//	
-//	Not sure if these should go in Entity or PhysObject. But both should be implemented in some form
+	float[] textures; // float??
+
 	String name;
-	
+
 	short type;
 	
-//	final short SHAPE = 0;
-//	final short CONSTRAINT_STRING = 1;
-//	final short CONSTRAINT_ELASTIC = 2;
-//	final short CONSTRAINT_ROD = 3;
-//	final short CONSTRAINT_SPRING = 4;
-	
-	public static void stuff() {
-	
+	Entity(String name, short type, float[] vertices, float[] normals, float[] textures) {
+		this.name = name;
+		this.vertices = vertices;
+		this.normals = normals;
+		this.textures = textures;
 	}
-	
+
 	Physics physObject;
-	
+
 }

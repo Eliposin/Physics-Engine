@@ -105,8 +105,17 @@ public class GameEngine {
 		
 		Loader.read("Object_Test");
 		
-		ComplexPhys.addPhysics("Box", attr[0], attr[1], attr[2]);
-		ComplexPhys.addPhysics("Square", attr[0], attr[1], attr[2]);
+		float[] vertices = {-25,-25,-25,
+				25,-25,-25,
+				25,25,-25,
+				-25,25,-25,
+				-25,-25,25,
+				25,-25,25,
+				25,25,25,
+				-25,25,25};
+		
+		ComplexPhys.addPhysics("Box", vertices, attr[0], attr[1], attr[2]);
+		ComplexPhys.addPhysics("Square", vertices, attr[0], attr[1], attr[2]);
 		
 		boxLogger = new Logger("Box");
 		squareLogger = new Logger("Square");
@@ -523,7 +532,7 @@ public class GameEngine {
 		return delta;
 
 	}
-
+	
 	public void updateFPS() {
 		// Calculate the FPS
 		if (getTime() - lastFPS > 1000) {

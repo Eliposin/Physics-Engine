@@ -9,7 +9,7 @@ public class ComplexPhys {
 	static ArrayList<Boolean> isActive = new ArrayList<Boolean>();
 	static ArrayList<Float[]> AABB = new ArrayList<Float[]>();
 
-	public static int addPhysics(String name, float mass, float drag,
+	public static int addPhysics(String name, float[] vertices, float mass, float drag,
 			float restitution) {
 
 		int index;
@@ -17,7 +17,7 @@ public class ComplexPhys {
 		physName.add(name);
 		index = physName.indexOf(name);
 		isActive.add(index, true);
-		physObject.add(new Physics(mass, drag, restitution));
+		physObject.add(new Physics(vertices, mass, drag, restitution));
 
 		return index;
 

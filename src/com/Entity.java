@@ -6,7 +6,11 @@ public class Entity {
 	float[] vertices;
 	float[] normals;
 	float[] textures; // float??
+	
+	float[] AABB = new float[6];
 
+	Physics physObject;
+	
 	String name;
 
 	short type;
@@ -18,6 +22,16 @@ public class Entity {
 		this.textures = textures;
 	}
 
-	Physics physObject;
+	public void addVertexBuffer() {
+		
+	}
+	
+	public Physics getPhysics() {
+		return physObject;
+	}
+	
+	public float[] getAABB() {
+		return AABB;
+	}
 
 }

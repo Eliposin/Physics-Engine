@@ -32,7 +32,10 @@ public class Settings {
 	public Settings() throws LWJGLException {
 		initSettings();
 	}
-
+	/**
+	 * initialized Settings window.
+	 * @throws LWJGLException
+	 */
 	void initSettings() throws LWJGLException {
 		settingsFrame = new JFrame();
 		settingsFrame.setAutoRequestFocus(true);
@@ -62,7 +65,16 @@ public class Settings {
 
 	}
 
-	// Checks to see if check box is selected. If selected, makes full screen.
+			
+//Checks to see if check box is selected.  If selected, makes full screen.
+//		Display.setDisplayMode();
+//		Display.setFullscreen(checkFullScreen.isSelected());
+//		Display.update();// Checks to see if check box is selected. If selected, makes full screen.
+	/**
+	 * 
+	 * @param aCheckBox a JCheckBox object checks state of JCheckBox to determine if full screen is enabled.
+	 * @throws LWJGLException
+	 */
 	public void toggleFullscreen(JCheckBox aCheckBox) throws LWJGLException {
 		Display.getDisplayMode();
 		if (aCheckBox.isSelected() && !Display.isFullscreen()) {
@@ -70,20 +82,25 @@ public class Settings {
 		} else if (!aCheckBox.isSelected() && Display.isFullscreen())
 			Display.setFullscreen(false);
 	}
-
-	public void soundOnColid() {
+	/**
+	 * 
+	 * @param on boolean value to determine if sound on colid is played
+	 * possibly gotten from check box or a list box with multip options.
+	 */
+	public void soundOnColid(boolean on) {
 
 	}
 
-		
-		//Checks to see if check box is selected.  If selected, makes full screen.
-//		Display.setDisplayMode();
-//		Display.setFullscreen(checkFullScreen.isSelected());
-//		Display.update();
+
 		
 		
 
-	
+	/**
+	 * Used to set new FPS.
+	 * 
+	 * @param input input passed in from a text field used to set new FPS
+	 * 
+	 */
 	public void newFPS(int input){
 		GameEngine.setSetFPS(input);
 	}

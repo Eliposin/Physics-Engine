@@ -22,7 +22,7 @@ public class Collision {
 		return overlap;
 	}
 		
-	public boolean AABBCollide(float[] vertciesOne, float[] vertciesTwo) {
+	public boolean AABBCollide(float[] vertices1, float[] vertices2) {
 		
 		return true;
 	}

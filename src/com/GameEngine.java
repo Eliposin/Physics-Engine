@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.Sys;
 import com.Logger;
 import effects.Trail;
-import com.KeyInput;
+import com.Input;
 import com.Settings;
 import com.Loader;
 import gui.Button;
@@ -63,7 +63,6 @@ public class GameEngine {
 	Trail trail = new Trail(trailLength);	// create a trail
 //	Trail trail2 = new Trail(trailLength);
 	
-	KeyInput keyInput = new KeyInput();
 	Button button = new Button(400, 600);
 
 	Random random = new Random();
@@ -342,8 +341,6 @@ public class GameEngine {
 	public void update(int delta) throws IOException {
 		
 //		button.run();	// test out a button I've been working on
-
-//		keyInput.refresh();
 		
 		//	Set the location of the physics objects to something the renderer can easily get at
 		location = Vector.cScaleVector(ComplexPhys.getLocation("Box").clone(), scale);
@@ -368,8 +365,10 @@ public class GameEngine {
 		ComplexPhys.getPhysObject("Box").addForce(f2);
 		ComplexPhys.getPhysObject("Square").addForce(f2);
 		
-		// move the object using force; precisely calculated to the pixel
-		if (Mouse.isButtonDown(0)) {
+		Input.refresh();
+		
+		if (Input.mouse0Down == true) {
+			
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
 			
@@ -380,10 +379,10 @@ public class GameEngine {
 			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
 			
 			phys.addForce(f);
-			
 		}
 		
-		if (Mouse.isButtonDown(1)) {
+		if (Input.mouse1Down == true) {
+			
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
 			
@@ -396,8 +395,7 @@ public class GameEngine {
 			phys.addForce(f);
 		}
 		
-		//TODO Make KeyInput work better.
-		if (KeyInput.debugDown == true) {
+		if (Input.debugChanged == Input.PRESSED) {
 			
 			if (debugToggle == false) {
 				debugToggle = true;
@@ -408,97 +406,61 @@ public class GameEngine {
 			}
 			
 		}
-
-		while (Keyboard.next()) {
-
-			if (Keyboard.getEventKeyState()) {
-				
-				if (Keyboard.getEventKey() == Keyboard.KEY_E) {
-
-					System.out.println("E Key Pressed");
-					
-					if (debugToggle == false) {
-						debugToggle = true;
-						System.out.println("debug is ON");
-					} else {
-						debugToggle = false;
-						System.out.println("debug is OFF");
-					}
-					
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
+		
+		if (Input.actionChanged == Input.PRESSED) {
+			
+			blue = random.nextFloat();
+			red = random.nextFloat();
+			green = random.nextFloat();
+			
+		}
+		
+		if (Input.forwardChanged == Input.PRESSED) {
+			
+			if (setFPS < 10) {
+				setFPS += 1;
+				if (setFPS == 0) {
+					setFPS = 1;
 				}
-
-				if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
-
-					System.out.println("Space Key Pressed");
-					blue = random.nextFloat();
-					red = random.nextFloat();
-					green = random.nextFloat();
-				}
-				
-				if (Keyboard.getEventKey() == Keyboard.KEY_UP) {
-					System.out.println("Up is Down");
-					if (setFPS < 10) {
-						setFPS += 1;
-						if (setFPS == 0) {
-							setFPS = 1;
-						}
-					} else if (setFPS < 60) {
-						setFPS += 5;
-					} else if (setFPS < 120) {
-						setFPS += 10;
-					} else if (setFPS < 480) {
-						setFPS += 30;
-					} else {
-						setFPS += 120;
-						if (setFPS > 2000) {
-							setFPS = 2000;
-						}
-					} 
-				}
-				
-				if (Keyboard.getEventKey() == Keyboard.KEY_DOWN) {
-					System.out.println("Down is Down");
-					if (setFPS < 10) {
-						setFPS -= 1;
-						if (setFPS == 0) {
-							setFPS = 1;
-						}
-					} else if (setFPS < 60) {
-						setFPS -= 5;
-					} else if (setFPS < 120) {
-						setFPS -= 10;
-					} else if (setFPS < 480) {
-						setFPS -= 30;
-					} else {
-						setFPS -= 120;
-						if (setFPS > 2000) {
-							setFPS = 2000;
-						}
-					} 
-				}
+			} else if (setFPS < 60) {
+				setFPS += 5;
+			} else if (setFPS < 120) {
+				setFPS += 10;
+			} else if (setFPS < 480) {
+				setFPS += 30;
 			} else {
-				
-				if (Keyboard.getEventKey() == Keyboard.KEY_E) {
-					
-					System.out.println("E Key Released");
+				setFPS += 120;
+				if (setFPS > 2000) {
+					setFPS = 2000;
 				}
-
-				if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
-
-					System.out.println("Space Key Released");
+			} 
+		}
+		
+		if (Input.backwardChanged == Input.PRESSED) {
+			
+			if (setFPS < 10) {
+				setFPS -= 1;
+				if (setFPS == 0) {
+					setFPS = 1;
+				}
+			} else if (setFPS < 60) {
+				setFPS -= 5;
+			} else if (setFPS < 120) {
+				setFPS -= 10;
+			} else if (setFPS < 480) {
+				setFPS -= 30;
+			} else {
+				setFPS -= 120;
+				if (setFPS > 2000) {
+					setFPS = 2000;
 				}
 			}
-			if(Keyboard.getEventKey() == Keyboard.KEY_T){
-				
-				com.Settings.editSettings();
-			}
+		}
+		
+		if (Input.settingsChanged == Input.PRESSED) {
+			
+			com.Settings.editSettings();
+			
 		}
 
 		updateFPS();
@@ -522,7 +484,6 @@ public class GameEngine {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			delta = 1;

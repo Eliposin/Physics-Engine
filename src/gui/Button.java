@@ -3,7 +3,7 @@ package gui;
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import com.GameEngine;
-import com.KeyInput;
+import com.Input;
 import com.DrawBuffer;
 import com.Vector;
 
@@ -78,13 +78,13 @@ public class Button implements Runnable {
 
 	public void run() {
 
-		if (locX < KeyInput.mouseX && KeyInput.mouseX < locX + buttonWidth
-				&& locY < KeyInput.mouseY
-				&& KeyInput.mouseY < locY + buttonHeight) {
+		if (locX < Input.mouseX && Input.mouseX < locX + buttonWidth
+				&& locY < Input.mouseY
+				&& Input.mouseY < locY + buttonHeight) {
 
 			onHover();
 			
-			if (KeyInput.mouse0Down == true) {
+			if (Input.mouse0Down == true) {
 				onClick();
 			} else {
 				onRelease();

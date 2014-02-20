@@ -53,7 +53,6 @@ public class Settings {
 		settingsFrame.getContentPane().add(lblChkFullScreen);
 		JCheckBox checkFullScreen = new JCheckBox();
 		settingsFrame.getContentPane().add(checkFullScreen);
-<<<<<<< HEAD
 
 		JLabel lblSoundOnColide = new JLabel("Toggle Full Screen");
 		settingsFrame.getContentPane().add(lblChkFullScreen);
@@ -74,16 +73,10 @@ public class Settings {
 	public void soundOnColid() {
 
 	}
-=======
-		
 		//Checks to see if check box is selected.  If selected, makes full screen.
 //		Display.setDisplayMode();
 //		Display.setFullscreen(checkFullScreen.isSelected());
 //		Display.update();
-		}
-		
-		
->>>>>>> c8b14f3a839474450415e296cad246e1933e95a3
 	
 	public void newFPS(int input){
 		GameEngine.setSetFPS(input);

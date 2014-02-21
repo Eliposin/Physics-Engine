@@ -1,6 +1,7 @@
 package physics;
 
 import com.Entity;
+<<<<<<< HEAD
 
 import com.GameEngine;
 
@@ -10,6 +11,9 @@ import com.GameEngine;
  * @author Christopher Dombroski
  *
  */
+=======
+import com.GameEngine;
+>>>>>>> 0af1d3e7ef461d0a526d28804df1c7dc01f7ec15
 
 public class Collision {
 	int width = GameEngine.width;
@@ -17,6 +21,7 @@ public class Collision {
 	int depth = GameEngine.depth;
 	float scale = GameEngine.scale;
 	float[] distance = new float[3];
+<<<<<<< HEAD
 	byte[][][] overlapCount = new byte[(int) (width/scale)]
 									  [(int) (height/scale)]
 									  [(int) (depth/scale)];
@@ -24,6 +29,10 @@ public class Collision {
 											 [(int) (height/scale)]
 											 [(int) (depth/scale)]
 											 [10]; //[x][y][z][index]
+=======
+	byte[][][] overlapCount = new byte[(int) (width/scale)][(int) (height/scale)][(int) (depth/scale)];
+	Entity[][][][] overlapEntitiy; //[x][y][z][index]
+>>>>>>> 0af1d3e7ef461d0a526d28804df1c7dc01f7ec15
 	boolean overlap = false;
 
 	public boolean AABBCollide(float[] AABB) {
@@ -70,6 +79,7 @@ public class Collision {
 //
 //	}
 
+<<<<<<< HEAD
 	/**
 	 * Take an Entity and find out where on the collision array it exists.
 	 * Once it finds an overlap, it makes the corresponding byte array 
@@ -99,4 +109,14 @@ public class Collision {
 			}
 		}
 	}
+=======
+	private void mapSectors(Entity entity) {
+		
+		float[] AABB = entity.getAABB();
+		
+		
+		
+	}
+	
+>>>>>>> 0af1d3e7ef461d0a526d28804df1c7dc01f7ec15
 }

@@ -2,27 +2,48 @@ package com;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.opengl.Texture;
 
 public class Loader {
 
-	public static void read(String inputFileName) {
+	public List<float[]> verticesList = new ArrayList<float[]>(5000);
+	public List<float[]> normalsList = new ArrayList<float[]>(5000);
+	public List<float[]> textureCoordsList = new ArrayList<float[]>(5000);
+	public List<float[]> paramVerticesList = new ArrayList<float[]>(500);
+	public List<float[]> colorAmbientList = new ArrayList<float[]>(100);
+	public List<float[]> colorDiffuseList = new ArrayList<float[]>(100);
+	public List<float[]> colorSpecularList = new ArrayList<float[]>(100);
+	public List<Integer> shadingList = new ArrayList<Integer>(100);
+	public List<Integer> illuminationList = new ArrayList<Integer>(100);
+	public List<Float> materialDissolveList = new ArrayList<Float>(100);
+	public List<String> materialList = new ArrayList<String>(20);
+	public List<String> objectList = new ArrayList<String>(10);
+	public List<String> groupList = new ArrayList<String>(10);
+	
+	float[] vertices;
+	float[] normals;
+	float[] textureCoords;
+	float[] paramVertices;
+	float[] colorAmbient;
+	float[] colorDiffuse;
+	float[] colorSpecular;
+
+	public void read(String inputFileName) {
 		File f = new File("scenes\\" + inputFileName + ".obj");
 		BufferedReader read = null;
-
-		float[] vertices = new float[1];
 
 		try {
 			String currentLine;
 			FileReader reader = new FileReader(f);
 			read = new BufferedReader(reader);
-
+			
 			while ((currentLine = read.readLine()) != null) {
-				vertices = concat(vertices, fileParser(currentLine));
-				// System.out.println(currentLine);
-
+				fileParser(currentLine);
 			}
+			
+			initAll();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -37,110 +58,109 @@ public class Loader {
 		}
 
 	}
+	
+	/**
+	 * Parse through a .obj file.
+	 * 
+	 * @param fileText
+	 * @return
+	 */
+	private void fileParser(String fileText) {
 
-	private static float[] fileParser(String fileText) {
-
-		/*
-		 * Parse through a .obj file. This system needs some attention because
-		 * certain formats will break it. It also currently only supports float
-		 * formats, no strings of other such things.
-		 */
-
-		float[] output = new float[3];
-//		String[] holder = new String[5];
-		String dataType = "";
-		char[] charHolder = new char[100];
-		ArrayList<Integer> whiteSpace = new ArrayList<Integer>();
-
-		fileText = fileText.trim();
-		fileText += " ";
-
-		for (int i = 0; i < fileText.length(); i++) {
-			if (Character.isWhitespace(fileText.charAt(i))) {
-				whiteSpace.add(i);
-			}
-		}
-
-		fileText.toLowerCase().getChars(0, whiteSpace.get(0), charHolder, 0);
-		dataType = new String(charHolder).trim();
-
-		// check for v, vt, o
-
-		switch (dataType) {
+		String[] line = fileText.split(" ");
+		
+		switch (line[0].toLowerCase()) {
 
 		case "#":
 			break;
 		case "o":
-			output = getFloatArray(fileText, whiteSpace);
+			if (line.length > 1) {
+				objectList.add(line[1]);
+			} else {
+				objectList.add("object");
+			}
 			break;
 		case "v":
-			output = getFloatArray(fileText, whiteSpace);
+			verticesList.add(floats(line));
 			break;
-		case "vt": // TODO
+		case "vt":
+			textureCoordsList.add(floats(line));
 			break;
 		case "vn":
-			output = getFloatArray(fileText, whiteSpace);
+			normalsList.add(floats(line));
 			break;
 		case "vp":
-			output = getFloatArray(fileText, whiteSpace);
+			paramVerticesList.add(floats(line));
 			break;
 		case "f": // TODO
 			break;
-		case "g": // TODO
+		case "g":
+			if (line.length > 1) {
+				groupList.add(line[1]);
+			} else {
+				groupList.add("group");
+			}
+			break;
+		case "newmtl":
+			materialList.add(line[1]);
 			break;
 		case "ka":
-			output = getFloatArray(fileText, whiteSpace);
+			colorAmbientList.add(floats(line));
 			break;
 		case "kd":
-			output = getFloatArray(fileText, whiteSpace);
+			colorDiffuseList.add(floats(line));
 			break;
 		case "ks":
-			output = getFloatArray(fileText, whiteSpace);
+			colorSpecularList.add(floats(line));
+			break;
+		case "s":
+			if (line[1].equals("off") == false) {
+				shadingList.add(Integer.valueOf(line[1]));
+			} else {
+				shadingList.add(-1);
+			}
 			break;
 		case "d":
-			output = getFloatArray(fileText, whiteSpace);
-
+			materialDissolveList.add(Float.parseFloat(line[1]));
+			break;
+		case "tr":
+			materialDissolveList.add(Float.parseFloat(line[1]));
+			break;
+		case "illum":
+			illuminationList.add(Integer.valueOf(line[1]));
+			break;
 		}
-
-		return output;
 	}
 
-	private static float[] getFloatArray(String text,
-			ArrayList<Integer> whiteSpace) {
-		float[] output = new float[whiteSpace.size() - 1];
-
-		for (int i = 0; i < whiteSpace.size() - 1; i++) {
-			char[] characterHolder = new char[whiteSpace.get(i + 1)
-					- whiteSpace.get(i) - 1];
-			text.getChars(whiteSpace.get(i) + 1, whiteSpace.get(i + 1),
-					characterHolder, 0);
-			output[i] = Float.parseFloat(new String(characterHolder));
+	
+	private float[] floats(String[] line) {
+		float[] f = new float [line.length - 1];
+		for (byte i = 0; i < f.length; i++) {
+			f[i] = Float.parseFloat(line[i + 1]);
 		}
-
+		return f;
+	}
+	
+	private static float[] toArray(List<float[]> list, int stride) {
+		if (stride < 1) {
+			return null;
+		}
+		float[] output = new float[list.size() * stride];
+		for (int i = 0; i < list.size(); i++) {
+			for (int j = 0; j < stride; j ++) {
+				output[i * stride + j] = list.get(i)[j];
+			}
+		}
 		return output;
 	}
-
-	private static String[] getStringArray(String text,
-			ArrayList<Integer> whiteSpace) {
-		String[] output = new String[whiteSpace.size() - 1];
-
-		for (int i = 0; i < whiteSpace.size() - 1; i++) {
-			char[] characterHolder = new char[whiteSpace.get(i + 1)
-					- whiteSpace.get(i) - 1];
-			text.getChars(whiteSpace.get(i) + 1, whiteSpace.get(i + 1),
-					characterHolder, 0);
-			output[i] = new String(characterHolder);
-		}
-
-		return output;
-	}
-
-	private static float[] concat(float[] A, float[] B) {
-		int aLen = A.length;
-		int bLen = B.length;
-		float[] C = new float[aLen + bLen];
-		System.arraycopy(A, 0, C, 0, aLen);
-		System.arraycopy(B, 0, C, aLen, bLen);
-		return C;
+	
+	private void initAll() {
+		vertices = toArray(verticesList, verticesList.get(0).length);
+//		normals = toArray(normalsList, normalsList.get(0).length);
+//		textureCoords = toArray(textureCoordsList, textureCoordsList.get(0).length);
+//		paramVertices = toArray(paramVerticesList, paramVerticesList.get(0).length);
+//		colorAmbient = toArray(colorAmbientList, colorAmbientList.get(0).length);
+//		colorDiffuse = toArray(colorDiffuseList, colorDiffuseList.get(0).length);
+//		colorSpecular = toArray(colorSpecularList, colorSpecularList.get(0).length);
 	}
 }

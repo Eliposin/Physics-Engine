@@ -34,6 +34,7 @@ public class GameEngine {
 	
 	public static int width = 1200;	// window width
 	public static int height = 800;	// window height
+	public static int depth = 1200;
 	
 	public static float scale = 50f;	// number of pixels in 1 meter
 
@@ -102,7 +103,8 @@ public class GameEngine {
 //		GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 //		button.initGL();
 		
-		Loader.read("Object_Test");
+		Loader load = new Loader();
+		load.read("Object_Test");
 		
 		float[] vertices = {-25,-25,-25,
 				25,-25,-25,
@@ -139,7 +141,7 @@ public class GameEngine {
 		// init opengl
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, 0, height, 100, -100);
+		GL11.glOrtho(0, width, 0, height, 0, depth);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
@@ -351,7 +353,7 @@ public class GameEngine {
 		float log[] = {phys2.getVelocity()[0], phys2.getVelocity()[1], phys2.getVelocity()[2], delta};
 		boxLogger.LogLine(log);
 		phys2 = ComplexPhys.getPhysObject("Square");
-		float log2[] = {phys2.getlocation()[0], phys2.getlocation()[1], phys2.getlocation()[2], delta};
+		float log2[] = {phys2.getLocation()[0], phys2.getLocation()[1], phys2.getLocation()[2], delta};
 		squareLogger.LogLine(log2);
 		trail.updateTrail(location);
 //		trail2.updateTrail(location2);

@@ -24,15 +24,15 @@ public class Physics {
 
 	public Physics(float[] vertices) {
 
-		collision = new Collision();
-		collision.buildAABB(vertices);
+//		collision = new Collision();
+//		collision.buildAABB(vertices);
 		
 	}
 
 	public Physics(float[] vertices, float mass, float drag, float restitution) {
 
-		collision = new Collision();
-		collision.buildAABB(vertices);
+//		collision = new Collision();
+//		collision.buildAABB(vertices);
 		
 		this.mass = mass;
 		this.drag = drag;
@@ -56,7 +56,7 @@ public class Physics {
 		this.restitution = restitution;
 	}
 
-	public float[] getlocation() {
+	public float[] getLocation() {
 		return location;
 	}
 

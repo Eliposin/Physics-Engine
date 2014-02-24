@@ -12,15 +12,15 @@ import com.GameEngine;
  */
 
 public class Collision {
-	int width = GameEngine.width;
-	int height = GameEngine.height;
-	int depth = GameEngine.depth;
-	float scale = GameEngine.scale;
+	static int width = GameEngine.width;
+	static int height = GameEngine.height;
+	static int depth = GameEngine.depth;
+	static float scale = GameEngine.scale;
 	float[] distance = new float[3];
-	byte[][][] overlapCount = new byte[(int) (width/scale)]
+	static byte[][][] overlapCount = new byte[(int) (width/scale)]
 									  [(int) (height/scale)]
 									  [(int) (depth/scale)];
-	Entity[][][][] overlapEntity = new Entity[(int) (width/scale)]
+	static Entity[][][][] overlapEntity = new Entity[(int) (width/scale)]
 											 [(int) (height/scale)]
 											 [(int) (depth/scale)]
 											 [10]; //[x][y][z][index]
@@ -79,7 +79,7 @@ public class Collision {
 	 * 
 	 * @param entity The entity to map onto the collision array
 	 */
-	private void mapSectors(Entity entity) {
+	public static void mapSectors(Entity entity) {
 		
 		float[] AABB = entity.getAABB();
 		int[] index = new int[3];

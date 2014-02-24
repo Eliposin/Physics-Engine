@@ -12,6 +12,7 @@ public class Entity {
 	Physics physObject;
 	
 	String name;
+	Loader loader = new Loader();
 
 	short type;
 	
@@ -20,6 +21,14 @@ public class Entity {
 		this.vertices = vertices;
 		this.normals = normals;
 		this.textures = textures;
+	}
+	
+	Entity(String name, short type, String fileName) {
+		this.name = name;
+		loader.read(fileName);
+		this.vertices = loader.vertices;
+		this.normals = loader.normals;
+		this.textures = loader.textureCoords;
 	}
 
 	public void addVertexBuffer() {

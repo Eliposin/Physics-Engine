@@ -10,9 +10,9 @@ package com;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Random;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -23,9 +23,10 @@ import effects.Trail;
 import com.Input;
 import com.Settings;
 import com.Loader;
+
 import gui.Button;
-import physics.ComplexPhys;
-import physics.Physics;
+import physics.*;
+
 
 public class GameEngine {
 	
@@ -103,8 +104,8 @@ public class GameEngine {
 //		GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 //		button.initGL();
 		
-		Loader load = new Loader();
-		load.read("Object_Test");
+//		Loader load = new Loader();
+//		load.read("Object_Test");
 		
 		float[] vertices = {-25,-25,-25,
 				25,-25,-25,
@@ -117,6 +118,8 @@ public class GameEngine {
 		
 		ComplexPhys.addPhysics("Box", vertices, attr[0], attr[1], attr[2]);
 		ComplexPhys.addPhysics("Square", vertices, attr[0], attr[1], attr[2]);
+		
+		Manager.addEntity("Circle1", Manager.SHAPE, "bunny");
 		
 		boxLogger = new Logger("Box");
 		squareLogger = new Logger("Square");
@@ -467,6 +470,7 @@ public class GameEngine {
 
 		updateFPS();
 		ComplexPhys.UpdatePhysics(delta);
+		Manager.update();
 		
 	}
 

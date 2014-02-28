@@ -42,11 +42,8 @@ public class Manager {
 		index = EntityName.indexOf(name);
 		isActive.add(index, true);
 		Entity.add(new Entity(name, type, fileName));
-<<<<<<< HEAD
 		
 		ComplexPhys.addPhysics(name, 1000, 0, 0);
-=======
->>>>>>> c2e3eb5f2a94cf026af51e369d338cc2f85ed635
 
 		return index;
 
@@ -120,10 +117,7 @@ public class Manager {
 	}
 	
 	public static void update() {
-<<<<<<< HEAD
 		Collision.clearSectors();
-=======
->>>>>>> c2e3eb5f2a94cf026af51e369d338cc2f85ed635
 		for(int i = 0; i < Entity.size(); i++) {
 			Collision.mapSectors(Entity.get(i));
 		}

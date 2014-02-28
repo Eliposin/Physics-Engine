@@ -11,11 +11,7 @@ public class Entity {
 	
 	float[] AABB = new float[6];
 	
-<<<<<<< HEAD
 	public String name;
-=======
-	String name;
->>>>>>> c2e3eb5f2a94cf026af51e369d338cc2f85ed635
 	Loader loader = new Loader();
 
 	short type;
@@ -35,14 +31,10 @@ public class Entity {
 		this.vertices = loader.vertices;
 		this.normals = loader.normals;
 		this.textures = loader.textureCoords;
-<<<<<<< HEAD
 		AABB = Collision.buildAABB(vertices);
-=======
 	}
 
 	public void addVertexBuffer() {
-		
->>>>>>> c2e3eb5f2a94cf026af51e369d338cc2f85ed635
 	}
 	
 	public Physics getPhysics() {

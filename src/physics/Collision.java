@@ -16,7 +16,6 @@ import com.GameEngine;
  */
 
 public class Collision {
-<<<<<<< HEAD
 	static float scale = GameEngine.scale;
 	static short width = (short) Math.floor(GameEngine.width / scale);
 	static short height = (short) Math.floor(GameEngine.height / scale);
@@ -24,20 +23,6 @@ public class Collision {
 	float[] distance = new float[3];
 	public static HashMap<short[], Sector> overlapMap = new HashMap<short[], Sector>();
 	public static HashMap<Integer, short[]> overlapKeys = new HashMap<Integer, short[]>();
-=======
-	static int width = GameEngine.width;
-	static int height = GameEngine.height;
-	static int depth = GameEngine.depth;
-	static float scale = GameEngine.scale;
-	float[] distance = new float[3];
-	static byte[][][] overlapCount = new byte[(int) (width/scale)]
-									  [(int) (height/scale)]
-									  [(int) (depth/scale)];
-	static Entity[][][][] overlapEntity = new Entity[(int) (width/scale)]
-											 [(int) (height/scale)]
-											 [(int) (depth/scale)]
-											 [10]; //[x][y][z][index]
->>>>>>> c2e3eb5f2a94cf026af51e369d338cc2f85ed635
 	boolean overlap = false;
 
 	public boolean AABBCollide(float[] AABB) {

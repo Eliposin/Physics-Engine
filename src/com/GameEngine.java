@@ -21,14 +21,10 @@ import org.lwjgl.Sys;
 import com.Logger;
 import effects.Trail;
 import com.Input;
-<<<<<<< HEAD
 //import com.Settings;
 //import com.Loader;
-=======
 import com.Settings;
 import com.Loader;
->>>>>>> c2e3eb5f2a94cf026af51e369d338cc2f85ed635
-
 import gui.Button;
 import physics.*;
 
@@ -127,18 +123,11 @@ public class GameEngine {
 //		ComplexPhys.addPhysics("Box", vertices, attr[0], attr[1], attr[2]);
 //		ComplexPhys.addPhysics("Square", vertices, attr[0], attr[1], attr[2]);
 		
-<<<<<<< HEAD
 		Manager.addEntity(obj1, Manager.SHAPE, "Circle");
 		Manager.addEntity(obj2, Manager.SHAPE, "Circle");
 		
 		circleLogger = new Logger(obj1);
 		ringLogger = new Logger(obj2);
-=======
-		Manager.addEntity("Circle1", Manager.SHAPE, "bunny");
-		
-		boxLogger = new Logger("Box");
-		squareLogger = new Logger("Square");
->>>>>>> c2e3eb5f2a94cf026af51e369d338cc2f85ed635
 		
 	}
 	

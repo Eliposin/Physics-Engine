@@ -12,7 +12,6 @@ import java.nio.FloatBuffer;
 import java.util.Random;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -21,11 +20,12 @@ import org.lwjgl.Sys;
 import com.Logger;
 import effects.Trail;
 import com.Input;
-import com.Settings;
-import com.Loader;
+//import com.Settings;
+//import com.Loader;
+
 import gui.Button;
-import physics.ComplexPhys;
-import physics.Physics;
+import physics.*;
+
 
 public class GameEngine {
 	
@@ -53,12 +53,15 @@ public class GameEngine {
 	float[] location = {400, 600, 0};	// location of the first object. need to change soon.
 	float[] location2 = new float[3];	// location of the second object. ^^
 	
+	String obj1 = "Circle";
+	String obj2 = "Ring";
+	
 	int[] graphData = new int[width];	// A list of frametime data.
 	
 	float[] attr = {1000, 0f, 1f};	// The attributes of the objects for physics. {Mass, Drag, Restitution} 
 	
-	Logger boxLogger;
-	Logger squareLogger;
+	Logger circleLogger;
+	Logger ringLogger;
 	
 	int trailLength = 250;	// max positions to use for creating a trail.
 	Trail trail = new Trail(trailLength);	// create a trail
@@ -103,31 +106,34 @@ public class GameEngine {
 //		GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 //		button.initGL();
 		
-		Loader load = new Loader();
-		load.read("Object_Test");
+//		Loader load = new Loader();
+//		load.read("Object_Test");
 		
-		float[] vertices = {-25,-25,-25,
-				25,-25,-25,
-				25,25,-25,
-				-25,25,-25,
-				-25,-25,25,
-				25,-25,25,
-				25,25,25,
-				-25,25,25};
+//		float[] vertices = {-25,-25,-25,
+//				25,-25,-25,
+//				25,25,-25,
+//				-25,25,-25,
+//				-25,-25,25,
+//				25,-25,25,
+//				25,25,25,
+//				-25,25,25};
 		
-		ComplexPhys.addPhysics("Box", vertices, attr[0], attr[1], attr[2]);
-		ComplexPhys.addPhysics("Square", vertices, attr[0], attr[1], attr[2]);
+//		ComplexPhys.addPhysics("Box", vertices, attr[0], attr[1], attr[2]);
+//		ComplexPhys.addPhysics("Square", vertices, attr[0], attr[1], attr[2]);
 		
-		boxLogger = new Logger("Box");
-		squareLogger = new Logger("Square");
+		Manager.addEntity(obj1, Manager.SHAPE, "Circle");
+		Manager.addEntity(obj2, Manager.SHAPE, "Circle");
+		
+		circleLogger = new Logger(obj1);
+		ringLogger = new Logger(obj2);
 		
 	}
 	
 	public void close() {
 		
 		try {
-			boxLogger.close();
-			squareLogger.close();
+			circleLogger.close();
+			ringLogger.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -170,6 +176,22 @@ public class GameEngine {
 			GL11.glVertex2f(i * scale, height);
 		}
 		GL11.glEnd();
+		
+		GL11.glBegin(GL11.GL_QUADS);
+		for (int i = 0; i < Collision.overlapMap.size(); i++) {
+			int intensity = Collision.getEntities(i).length;
+			short[] sectorIndex = Collision.getKey(i);
+			GL11.glColor3f(intensity*0.2f, intensity*0.2f, intensity*0.2f);
+			GL11.glVertex2f(sectorIndex[0]*scale,sectorIndex[1]*scale);
+			GL11.glVertex2f(sectorIndex[0]*scale,sectorIndex[1]*scale+scale);
+			GL11.glVertex2f(sectorIndex[0]*scale+scale,sectorIndex[1]*scale+scale);
+			GL11.glVertex2f(sectorIndex[0]*scale+scale,sectorIndex[1]*scale);
+		}
+
+
+		GL11.glEnd();
+		GL11.glColor3f(red, green, blue);
+
 		
 		// Circle 1
 		//TODO Create a vertex buffer and simplify all this into one draw call.
@@ -345,16 +367,19 @@ public class GameEngine {
 //		button.run();	// test out a button I've been working on
 		
 		//	Set the location of the physics objects to something the renderer can easily get at
-		location = Vector.cScaleVector(ComplexPhys.getLocation("Box").clone(), scale);
-		location2 = Vector.cScaleVector(ComplexPhys.getLocation("Square").clone(), scale);
+//		location = Vector.cScaleVector(ComplexPhys.getLocation("Box").clone(), scale);
+//		location2 = Vector.cScaleVector(ComplexPhys.getLocation("Square").clone(), scale);
+		
+		location = Vector.cScaleVector(Manager.getEntity(obj1).getPhysics().getLocation().clone(), scale);
+		location2 = Vector.cScaleVector(Manager.getEntity(obj2).getPhysics().getLocation().clone(), scale);
 		
 		//	log the object's current location
-		Physics phys2 = ComplexPhys.getPhysObject("Box");
+		Physics phys2 = ComplexPhys.getPhysObject(obj1);
 		float log[] = {phys2.getVelocity()[0], phys2.getVelocity()[1], phys2.getVelocity()[2], delta};
-		boxLogger.LogLine(log);
-		phys2 = ComplexPhys.getPhysObject("Square");
+		circleLogger.LogLine(log);
+		phys2 = ComplexPhys.getPhysObject(obj2);
 		float log2[] = {phys2.getLocation()[0], phys2.getLocation()[1], phys2.getLocation()[2], delta};
-		squareLogger.LogLine(log2);
+		ringLogger.LogLine(log2);
 		trail.updateTrail(location);
 //		trail2.updateTrail(location2);
 		
@@ -364,8 +389,8 @@ public class GameEngine {
 
 		// give the object a force of gravity
 		float[] f2 = {0, (float) (-9.8 * 1000), 0};
-		ComplexPhys.getPhysObject("Box").addForce(f2);
-		ComplexPhys.getPhysObject("Square").addForce(f2);
+		ComplexPhys.getPhysObject(obj1).addForce(f2);
+		ComplexPhys.getPhysObject(obj2).addForce(f2);
 		
 		Input.refresh();
 		
@@ -375,7 +400,7 @@ public class GameEngine {
 			int mouseY = Mouse.getY();
 			
 			float[] f = new float[3];
-			Physics phys = ComplexPhys.getPhysObject("Box");
+			Physics phys = ComplexPhys.getPhysObject(obj1);
 			
 			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
 			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
@@ -389,7 +414,7 @@ public class GameEngine {
 			int mouseY = Mouse.getY();
 			
 			float[] f = new float[3];
-			Physics phys = ComplexPhys.getPhysObject("Square");
+			Physics phys = ComplexPhys.getPhysObject(obj2);
 			
 			f[0] = (mouseX - location2[0] - phys.velocity[0]) * timeScale * phys.mass / delta;
 			f[1] = (mouseY - location2[1] - phys.velocity[1]) * timeScale * phys.mass / delta;
@@ -467,6 +492,7 @@ public class GameEngine {
 
 		updateFPS();
 		ComplexPhys.UpdatePhysics(delta);
+		Manager.update();
 		
 	}
 

@@ -1,6 +1,9 @@
 package com;
 
 import java.util.ArrayList;
+import physics.Collision;
+import physics.ComplexPhys;
+//import physics.Physics;
 
 public class Manager {
 
@@ -8,11 +11,11 @@ public class Manager {
 	static ArrayList<Entity> Entity = new ArrayList<Entity>();
 	static ArrayList<Boolean> isActive = new ArrayList<Boolean>();
 	
-	public final short SHAPE = 0;
-	public final short CONSTRAINT_STRING = 1;
-	public final short CONSTRAINT_ELASTIC = 2;
-	public final short CONSTRAINT_ROD = 3;
-	public final short CONSTRAINT_SPRING = 4;
+	public final static short SHAPE = 0;
+	public final static short CONSTRAINT_STRING = 1;
+	public final static short CONSTRAINT_ELASTIC = 2;
+	public final static short CONSTRAINT_ROD = 3;
+	public final static short CONSTRAINT_SPRING = 4;
 
 	public static int addEntity(String name, short type, 
 			float[] vertices, float[] normals, float[] textures) {
@@ -23,6 +26,21 @@ public class Manager {
 		index = EntityName.indexOf(name);
 		isActive.add(index, true);
 		Entity.add(new Entity(name, type, vertices, normals, textures));
+
+		return index;
+
+	}
+	
+	public static int addEntity(String name, short type, String fileName) {
+
+		int index;
+
+		EntityName.add(name);
+		index = EntityName.indexOf(name);
+		isActive.add(index, true);
+		Entity.add(new Entity(name, type, fileName));
+		
+		ComplexPhys.addPhysics(name, 1000, 0, 0);
 
 		return index;
 
@@ -93,5 +111,13 @@ public class Manager {
 
 		return Entity.get(index);
 
+	}
+	
+	public static void update() {
+		Collision.clearSectors();
+		for(int i = 0; i < Entity.size(); i++) {
+			Collision.mapSectors(Entity.get(i));
+		}
+		
 	}
 }

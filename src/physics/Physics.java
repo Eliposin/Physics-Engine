@@ -3,7 +3,7 @@ package physics;
 import java.util.ArrayList;
 import com.GameEngine;
 import com.Vector;
-import physics.Collision.*;
+//import physics.Collision.*;
 
 public class Physics {
 
@@ -22,17 +22,11 @@ public class Physics {
 	// hold all the possible forces acting on the object
 	ArrayList<float[]> momentumBuffer = new ArrayList<float[]>(); 
 
-	public Physics(float[] vertices) {
-
-//		collision = new Collision();
-//		collision.buildAABB(vertices);
+	public Physics() {
 		
 	}
 
-	public Physics(float[] vertices, float mass, float drag, float restitution) {
-
-//		collision = new Collision();
-//		collision.buildAABB(vertices);
+	public Physics(float mass, float drag, float restitution) {
 		
 		this.mass = mass;
 		this.drag = drag;
@@ -57,15 +51,15 @@ public class Physics {
 	}
 
 	public float[] getLocation() {
-		return location;
+		return location.clone();
 	}
 
 	public float[] getVelocity() {
-		return velocity;
+		return velocity.clone();
 	}
 
 	public float[] getAcceleration() {
-		return acceleration;
+		return acceleration.clone();
 	}
 
 	public float getSpeed() {

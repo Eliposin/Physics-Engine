@@ -32,8 +32,10 @@ public class Settings {
 	public Settings() throws LWJGLException {
 		initSettings();
 	}
+
 	/**
 	 * initialized Settings window.
+	 * 
 	 * @throws LWJGLException
 	 */
 	void initSettings() throws LWJGLException {
@@ -57,7 +59,6 @@ public class Settings {
 		JCheckBox checkFullScreen = new JCheckBox();
 		settingsFrame.getContentPane().add(checkFullScreen);
 
-
 		JLabel lblSoundOnColide = new JLabel("Toggle Full Screen");
 		settingsFrame.getContentPane().add(lblChkFullScreen);
 		JCheckBox checkSoundOnColide = new JCheckBox();
@@ -65,43 +66,41 @@ public class Settings {
 
 	}
 
-			
-//Checks to see if check box is selected.  If selected, makes full screen.
-//		Display.setDisplayMode();
-//		Display.setFullscreen(checkFullScreen.isSelected());
-//		Display.update();// Checks to see if check box is selected. If selected, makes full screen.
+	// Checks to see if check box is selected. If selected, makes full screen.
+	// Display.setDisplayMode();
+	// Display.setFullscreen(checkFullScreen.isSelected());
+	// Display.update();// Checks to see if check box is selected. If selected,
+	// makes full screen.
 	/**
 	 * 
-	 * @param aCheckBox a JCheckBox object checks state of JCheckBox to determine if full screen is enabled.
+	 * @param aCheckBox
+	 *            a JCheckBox object checks state of JCheckBox to determine if
+	 *            full screen is enabled.
 	 * @throws LWJGLException
 	 */
 	public void toggleFullscreen(JCheckBox aCheckBox) throws LWJGLException {
-		Display.getDisplayMode();
-		if (aCheckBox.isSelected() && !Display.isFullscreen()) {
-			Display.setFullscreen(true);
-		} else if (!aCheckBox.isSelected() && Display.isFullscreen())
-			Display.setFullscreen(false);
+
 	}
+
 	/**
 	 * 
-	 * @param on boolean value to determine if sound on colid is played
-	 * possibly gotten from check box or a list box with multip options.
+	 * @param on
+	 *            boolean value to determine if sound on colid is played
+	 *            possibly gotten from check box or a list box with multip
+	 *            options.
 	 */
-	public void soundOnColid(boolean on) {
+	public void soundOnCollide(boolean on) {
 
 	}
-
-
-		
-		
 
 	/**
 	 * Used to set new FPS.
 	 * 
-	 * @param input input passed in from a text field used to set new FPS
+	 * @param input
+	 *            input passed in from a text field used to set new FPS
 	 * 
 	 */
-	public void newFPS(int input){
-		GameEngine.setSetFPS(input);
+	public void newFPS(int input) {
+		GameEngine.setFPS = input;
 	}
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import com.Engine;
 import com.Input;
-import com.DrawBuffer;
 import com.Vector;
 
 public class Button implements Runnable {
@@ -46,7 +45,7 @@ public class Button implements Runnable {
 		shape[4][1] = locY + buttonHeight - buttonPadding;
 		shape[5][0] = locX + buttonPadding;
 		shape[5][1] = locY + buttonHeight - buttonPadding;
-		DrawBuffer.add(shape);
+//		DrawBuffer.add(shape);
 
 		shape = new float[5][3];
 		shape[0][0] = GL11.GL_TRIANGLES;
@@ -58,7 +57,7 @@ public class Button implements Runnable {
 		shape[3][1] = locY + buttonPadding;
 		shape[4][0] = locX + buttonWidth - buttonPadding;
 		shape[4][1] = locY + buttonHeight - buttonPadding;
-		DrawBuffer.add(shape);
+//		DrawBuffer.add(shape);
 
 		shape = new float[6][3];
 		shape[0][0] = GL11.GL_LINE_LOOP;
@@ -72,7 +71,7 @@ public class Button implements Runnable {
 		shape[4][1] = locY + buttonHeight - buttonPadding;
 		shape[5][0] = locX + buttonPadding;
 		shape[5][1] = locY + buttonHeight - buttonPadding;
-		DrawBuffer.add(shape);
+//		DrawBuffer.add(shape);
 
 	}
 

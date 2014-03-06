@@ -15,7 +15,7 @@ import physics.Physics;
 public class Entity {
 	
 	public String name;
-	public int VAOID;
+	int VAOID;
 	int VBOID;
 	int NBOID;
 	int VBOIID;

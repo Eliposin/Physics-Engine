@@ -76,6 +76,43 @@ public class Collision {
 	}
 
 	/**
+	 * 
+	 * @param vector1
+	 *            array representation of a vector
+	 * @param vector2
+	 *            array representation of a vector
+	 * @param stride
+	 *            number of elements in one vector e.g. {(0,1),(1,1),(2,1)}
+	 *            stride = 2.
+	 * @param addition
+	 *            boolean value if true does minkowski sum, if false minkowski
+	 *            difference.
+	 * @return output the sum or difference of the two vectors
+	 */
+	static float[] minkowski(float[] vector1, float[] vector2, int stride,
+			boolean addition) {
+		float[] output = new float[vector1.length * vector2.length / stride];
+
+		for (int i = 0; i < vector1.length / stride; i++) {
+			for (int j = 0; j < vector2.length / stride; j++) {
+				for (byte k = 0; k < stride; k++) {
+					if (addition) {
+						output[i * vector2.length + j * stride + k] = vector1[i
+								* stride + k]
+								+ vector2[j * stride + k];
+					} else {
+						output[i * vector2.length + j * stride + k] = vector1[i
+								* stride + k]
+								- vector2[j * stride + k];
+					}
+				}
+			}
+		}
+
+		return output;
+	}
+
+	/**
 	 * Take an Entity and find out where on the collision array it exists. Once
 	 * it finds an overlap, it makes the corresponding byte array (overlapCount)
 	 * add 1. If any section is 2 or greater, there is a chance there may be a
@@ -85,6 +122,7 @@ public class Collision {
 	 * @param entity
 	 *            The entity to map onto the collision array
 	 */
+
 	public static void mapSectors(Entity entity) {
 
 		float[] AABB = entity.getAABB();

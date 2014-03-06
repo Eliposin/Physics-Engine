@@ -3,46 +3,25 @@ package com;
 import java.util.ArrayList;
 import physics.Collision;
 import physics.ComplexPhys;
-//import physics.Physics;
-
-import physics.Collision;
-import physics.Physics;
 
 public class Manager {
 
 	static ArrayList<String> EntityName = new ArrayList<String>();
 	static ArrayList<Entity> Entity = new ArrayList<Entity>();
 	static ArrayList<Boolean> isActive = new ArrayList<Boolean>();
-	
+
 	public final static short SHAPE = 0;
 	public final static short CONSTRAINT_STRING = 1;
 	public final static short CONSTRAINT_ELASTIC = 2;
 	public final static short CONSTRAINT_ROD = 3;
 	public final static short CONSTRAINT_SPRING = 4;
 
-	public static int addEntity(String name, short type, 
-			float[] vertices, float[] normals, float[] textures) {
-
-		int index;
-
-		EntityName.add(name);
-		index = EntityName.indexOf(name);
-		isActive.add(index, true);
-		Entity.add(new Entity(name, type, vertices, normals, textures));
-
-		return index;
-
-	}
-	
 	public static int addEntity(String name, short type, String fileName) {
-
 		int index;
-
 		EntityName.add(name);
 		index = EntityName.indexOf(name);
 		isActive.add(index, true);
 		Entity.add(new Entity(name, type, fileName));
-		
 		ComplexPhys.addPhysics(name, 1000, 0, 0);
 
 		return index;
@@ -73,39 +52,39 @@ public class Manager {
 
 	}
 
-//	public static void setAttributes(String name, float mass, float drag,
-//			float restitution) {
-//
-//		int index;
-//
-//		index = EntityName.indexOf(name);
-//		Entity.get(index).setAttributes(mass, drag, restitution);
-//
-//	}
-//
-//	public static void UpdatePhysics(float delta) {
-//
-//		int index = 0;
-//
-//		while (index < EntityName.size()) {
-//			if (isActive.get(index) == true) {
-//
-//				Entity.get(index).update(delta);
-//
-//			}
-//			index++;
-//		}
-//
-//	}
-//
-//	public static float[] getLocation(String name) {
-//
-//		int index;
-//
-//		index = EntityName.indexOf(name);
-//		return Entity.get(index).location;
-//
-//	}
+	// public static void setAttributes(String name, float mass, float drag,
+	// float restitution) {
+	//
+	// int index;
+	//
+	// index = EntityName.indexOf(name);
+	// Entity.get(index).setAttributes(mass, drag, restitution);
+	//
+	// }
+	//
+	// public static void UpdatePhysics(float delta) {
+	//
+	// int index = 0;
+	//
+	// while (index < EntityName.size()) {
+	// if (isActive.get(index) == true) {
+	//
+	// Entity.get(index).update(delta);
+	//
+	// }
+	// index++;
+	// }
+	//
+	// }
+	//
+	// public static float[] getLocation(String name) {
+	//
+	// int index;
+	//
+	// index = EntityName.indexOf(name);
+	// return Entity.get(index).location;
+	//
+	// }
 
 	public static Entity getEntity(String name) {
 
@@ -115,12 +94,20 @@ public class Manager {
 		return Entity.get(index);
 
 	}
-	
+
 	public static void update() {
 		Collision.clearSectors();
-		for(int i = 0; i < Entity.size(); i++) {
-			Collision.mapSectors(Entity.get(i));
+		for (int i = 0; i < Entity.size(); i++) {
+			Collision.updateAABB((Entity) Entity.get(i));
+			Collision.mapSectors((Entity) Entity.get(i));
 		}
-		
+
+		if (Entity.size() > 1) {
+			for (int i = 0; i < Entity.size(); i++) {
+				for (int j = i+1; j < Entity.size(); j++)
+					Collision.AABBCollide((Entity) Entity.get(i), (Entity) Entity.get(j));
+
+			}
+		}
 	}
 }

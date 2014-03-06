@@ -3,17 +3,17 @@ package com;
 import java.io.IOException;
 
 
-public class Criminality implements Runnable {
+public class PhysicsEngine implements Runnable {
 	
 	Thread t = new Thread(this, "GUI");
 	
-	Criminality () {
+	PhysicsEngine () {
 		t.start();
 	}
 
 	public static void main(String args[]) {
 
-		new Criminality();
+		new PhysicsEngine();
 	    
 //	    DebugStats debugStats = new DebugStats();
 //		debugStats.start();
@@ -22,7 +22,7 @@ public class Criminality implements Runnable {
 	
 	public void run() {
 		
-		GameEngine gameEngine = new GameEngine();
+		Engine gameEngine = new Engine();
 		try {
 			gameEngine.start();
 		} catch (IOException e) {

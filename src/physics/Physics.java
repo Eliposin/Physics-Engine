@@ -1,7 +1,7 @@
 package physics;
 
 import java.util.ArrayList;
-import com.GameEngine;
+import com.Engine;
 import com.Vector;
 //import physics.Collision.*;
 
@@ -11,7 +11,7 @@ public class Physics {
 	public float drag = 1f; // coefficient of drag
 	public float restitution = 1f; // coefficient of restitution
 	public float[] location = { 0, 0, 0 }; // centimeters
-	private float[] lastLocation = { 0, 0, 0 };
+//	private float[] lastLocation = { 0, 0, 0 };
 	public float[] velocity = { 0, 0, 0 }; // centimeters per second
 	public float[] acceleration = { 0, 0, 0 }; // centimeters per second squared
 	
@@ -87,12 +87,13 @@ public class Physics {
 
 		velocity = force(velocity, delta);
 
-		lastLocation = location.clone();
+//		lastLocation = location.clone();
 		location = Vector.cAddVector(location,
-				Vector.cScaleVector(velocity, delta / GameEngine.timeScale));
+				Vector.cScaleVector(velocity, delta / Engine.timeScale));
 
-		float[] deltaX = Vector.cSubVector(location, lastLocation);
-		velocity = Vector.cScaleVector(deltaX, GameEngine.timeScale / delta);
+//		float[] deltaX = Vector.cSubVector(location, lastLocation);
+//		velocity = Vector.cScaleVector(deltaX, GameEngine.timeScale / delta);
+		velocity = Vector.cScaleVector(velocity, Engine.timeScale / delta);
 
 		return location;
 
@@ -108,7 +109,7 @@ public class Physics {
 
 			force = forceBuffer.get(i);
 			velocity = Vector.cAddVector(velocity, Vector.cScaleVector(
-					force.clone(), ((float) delta / GameEngine.timeScale)
+					force.clone(), ((float) delta / Engine.timeScale)
 							/ mass));
 
 		}

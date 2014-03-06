@@ -2,7 +2,7 @@ package gui;
 
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
-import com.GameEngine;
+import com.Engine;
 import com.Input;
 import com.DrawBuffer;
 import com.Vector;
@@ -31,9 +31,9 @@ public class Button implements Runnable {
 	}
 
 	public void render() {
-		color[0] = GameEngine.red * colorScale;
-		color[1] = GameEngine.green * colorScale;
-		color[2] = GameEngine.blue * colorScale;
+		color[0] = Engine.red * colorScale;
+		color[1] = Engine.green * colorScale;
+		color[2] = Engine.blue * colorScale;
 		shape = new float[6][3];
 		shape[0][0] = GL11.GL_QUADS;
 		shape[1] = Vector.cScaleVector(color.clone(), colorScale);

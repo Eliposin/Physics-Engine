@@ -14,7 +14,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-import com.GameEngine;
+import com.Engine;
 
 public class Settings {
 	private JFrame settingsFrame;
@@ -48,7 +48,7 @@ public class Settings {
 		JLabel lblFPS = new JLabel("Current FPS");
 		settingsFrame.getContentPane().add(lblFPS);
 
-		JLabel lblNumFPS = new JLabel(String.valueOf(GameEngine.setFPS));
+		JLabel lblNumFPS = new JLabel(String.valueOf(Engine.setFPS));
 		settingsFrame.getContentPane().add(lblNumFPS);
 
 		JTextArea newFPS = new JTextArea();
@@ -101,6 +101,6 @@ public class Settings {
 	 * 
 	 */
 	public void newFPS(int input) {
-		GameEngine.setFPS = input;
+		Engine.setFPS = input;
 	}
 }

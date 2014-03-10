@@ -8,36 +8,36 @@ import org.newdawn.slick.opengl.Texture;
 
 public class Model {
 
-	List<float[]> verticesList = new ArrayList<float[]>(5000);
-	List<float[]> normalsList = new ArrayList<float[]>(5000);
-	List<float[]> textureCoordsList = new ArrayList<float[]>(5000);
-	List<float[]> paramVerticesList = new ArrayList<float[]>(500);
-	List<float[]> colorAmbientList = new ArrayList<float[]>(100);
-	List<float[]> colorDiffuseList = new ArrayList<float[]>(100);
-	List<float[]> colorSpecularList = new ArrayList<float[]>(100);
-	List<int[]> indicesList = new ArrayList<int[]>(500);
-	List<Integer> shadingList = new ArrayList<Integer>(100);
-	List<Integer> illuminationList = new ArrayList<Integer>(100);
-	List<Float> materialDissolveList = new ArrayList<Float>(100);
-	List<String> materialList = new ArrayList<String>(20);
-	List<String> objectList = new ArrayList<String>(10);
-	List<String> groupList = new ArrayList<String>(10);
+	public List<float[]> verticesList = new ArrayList<float[]>(5000);
+	public List<float[]> normalsList = new ArrayList<float[]>(5000);
+	public List<float[]> textureCoordsList = new ArrayList<float[]>(5000);
+	public List<float[]> paramVerticesList = new ArrayList<float[]>(500);
+	public List<float[]> colorAmbientList = new ArrayList<float[]>(100);
+	public List<float[]> colorDiffuseList = new ArrayList<float[]>(100);
+	public List<float[]> colorSpecularList = new ArrayList<float[]>(100);
+	public List<int[]> indicesList = new ArrayList<int[]>(500);
+	public List<Integer> shadingList = new ArrayList<Integer>(100);
+	public List<Integer> illuminationList = new ArrayList<Integer>(100);
+	public List<Float> materialDissolveList = new ArrayList<Float>(100);
+	public List<String> materialList = new ArrayList<String>(20);
+	public List<String> objectList = new ArrayList<String>(10);
+	public List<String> groupList = new ArrayList<String>(10);
 
-	float[] vertices;
-	float[] normals;
-	float[] textureCoords;
-	float[] paramVertices;
-	float[] colorAmbient;
-	float[] colorDiffuse;
-	float[] colorSpecular;
-	int[] indices;
+	public float[] vertices;
+	public float[] normals;
+	public float[] textureCoords;
+	public float[] paramVertices;
+	public float[] colorAmbient;
+	public float[] colorDiffuse;
+	public float[] colorSpecular;
+	public int[] indices;
 
 	Texture texture;
 
 	byte indicesFormat = -1;
 	byte indicesStride;
 	byte vertexStride;
-	byte normalStride;
+	byte normalStride = 3;
 	byte textureStride;
 
 	final byte V = 0;
@@ -235,6 +235,58 @@ public class Model {
 
 		return indices;
 	}
+	
+	private ArrayList<float[]> genNormals() {
+		
+		long time = System.currentTimeMillis();
+
+		ArrayList<ArrayList<float[]>> normalBuffer = new ArrayList<ArrayList<float[]>>(verticesList.size());
+		ArrayList<float[]> normals = new ArrayList<float[]>(verticesList.size());
+		
+		while (normalBuffer.size() <= verticesList.size()) {
+			normalBuffer.add(new ArrayList<float[]>());
+		}
+
+		for( int i = 0; i < indicesList.size(); i++ ) {
+		  // get the three vertices that make the faces
+		  float[] p1 = verticesList.get(indicesList.get(i)[0]);
+		  float[] p2 = verticesList.get(indicesList.get(i)[1]);
+		  float[] p3 = verticesList.get(indicesList.get(i)[2]);
+
+		  float[] v1 = Vector.cSubVector(p2, p1);
+		  float[] v2 = Vector.cSubVector(p3, p1);
+		  float[] normal = Vector.cCrossVector(v1, v2);
+
+		  normal = Vector.toSpherical(normal);
+		  normal[0] = 1;
+		  normal = Vector.toCartesian(normal);
+
+		  // Store the face's normal for each of the vertices that make up the face.
+		  normalBuffer.get(indicesList.get(i)[0]).add(normal);
+		  normalBuffer.get(indicesList.get(i)[1]).add(normal);
+		  normalBuffer.get(indicesList.get(i)[2]).add(normal);
+		}
+
+		// Now loop through each vertex vector, and average out all the normals stored.
+
+		for( int i = 0; i < verticesList.size(); i++) {
+			float[] normal = new float[3];
+			for( int j = 0; j < normalBuffer.get(i).size(); j++ ) {
+				normal = Vector.cAddVector(normal, normalBuffer.get(i).get(j));
+			}
+			
+			normal = Vector.toSpherical(normal);
+			normal[0] = 1;
+			normal = Vector.toCartesian(normal);
+			
+			normals.add(i, normal);
+				
+		}
+
+		System.out.println(System.currentTimeMillis() - time + " milliseconds");
+
+		return normals;
+	}
 
 	private static float[] toArray(List<float[]> list, int stride) {
 		if (stride < 1) {
@@ -279,14 +331,16 @@ public class Model {
 		if (verticesList.size() != 0) {
 			vertices = toArray(verticesList, vertexStride);
 		}
-		if (normalsList.size() != 0) {
-			normals = toArray(normalsList, normalStride);
-		}
 		if (textureCoordsList.size() != 0) {
 			textureCoords = toArray(textureCoordsList, textureStride);
 		}
 		if (indicesList.size() != 0) {
 			indices = toArrayI(indicesList, indicesStride);
+		}
+		if (normalsList.size() != 0) {
+			normals = toArray(normalsList, normalStride);
+		} else {
+			normals = toArray(genNormals(), normalStride);;
 		}
 		if (paramVerticesList.size() != 0) {
 			paramVertices = toArray(paramVerticesList,

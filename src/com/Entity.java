@@ -20,8 +20,11 @@ public class Entity {
 	int NBOID;
 	int VBOIID;
 	
-	Model mdl = new Model();
+	public Model mdl = new Model();
+	
 	public float[] AABB = new float[6];
+	public float[] rotation = new float[3]; // position, rotation
+	public float[] location = new float[3];
 	
 	short type;
 	
@@ -41,12 +44,8 @@ public class Entity {
 		}
 		
 		FloatBuffer verticesBuffer = toFloatBuffer(mdl.vertices);
-		FloatBuffer normalsBuffer = null;
+		FloatBuffer normalsBuffer = toFloatBuffer(mdl.normals);;
 		IntBuffer indicesBuffer = toIntBuffer(mdl.indices);
-		
-		if (normals) {
-			normalsBuffer = toFloatBuffer(mdl.normals);
-		}
 		
 		VAOID = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(VAOID);
@@ -54,12 +53,11 @@ public class Entity {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOID);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
 		GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-		if (normals) {
-			NBOID = GL15.glGenBuffers();
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, NBOID);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
-			GL11.glNormalPointer(GL11.GL_FLOAT, 0, 0);
-		}
+		
+		NBOID = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, NBOID);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
+		GL11.glNormalPointer(GL11.GL_FLOAT, 0, 0);
 
 		VBOIID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOIID);
@@ -73,8 +71,8 @@ public class Entity {
 		
 		GL11.glPushMatrix();
 		
-		float[] location = getLocation(); 
-		GL11.glTranslatef(location[0]*Engine.scale,location[1]*Engine.scale,location[2]*Engine.scale);
+		GL11.glTranslatef(location[0], location[1], location[2]);
+		GL11.glScalef(Engine.scale, Engine.scale, Engine.scale);
 		
 		GL30.glBindVertexArray(VAOID);
 		
@@ -125,8 +123,13 @@ public class Entity {
 		return AABB.clone();
 	}
 	
-	public float[] getLocation() {
-		return getPhysics().getLocation().clone();
+	public void updateOrientation() {
+		Physics phys = getPhysics();
+		AABB[0] = location[0] - phys.getLocation()[0];
+		AABB[1] = location[1] - phys.getLocation()[1];
+		AABB[2] = location[2] - phys.getLocation()[2];
+		location = Vector.cScaleVector(phys.getLocation().clone(), Engine.scale);
+//		rotation = phys.getRotation().clone;
 	}
 
 }

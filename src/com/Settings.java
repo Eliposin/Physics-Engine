@@ -3,16 +3,16 @@ package com;
 import javax.swing.JFrame;
 import javax.swing.JCheckBox;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
+//import javax.swing.JTextField;
+//import javax.swing.JTextPane;
 
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
+//import org.lwjgl.opengl.Display;
+//import org.lwjgl.opengl.DisplayMode;
 
 import com.Engine;
 
@@ -59,9 +59,9 @@ public class Settings {
 		JCheckBox checkFullScreen = new JCheckBox();
 		settingsFrame.getContentPane().add(checkFullScreen);
 
-		JLabel lblSoundOnColide = new JLabel("Toggle Full Screen");
+//		JLabel lblSoundOnColide = new JLabel("Toggle Full Screen");
 		settingsFrame.getContentPane().add(lblChkFullScreen);
-		JCheckBox checkSoundOnColide = new JCheckBox();
+//		JCheckBox checkSoundOnColide = new JCheckBox();
 		settingsFrame.getContentPane().add(checkFullScreen);
 
 	}

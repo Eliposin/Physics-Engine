@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import com.Entity;
+import com.Vector;
 
 import com.Engine;
 
@@ -28,9 +29,12 @@ public class Collision {
 		float AABB2[] = ent2.getAABB();
 		float distance[] = new float[3];
 		boolean overlap = false;
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++) {
+			AABB1[i+3] *= Engine.scale;
+			AABB2[i+3] *= Engine.scale;
 			distance[i] = Math.abs(AABB2[i] - AABB1[i])
 					- (AABB1[i + 3] + AABB2[i + 3]);
+		}
 
 		overlap = distance[0] <= 0.0F && distance[1] <= 0.0F
 				&& distance[2] <= 0.0F;
@@ -39,11 +43,54 @@ public class Collision {
 		return overlap;
 	}
 
-	public static void updateAABB(Entity entity) {
-		for (int i = 0; i < 3; i++)
-			entity.AABB[i] = entity.getLocation()[i] * scale;
-
-	}
+//	public void minkowskiCollide(Entity A, Entity B) {
+//
+//		float[] p0 = new float[2];
+//		float[] p1 = new float[2];
+//		float leastPenetratingDist = Float.MIN_VALUE;
+//		float leastPositiveDist = Float.MAX_VALUE;
+//
+//		for (int i = 0; i < A.mdl.vertices.length; i++) {
+//
+//			float[] wsN = A.mdl.normalsList.get(i);
+//
+//			// wsv0 is the vertex projected into the world space
+//			float[] wsV0 = A.mdl.verticesList.get(i);
+//			float[] wsV1 = A.mdl.verticesList.get(i+1);
+//
+//			// get the supporting vertices of B, most opposite face normal
+//			float[] s = B.getSupportVertices(Vector.cScaleVector(wsN, -1));
+//
+//			for (int j = 0; j < s.length; j++) {
+//
+//				// form point on plane of minkowski face
+//				float[] mfp0 = s[j].m_v.Sub(wsV0);
+//				float[] mfp1 = s[j].m_v.Sub(wsV1);
+//
+//				float faceDist = mfp0.Dot(wsN);
+//
+//				// project onto minkowski edge
+//				float[] p = ProjectPointOntoEdge(new float[2], mfp0, mfp1);
+//
+//				// get distance
+//				float dist = p.m_Len * Scalar.Sighn(faceDist);
+//
+//				if (dist > leastPenetratingDist) {
+//					p0 = p;
+//					leastPenetratingDist = dist;
+//				}
+//
+//				// track positive
+//				if (dist > 0 && dist < leastPositiveDist) {
+//					p1 = p;
+//					leastPositiveDist = dist;
+//				}
+//
+//			}
+//
+//		}
+//
+//	}
 
 	public boolean AABBCollide(float[] vertices1, float[] vertices2) {
 
@@ -124,6 +171,7 @@ public class Collision {
 	 */
 
 	public static void mapSectors(Entity entity) {
+		//FIXME seems to produce results off by about 25%
 
 		float[] AABB = entity.getAABB();
 		short[] index = new short[3];
@@ -131,10 +179,12 @@ public class Collision {
 
 		for (int i = 0; i < 3; i++) {
 			index[i] = (short) Math.floor(AABB[i] / scale);
+			AABB[i+3] *= Engine.scale; 
 			radius[i] = (short) (Math.floor((AABB[i] + AABB[i + 3]) / scale)
-					- index[i] + 1);
+					- index[i] + 0);
 			radius[i + 3] = (short) (Math
-					.floor((AABB[i] - AABB[i + 3]) / scale) - index[i] - 1);
+					.floor((AABB[i] - AABB[i + 3]) / scale)
+					- index[i] - 0);
 		}
 
 		for (short i = (short) (index[0] + radius[3]); i <= index[0]

@@ -8,13 +8,17 @@ package com;
  */
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Random;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.Sys;
 import com.Logger;
 import com.Input;
@@ -107,8 +111,8 @@ public class Engine {
 		// GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 		// button.initGL();
 
-		Manager.addEntity(obj1, Manager.SHAPE, "Circle");
-		Manager.addEntity(obj2, Manager.SHAPE, "Circle");
+		Manager.addEntity(obj1, Manager.SHAPE, "icosphere");
+		Manager.addEntity(obj2, Manager.SHAPE, "icosphere");
 
 		circleLogger = new Logger(obj1);
 		ringLogger = new Logger(obj2);
@@ -133,7 +137,7 @@ public class Engine {
 		// init opengl
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, 0, height, 0, depth);
+		GL11.glOrtho(0, width, 0, height, depth, 0);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
@@ -162,20 +166,24 @@ public class Engine {
 		}
 		GL11.glEnd();
 
-		GL11.glBegin(GL11.GL_QUADS);
-		for (int i = 0; i < Collision.overlapMap.size(); i++) {
-			int intensity = Collision.getEntities(i).length;
-			short[] sectorIndex = Collision.getKey(i);
-			GL11.glColor3f(intensity * 0.2f, intensity * 0.2f, intensity * 0.2f);
-			GL11.glVertex2f(sectorIndex[0] * scale, sectorIndex[1] * scale);
-			GL11.glVertex2f(sectorIndex[0] * scale, sectorIndex[1] * scale
-					+ scale);
-			GL11.glVertex2f(sectorIndex[0] * scale + scale, sectorIndex[1]
-					* scale + scale);
-			GL11.glVertex2f(sectorIndex[0] * scale + scale, sectorIndex[1]
-					* scale);
+		if (debugToggle) {
+
+			GL11.glBegin(GL11.GL_QUADS);
+			for (int i = 0; i < Collision.overlapMap.size(); i++) {
+				int intensity = Collision.getEntities(i).length;
+				short[] sectorIndex = Collision.getKey(i);
+				GL11.glColor3f(intensity * 0.2f, intensity * 0.2f, intensity * 0.2f);
+				GL11.glVertex2f(sectorIndex[0] * scale, sectorIndex[1] * scale);
+				GL11.glVertex2f(sectorIndex[0] * scale, sectorIndex[1] * scale
+						+ scale);
+				GL11.glVertex2f(sectorIndex[0] * scale + scale, sectorIndex[1]
+						* scale + scale);
+				GL11.glVertex2f(sectorIndex[0] * scale + scale, sectorIndex[1]
+						* scale);
+			}
+			GL11.glEnd();
 		}
-		GL11.glEnd();
+
 
 		GL11.glColor3f(red, green, blue);
 
@@ -258,9 +266,26 @@ public class Engine {
 		ringLogger.LogLine(log2);
 		trail.updateTrail(location);
 		// trail2.updateTrail(location2);
+		
+		
 
-		if (debugToggle == true) {
+		if (debugToggle) {
 			// TODO put stuff here
+//			IntBuffer viewport = BufferUtils.createIntBuffer(16);
+//			GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
+//			
+//			FloatBuffer modelMatrix = BufferUtils.createFloatBuffer(16);
+//			GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelMatrix);
+//			
+//			FloatBuffer projMatrix = BufferUtils.createFloatBuffer(16);
+//			GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projMatrix);
+//			
+//			FloatBuffer obj_pos = BufferUtils.createFloatBuffer(16);
+//			
+//			boolean unProject = GLU.gluUnProject(Input.mouseX, Input.mouseY, 0.5f, modelMatrix, projMatrix, viewport, obj_pos);
+//			
+//			System.out.println(unProject);
+//			System.out.println(obj_pos.get(0) + ", " + obj_pos.get(1) + ", " + obj_pos.get(2));
 		}
 
 		// give the object a force of gravity
@@ -410,6 +435,13 @@ public class Engine {
 			lastFPS += 1000; // add 1 second
 		}
 		fps++;
+	}
+	
+	private FloatBuffer asFloatBuffer(float[] floatArray) {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(floatArray.length);
+		buffer.put(floatArray);
+		buffer.flip();
+		return buffer;
 	}
 
 }

@@ -98,8 +98,8 @@ public class Manager {
 	public static void update() {
 		Collision.clearSectors();
 		for (int i = 0; i < Entity.size(); i++) {
-			Collision.updateAABB((Entity) Entity.get(i));
-			Collision.mapSectors((Entity) Entity.get(i));
+			Entity.get(i).updateOrientation();
+//			Collision.mapSectors((Entity) Entity.get(i));
 		}
 
 		if (Entity.size() > 1) {

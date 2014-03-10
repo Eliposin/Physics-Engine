@@ -272,4 +272,19 @@ public class Vector {
 		return vector;
 	}
 	
+	public static float[] cDivVector(float scalar, float[] vector) {
+		
+		for (int i = 0; i < vector.length; i++) {
+			
+			if (vector[i] == 0) {
+				vector[i] = 0;
+			} else {
+				vector[i] = scalar / vector[i];
+			}
+			
+		}
+		
+		return vector;
+	}
+	
 }

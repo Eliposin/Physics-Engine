@@ -132,7 +132,7 @@ public class Entity {
 			GL11.glColor3f(0.2f, 0.8f, 0.2f);
 			GL11.glBegin(GL11.GL_LINES);
 			float[] acceleration = getPhysics().getAcceleration();
-			acceleration = Vector.cScaleVector(acceleration, 5/Engine.scale);
+			acceleration = Vector.cScaleVector(acceleration, 1f/10);
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(acceleration[0], acceleration[1], acceleration[2]);
 			GL11.glEnd();
@@ -140,7 +140,7 @@ public class Entity {
 			//Draw the velocity of the object
 			GL11.glColor3f(0.8f, 0.8f, 0.2f);
 			float[] velocity = getPhysics().getVelocity();
-			velocity = Vector.cScaleVector(velocity, 5/Engine.scale);
+			velocity = Vector.cScaleVector(velocity, 1f/10);
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(velocity[0], velocity[1], velocity[2]);

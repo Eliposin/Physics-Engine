@@ -40,7 +40,7 @@ public class Engine {
 	public static int height = 800; // window height
 	public static int depth = 1200;
 
-	public static float scale = 50f; // number of pixels in 1 meter
+	public static float scale = 100f; // number of pixels in 1 meter
 
 	int fps; // Actual frames per second
 	static int setFPS = 120; // Desired frames per second

@@ -3,10 +3,14 @@ package physics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import com.Entity;
-import com.Vector;
 
+import org.lwjgl.util.vector.Vector3f;
+
+import com.Entity;
+import com.Model;
+import com.Vector;
 import com.Engine;
+import data.Stack;
 
 /**
  * An all-seeing class that detects collisions and remedies them.
@@ -43,58 +47,30 @@ public class Collision {
 		return overlap;
 	}
 
-//	public void minkowskiCollide(Entity A, Entity B) {
-//
-//		float[] p0 = new float[2];
-//		float[] p1 = new float[2];
-//		float leastPenetratingDist = Float.MIN_VALUE;
-//		float leastPositiveDist = Float.MAX_VALUE;
-//
-//		for (int i = 0; i < A.mdl.vertices.length; i++) {
-//
-//			float[] wsN = A.mdl.normalsList.get(i);
-//
-//			// wsv0 is the vertex projected into the world space
-//			float[] wsV0 = A.mdl.verticesList.get(i);
-//			float[] wsV1 = A.mdl.verticesList.get(i+1);
-//
-//			// get the supporting vertices of B, most opposite face normal
-//			float[] s = B.getSupportVertices(Vector.cScaleVector(wsN, -1));
-//
-//			for (int j = 0; j < s.length; j++) {
-//
-//				// form point on plane of minkowski face
-//				float[] mfp0 = s[j].m_v.Sub(wsV0);
-//				float[] mfp1 = s[j].m_v.Sub(wsV1);
-//
-//				float faceDist = mfp0.Dot(wsN);
-//
-//				// project onto minkowski edge
-//				float[] p = ProjectPointOntoEdge(new float[2], mfp0, mfp1);
-//
-//				// get distance
-//				float dist = p.m_Len * Scalar.Sighn(faceDist);
-//
-//				if (dist > leastPenetratingDist) {
-//					p0 = p;
-//					leastPenetratingDist = dist;
+	public boolean GJKCollide(Entity a, Entity b) {
+		
+		Stack<float[]> simplex = new Stack<float[]>(4);
+		
+		float[] d = Vector.cSubVector(b.location, a.location); 
+		
+		simplex.push(support(a.mdl.verticesList, b.mdl.verticesList, d));
+		
+		d = Vector.cScaleVector(d, -1);
+		
+		while(true) {
+			
+			simplex.push(support(a.mdl.verticesList, b.mdl.verticesList, d));
+			
+			if (Vector.cDotVector(simplex.peek(), d) <= 0) {
+				return false;
+			} else {
+//				if (contains(simplex)) {
+//					return true;
+//				} else {
+//					d = getDirection(simplex);
 //				}
-//
-//				// track positive
-//				if (dist > 0 && dist < leastPositiveDist) {
-//					p1 = p;
-//					leastPositiveDist = dist;
-//				}
-//
-//			}
-//
-//		}
-//
-//	}
-
-	public boolean AABBCollide(float[] vertices1, float[] vertices2) {
-
-		return true;
+			}
+		}
 	}
 
 	public static float[] buildAABB(float[] vertices) {
@@ -120,6 +96,91 @@ public class Collision {
 		}
 		return AABB;
 
+	}
+	
+	public static float[] farthestPoint(ArrayList<float[]> shape, float[] normal) {
+		//TODO Sort the vertices by direction and use the commented out algorithm
+		
+		int index = 0;
+//		int nextIndex = shape.size();
+		float max = Float.MIN_NORMAL;
+//		float nextMax = Float.MIN_NORMAL;
+//		int start = index;
+//		int end = nextIndex;
+		float temp = 0;
+//		int n = 3;
+//		int skip = shape.size() / n;
+//		int remainder = shape.size() % n;
+		
+		for (int i = 0; i < shape.size(); i++) {
+			
+			temp = Vector.cDotVector(normal, shape.get(i));
+
+			if (temp > max) {
+				max = temp;
+				index = i;
+			}
+
+		}
+		
+//		int iterations = 0;
+		
+//FIXME After the vertices are sorted, fix the implementation of this algorithm.
+		
+//		while (skip != 0) {
+//
+//			for (int i = start; i <= end+remainder; i += skip) {
+//				
+//				if ( i < end) {
+//					temp = Vector.cDotVector(normal, shape.get(i));
+//				} else {
+//					temp = Vector.cDotVector(normal, shape.get(end-1));
+//				}
+//				
+//				iterations++;
+//				if (temp >= max) {
+//					nextMax = max;
+//					max = temp;
+//					nextIndex = index;
+//					index = i;
+//				} else if (temp >= nextMax) {
+//					nextMax = temp;
+//					nextIndex = i;
+//				}
+//			}
+//			
+//			if (index < nextIndex) {
+//				start = index;
+//				end = nextIndex;
+//			} else {
+//				start = nextIndex;
+//				end = index;
+//			}
+//			
+//			if (end-start < n && end-start > 1) {
+//				skip = 1;
+//			} else if (end-start <= 1) {
+//				skip = 0;
+//			} else {
+//				skip = (end - start) / n;
+//				remainder = (end - start) % n;
+//			}
+//			
+//		}
+//		
+//		System.out.println(iterations + " iterations out of " + shape.size() + " vertices");
+//		System.out.println(Arrays.toString(mdl.shape.get(index)));
+		return shape.get(index);
+	}
+	
+	public float[] support(ArrayList<float[]> shape1, ArrayList<float[]> shape2, float[] vector) {
+		
+		float[] p1 = farthestPoint(shape1, vector);
+		float[] p2 = farthestPoint(shape2, Vector.cScaleVector(vector, -1));
+		float[] p3 = Vector.cSubVector(p1, p2);
+		
+		return p3;
+		
 	}
 
 	/**

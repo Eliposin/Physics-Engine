@@ -287,4 +287,18 @@ public class Vector {
 		return vector;
 	}
 	
+	public static float cLength(float[] vector) {
+		return (float) Math.sqrt(
+				Math.pow(vector[0], 2) + 
+				Math.pow(vector[1], 2) + 
+				Math.pow(vector[2], 2));
+	}
+	
+	public static float[] normalize(float[] vector) {
+		
+		float length = cLength(vector);
+		return cScaleVector(vector, 1/length);
+		
+	}
+	
 }

@@ -8,20 +8,20 @@ import org.newdawn.slick.opengl.Texture;
 
 public class Model {
 
-	public List<float[]> verticesList = new ArrayList<float[]>(5000);
-	public List<float[]> normalsList = new ArrayList<float[]>(5000);
-	public List<float[]> textureCoordsList = new ArrayList<float[]>(5000);
-	public List<float[]> paramVerticesList = new ArrayList<float[]>(500);
-	public List<float[]> colorAmbientList = new ArrayList<float[]>(100);
-	public List<float[]> colorDiffuseList = new ArrayList<float[]>(100);
-	public List<float[]> colorSpecularList = new ArrayList<float[]>(100);
-	public List<int[]> indicesList = new ArrayList<int[]>(500);
-	public List<Integer> shadingList = new ArrayList<Integer>(100);
-	public List<Integer> illuminationList = new ArrayList<Integer>(100);
-	public List<Float> materialDissolveList = new ArrayList<Float>(100);
-	public List<String> materialList = new ArrayList<String>(20);
-	public List<String> objectList = new ArrayList<String>(10);
-	public List<String> groupList = new ArrayList<String>(10);
+	public ArrayList<float[]> verticesList = new ArrayList<float[]>(5000);
+	public ArrayList<float[]> normalsList = new ArrayList<float[]>(5000);
+	public ArrayList<float[]> textureCoordsList = new ArrayList<float[]>(5000);
+	public ArrayList<float[]> paramVerticesList = new ArrayList<float[]>(500);
+	public ArrayList<float[]> colorAmbientList = new ArrayList<float[]>(100);
+	public ArrayList<float[]> colorDiffuseList = new ArrayList<float[]>(100);
+	public ArrayList<float[]> colorSpecularList = new ArrayList<float[]>(100);
+	public ArrayList<int[]> indicesList = new ArrayList<int[]>(500);
+	public ArrayList<Integer> shadingList = new ArrayList<Integer>(100);
+	public ArrayList<Integer> illuminationList = new ArrayList<Integer>(100);
+	public ArrayList<Float> materialDissolveList = new ArrayList<Float>(100);
+	public ArrayList<String> materialList = new ArrayList<String>(20);
+	public ArrayList<String> objectList = new ArrayList<String>(10);
+	public ArrayList<String> groupList = new ArrayList<String>(10);
 
 	public float[] vertices;
 	public float[] normals;
@@ -35,7 +35,7 @@ public class Model {
 	Texture texture;
 
 	byte indicesFormat = -1;
-	byte indicesStride;
+	byte indicesStride = 3;
 	byte vertexStride;
 	byte normalStride = 3;
 	byte textureStride;
@@ -58,9 +58,13 @@ public class Model {
 			while ((currentLine = read.readLine()) != null) {
 				fileParser(currentLine);
 			}
-			System.out.println(System.currentTimeMillis() - time);
 
 			initAll();
+			
+			System.out.println(System.currentTimeMillis() - time + 
+					" milliseconds to load " + verticesList.size() + 
+					" vertices and " + indicesList.size() + 
+					" faces");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -186,50 +190,41 @@ public class Model {
 			}
 		}
 
-		switch (indicesFormat) {
-		case (V):
-			indicesStride = (byte) sides;
-			break;
-		case (VN):
-			indicesStride = (byte) (sides * 2);
-			break;
-		case (VT):
-			indicesStride = (byte) (sides * 2);
-			break;
-		case (VTN):
-			indicesStride = (byte) (sides * 3);
-			break;
-		}
-
-		int[] indices = new int[indicesStride];
+		int[] indices = new int[line.length-1];
 
 		switch (indicesFormat) {
 		case (V):
 			for (int i = 0; i < sides; i++) {
 				indices[i] = Integer.parseInt(line[i + 1]) - 1;
 			}
+			triangulate(indices);
 			break;
 		case (VN):
 			for (int i = 0; i < sides; i++) {
 				working = line[i + 1].split("//");
-				indices[i * 2] = Integer.parseInt(working[0]) - 1;
-				indices[i * 2 + 1] = Integer.parseInt(working[1]) - 1;
+//				indices[i * 2] = Integer.parseInt(working[0]) - 1;
+//				indices[i * 2 + 1] = Integer.parseInt(working[1]) - 1;
 			}
+			triangulate(indices);
 			break;
 		case (VT):
 			for (int i = 0; i < sides; i++) {
 				working = line[i + 1].split("/");
-				indices[i * 2] = Integer.parseInt(working[0]) - 1;
-				indices[i * 2 + 1] = Integer.parseInt(working[1]) - 1;
+				indices[i] = Integer.parseInt(working[0]) - 1;
+//				indices[i * 2] = Integer.parseInt(working[0]) - 1;
+//				indices[i * 2 + 1] = Integer.parseInt(working[1]) - 1;
 			}
+			triangulate(indices);
 			break;
 		case (VTN):
 			for (int i = 0; i < sides; i++) {
 				working = line[i + 1].split("/");
-				indices[i * 3] = Integer.parseInt(working[0]) - 1;
-				indices[i * 3 + 1] = Integer.parseInt(working[1]) - 1;
-				indices[i * 3 + 2] = Integer.parseInt(working[2]) - 1;
+				indices[i] = Integer.parseInt(working[0]) - 1;
+//				indices[i * 3] = Integer.parseInt(working[0]) - 1;
+//				indices[i * 3 + 1] = Integer.parseInt(working[1]) - 1;
+//				indices[i * 3 + 2] = Integer.parseInt(working[2]) - 1;
 			}
+			triangulate(indices);
 			break;
 		}
 
@@ -237,8 +232,6 @@ public class Model {
 	}
 	
 	private ArrayList<float[]> genNormals() {
-		
-		long time = System.currentTimeMillis();
 
 		ArrayList<ArrayList<float[]>> normalBuffer = new ArrayList<ArrayList<float[]>>(verticesList.size());
 		ArrayList<float[]> normals = new ArrayList<float[]>(verticesList.size());
@@ -283,9 +276,42 @@ public class Model {
 				
 		}
 
-		System.out.println(System.currentTimeMillis() - time + " milliseconds");
-
 		return normals;
+	}
+	
+	/**
+	 * Input an n-sided convex polygon and turn it into a bunch of triangles. 
+	 * This is useful for when drawing triangles is the only option.
+	 * @param sides The indices for the given polygon
+	 */
+	private void triangulate(int[] sides) {
+		boolean[] discard = new boolean[sides.length];
+		int index = 0;
+		for (int i = 0; i < sides.length-2; i++) {
+			int[] tri = new int[3];
+			
+			for (int j = 0; j < 3; j++) {
+				if (index < sides.length){
+
+					if (!discard[index]) {
+						tri[j] = sides[index];
+					} else {
+						j--;
+					}
+					if (j == 1) discard[index] = true;
+					if (j != 2) index++;
+
+				} else {
+					index = 0;
+					j--;
+				}
+				
+			}
+			
+			indicesList.add(tri);
+			
+		}
+		
 	}
 
 	private static float[] toArray(List<float[]> list, int stride) {

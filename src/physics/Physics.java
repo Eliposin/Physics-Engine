@@ -18,7 +18,7 @@ public class Physics {
 	Collision collision;
 
 	// hold all the possible momentums acting on the object
-	ArrayList<float[]> forceBuffer = new ArrayList<float[]>(); 
+	ArrayList<float[]> forceBuffer = new ArrayList<float[]>();
 	// hold all the possible forces acting on the object
 	ArrayList<float[]> momentumBuffer = new ArrayList<float[]>(); 
 
@@ -85,15 +85,18 @@ public class Physics {
 
 	public float[] update(float delta) {
 
+		float[] temp = velocity.clone();
 		velocity = force(velocity, delta);
-
+		acceleration =  Vector.cScaleVector(Vector.cSubVector(velocity.clone(), temp), Engine.timeScale / delta);
 //		lastLocation = location.clone();
 		location = Vector.cAddVector(location,
 				Vector.cScaleVector(velocity, delta / Engine.timeScale));
 
 //		float[] deltaX = Vector.cSubVector(location, lastLocation);
 //		velocity = Vector.cScaleVector(deltaX, GameEngine.timeScale / delta);
+		
 		velocity = Vector.cScaleVector(velocity, Engine.timeScale / delta);
+		
 
 		return location;
 
@@ -113,7 +116,7 @@ public class Physics {
 							/ mass));
 
 		}
-
+		
 		forceBuffer.clear();
 
 		return velocity;

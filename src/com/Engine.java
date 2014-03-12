@@ -48,7 +48,7 @@ public class Engine {
 	long lastFrame = getTime(); // last frame's time of creation
 	int frame = 0; // current frame number
 
-	boolean debugToggle = true; // use the debug menu
+	public static boolean debugToggle = true; // use the debug menu
 
 	public static float red = 0.5f;
 	public static float green = 0.5f;
@@ -111,8 +111,8 @@ public class Engine {
 		// GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 		// button.initGL();
 
-		Manager.addEntity(obj1, Manager.SHAPE, "icosphere");
-		Manager.addEntity(obj2, Manager.SHAPE, "icosphere");
+		Manager.addEntity(obj1, Manager.SHAPE, "icosahedron");
+		Manager.addEntity(obj2, Manager.SHAPE, "icosahedron");
 
 		circleLogger = new Logger(obj1);
 		ringLogger = new Logger(obj2);
@@ -435,13 +435,6 @@ public class Engine {
 			lastFPS += 1000; // add 1 second
 		}
 		fps++;
-	}
-	
-	private FloatBuffer asFloatBuffer(float[] floatArray) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(floatArray.length);
-		buffer.put(floatArray);
-		buffer.flip();
-		return buffer;
 	}
 
 }

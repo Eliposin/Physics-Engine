@@ -254,6 +254,16 @@ public class Vector {
 		return newVector;
 	}
 	
+	public static float[] cTripleProduct(float[] vector1, float[] vector2, float[] vector3) {
+		
+		float[] newVector = new float[3];
+		
+		newVector = cSubVector(cCrossVector(vector2, cCrossVector(vector1, vector3)),
+				cCrossVector(vector3, cCrossVector(vector1, vector2)));
+		
+		return newVector;
+	}
+	
 	public static float[] sScaleVector(float[] vector, float scalar, int i) {
 		
 		vector[i] *= scalar;

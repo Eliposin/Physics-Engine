@@ -10,6 +10,7 @@ package com;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.lwjgl.BufferUtils;
@@ -20,14 +21,14 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.Sys;
+
 import com.Logger;
 import com.Input;
 //import com.Settings;
 
+
 import effects.Trail;
-
 import gui.Button;
-
 import physics.*;
 
 public class Engine {
@@ -40,7 +41,7 @@ public class Engine {
 	public static int height = 800; // window height
 	public static int depth = 1200;
 
-	public static float scale = 100f; // number of pixels in 1 meter
+	public static float scale = 50; // number of pixels in 1 meter
 
 	int fps; // Actual frames per second
 	static int setFPS = 120; // Desired frames per second
@@ -110,7 +111,7 @@ public class Engine {
 		initGL();
 		// GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
 		// button.initGL();
-
+		
 		Manager.addEntity(obj1, Manager.SHAPE, "icosahedron");
 		Manager.addEntity(obj2, Manager.SHAPE, "icosahedron");
 

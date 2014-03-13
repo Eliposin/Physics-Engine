@@ -104,9 +104,15 @@ public class Manager {
 
 		if (Entity.size() > 1) {
 			for (int i = 0; i < Entity.size(); i++) {
-				for (int j = i+1; j < Entity.size(); j++)
-					Collision.AABBCollide((Entity) Entity.get(i), (Entity) Entity.get(j));
-
+				for (int j = i+1; j < Entity.size(); j++) {
+					if (Collision.AABBCollide((Entity) Entity.get(i), (Entity) Entity.get(j))) {
+						
+						if (Collision.GJKCollide(Entity.get(i), Entity.get(j))) {
+							System.out.println("Acutal Collision!!!!!");
+						}
+						
+					}
+				}
 			}
 		}
 	}

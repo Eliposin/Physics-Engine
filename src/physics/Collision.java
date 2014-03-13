@@ -47,30 +47,98 @@ public class Collision {
 		return overlap;
 	}
 
-	public boolean GJKCollide(Entity a, Entity b) {
+	public static boolean GJKCollide(Entity a, Entity b) {
 		
-		Stack<float[]> simplex = new Stack<float[]>(4);
+		ArrayList<float[]> simplex = new ArrayList<float[]>(4);
 		
 		float[] d = Vector.cSubVector(b.location, a.location); 
 		
-		simplex.push(support(a.mdl.verticesList, b.mdl.verticesList, d));
+		simplex.add(support(a.mdl.verticesList, b.mdl.verticesList, d));
 		
-		d = Vector.cScaleVector(d, -1);
+//		d = Vector.cScaleVector(d, -1f);
 		
 		while(true) {
 			
-			simplex.push(support(a.mdl.verticesList, b.mdl.verticesList, d));
+			simplex.add(support(a.mdl.verticesList, b.mdl.verticesList, d));
 			
-			if (Vector.cDotVector(simplex.peek(), d) <= 0) {
+			if (Vector.cDotVector(simplex.get(simplex.size()-1), d) <= 0) {
 				return false;
 			} else {
-//				if (contains(simplex)) {
-//					return true;
-//				} else {
-//					d = getDirection(simplex);
-//				}
+				if (contains(simplex, d)) {
+					return true;
+				}
 			}
 		}
+	}
+	
+	public static boolean contains(ArrayList<float[]> simplex, float[] d) {
+		
+		float[] origin = new float[3];
+		float[] AB = new float[3];
+		float[] AC = new float[3];
+		float[] AO = new float[3];
+		float[] ABPerp = new float[3];
+		
+		AO = Vector.cSubVector(origin, simplex.get(0));
+		AB = Vector.cSubVector(simplex.get(1), simplex.get(0));
+		ABPerp = Vector.cTripleProduct(AB, AO, AB);
+		
+		switch(simplex.size()) {
+		case 4:
+			
+			AC = Vector.cSubVector(simplex.get(2), simplex.get(0));
+			float[] AD = Vector.cSubVector(simplex.get(3), simplex.get(0));
+			float[] ACDPerp = Vector.cTripleProduct(AD, AC, AC);
+			
+			if (Vector.cDotVector(ACDPerp, AO) > 0) {
+				
+				float[] ABDPerp = Vector.cTripleProduct(AD, AB, AB);
+				
+				if (Vector.cDotVector(ABDPerp, AO) > 0) {
+					
+					return true;
+					
+				}
+				
+			}
+			
+			break;
+		case 3:
+
+			AC = Vector.cSubVector(simplex.get(2), simplex.get(0));
+			
+			ABPerp = Vector.cTripleProduct(AC, AB, AB);
+			float[] ACPerp = Vector.cTripleProduct(AB, AC, AC);
+			
+			if (Vector.cDotVector(ABPerp, AO) > 0) {
+				
+				simplex.remove(3);
+				d = ABPerp;
+				
+			} else { 
+				
+				if (Vector.cDotVector(ACPerp, AO) > 0) {
+					
+					simplex.remove(1);
+					d = ACPerp;
+					
+				} else {
+					
+//					return true;
+					
+				}
+				
+			}
+
+			break;
+		case 2:
+			
+			d = ABPerp;
+			break;
+		}
+		
+		return false;
+		
 	}
 
 	public static float[] buildAABB(float[] vertices) {
@@ -173,7 +241,7 @@ public class Collision {
 		return shape.get(index);
 	}
 	
-	public float[] support(ArrayList<float[]> shape1, ArrayList<float[]> shape2, float[] vector) {
+	public static float[] support(ArrayList<float[]> shape1, ArrayList<float[]> shape2, float[] vector) {
 		
 		float[] p1 = farthestPoint(shape1, vector);
 		float[] p2 = farthestPoint(shape2, Vector.cScaleVector(vector, -1));

@@ -354,6 +354,16 @@ public class Model {
 	}
 
 	private void initAll() {
+		
+		verticesList.trimToSize();
+		textureCoordsList.trimToSize();
+		indicesList.trimToSize();
+		normalsList.trimToSize();
+		paramVerticesList.trimToSize();
+		colorAmbientList.trimToSize();
+		colorDiffuseList.trimToSize();
+		colorSpecularList.trimToSize();
+		
 		if (verticesList.size() != 0) {
 			vertices = toArray(verticesList, vertexStride);
 		}

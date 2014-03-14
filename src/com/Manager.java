@@ -3,6 +3,7 @@ package com;
 import java.util.ArrayList;
 import physics.Collision;
 import physics.ComplexPhys;
+import physics.GJKCollision;
 
 public class Manager {
 
@@ -107,8 +108,13 @@ public class Manager {
 				for (int j = i+1; j < Entity.size(); j++) {
 					if (Collision.AABBCollide((Entity) Entity.get(i), (Entity) Entity.get(j))) {
 						
+<<<<<<< HEAD
+						if (GJKCollision.GJKCollide(Entity.get(i), Entity.get(j))) {
+							System.out.println("Actual Collision!!!!!");
+=======
 						if (Collision.GJKCollide(Entity.get(i), Entity.get(j))) {
 							System.out.println("Acutal Collision!!!!!");
+>>>>>>> a55e04857c94b45d284647ad8d08ae49c462b418
 						}
 						
 					}

@@ -291,8 +291,8 @@ public class Engine {
 
 		// give the object a force of gravity
 		float[] f2 = { 0, (float) (-9.8 * 1000), 0 };
-		ComplexPhys.getPhysObject(obj1).addForce(f2);
-		ComplexPhys.getPhysObject(obj2).addForce(f2);
+//		ComplexPhys.getPhysObject(obj1).addForce(f2);
+//		ComplexPhys.getPhysObject(obj2).addForce(f2);
 
 		Input.refresh();
 

@@ -15,10 +15,6 @@ public class GJKCollision {
 
 		direction = Vector.cSubVector(entity2.location, entity1.location);
 		
-		if (direction[0] == 0 && direction[1] == 0 && direction[2] == 0) {
-			direction[1] = 1;
-		}
-		
 		simplex.clear();
 
 		simplex.add(support(entity1, entity2, direction));

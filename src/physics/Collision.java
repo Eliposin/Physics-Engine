@@ -42,33 +42,6 @@ public class Collision {
 		
 		return overlap;
 	}
-
-<<<<<<< HEAD
-	
-=======
-	public static boolean GJKCollide(Entity a, Entity b) {
-		
-		ArrayList<float[]> simplex = new ArrayList<float[]>(4);
-		
-		float[] d = Vector.cSubVector(b.location, a.location); 
-		
-		simplex.add(support(a.mdl.verticesList, b.mdl.verticesList, d));
-		
-//		d = Vector.cScaleVector(d, -1f);
-		
-		while(true) {
-			
-			simplex.add(support(a.mdl.verticesList, b.mdl.verticesList, d));
-			
-			if (Vector.cDotVector(simplex.get(simplex.size()-1), d) <= 0) {
-				return false;
-			} else {
-				if (contains(simplex, d)) {
-					return true;
-				}
-			}
-		}
-	}
 	
 	public static boolean contains(ArrayList<float[]> simplex, float[] d) {
 		
@@ -139,7 +112,6 @@ public class Collision {
 		return false;
 		
 	}
->>>>>>> a55e04857c94b45d284647ad8d08ae49c462b418
 
 	public static float[] buildAABB(float[] vertices) {
 		float[] AABB = new float[6];
@@ -165,21 +137,7 @@ public class Collision {
 		return AABB;
 
 	}
-	
-	
-<<<<<<< HEAD
-	
-=======
-	public static float[] support(ArrayList<float[]> shape1, ArrayList<float[]> shape2, float[] vector) {
-		
-		float[] p1 = farthestPoint(shape1, vector);
-		float[] p2 = farthestPoint(shape2, Vector.cScaleVector(vector, -1));
-		float[] p3 = Vector.cSubVector(p1, p2);
-		
-		return p3;
-		
-	}
->>>>>>> a55e04857c94b45d284647ad8d08ae49c462b418
+
 
 	/**
 	 * 

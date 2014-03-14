@@ -100,23 +100,24 @@ public class Manager {
 		Collision.clearSectors();
 		for (int i = 0; i < Entity.size(); i++) {
 			Entity.get(i).updateOrientation();
-//			Collision.mapSectors((Entity) Entity.get(i));
+			// Collision.mapSectors((Entity) Entity.get(i));
 		}
 
 		if (Entity.size() > 1) {
 			for (int i = 0; i < Entity.size(); i++) {
-				for (int j = i+1; j < Entity.size(); j++) {
-					if (Collision.AABBCollide((Entity) Entity.get(i), (Entity) Entity.get(j))) {
-						
-<<<<<<< HEAD
-						if (GJKCollision.GJKCollide(Entity.get(i), Entity.get(j))) {
+				for (int j = i + 1; j < Entity.size(); j++) {
+					if (Collision.AABBCollide((Entity) Entity.get(i),
+							(Entity) Entity.get(j))) {
+
+						if (GJKCollision.GJKCollide(Entity.get(i), Entity
+								.get(j))) {
 							System.out.println("Actual Collision!!!!!");
-=======
-						if (Collision.GJKCollide(Entity.get(i), Entity.get(j))) {
-							System.out.println("Acutal Collision!!!!!");
->>>>>>> a55e04857c94b45d284647ad8d08ae49c462b418
+							if (GJKCollision.GJKCollide(Entity.get(i), Entity
+									.get(j))) {
+								System.out.println("Acutal Collision!!!!!");
+							}
+
 						}
-						
 					}
 				}
 			}

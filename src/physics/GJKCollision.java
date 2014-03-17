@@ -5,12 +5,24 @@ import java.util.ArrayList;
 import com.Engine;
 import com.Entity;
 import com.Vector;
-
+/**
+ * 
+ * @author Bradley Pellegrini and Christopher Dombroski
+ * 
+ * Uses the GJK algorithm to find if two objects collide
+ *
+ */
 public class GJKCollision {
 	
 	static float[] direction = new float[3];
 	static ArrayList<float[]> simplex = new ArrayList<float[]>(4);
 	
+	/**
+	 * 
+	 * @param entity1 an object of the entity class
+	 * @param entity2 an object of the entity class
+	 * @return true if objects intersect, false if they do not.
+	 */
 	public static boolean GJKCollide(Entity entity1, Entity entity2) {
 
 		direction = Vector.cSubVector(entity2.location, entity1.location);
@@ -43,6 +55,10 @@ public class GJKCollision {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return true if the origin is contained.
+	 */
 	private static boolean contains() {
 
 		if (simplex.size() < 4) {
@@ -77,7 +93,9 @@ public class GJKCollision {
 		return contains;
 		
 	}
-	
+	/**
+	 * finds the direction of the origin from a line
+	 */
 	private static void getLineDirection() {
 		
 		float[] a = simplex.get(0);
@@ -93,7 +111,9 @@ public class GJKCollision {
 		}
 		
 	}
-	
+	/**
+	 * finds direction to the origin froma triangle
+	 */
 	private static void getTriDirection() {
 		
 		float[] a = simplex.get(0);
@@ -171,7 +191,9 @@ public class GJKCollision {
 		}
 		
 	}
-	
+	/**
+	 * finds the direction of the origin from a Tetrahedron
+	 */
 	private static void getTetraDirection() {
 		
 		float[] a = simplex.get(0);
@@ -209,7 +231,9 @@ public class GJKCollision {
 		}
 		
 	}
-	
+	/**
+	 * calls the above methods to get the direction
+	 */
 	private static void getDirection() {
 
 		switch(simplex.size()) {
@@ -227,6 +251,13 @@ public class GJKCollision {
 		
 	}
 
+	/**
+	 * 
+	 * @param shape1 Entity one
+	 * @param shape2 Entity two
+	 * @param vector a vector
+	 * @return a third point
+	 */
 	public static float[] support(Entity shape1,
 			Entity shape2, float[] vector) {
 
@@ -240,6 +271,12 @@ public class GJKCollision {
 
 	}
 
+	/**
+	 * 
+	 * @param shape an arraylist of the shape
+	 * @param normal the normals
+	 * @return the fartherest point in a direction.
+	 */
 	private static float[] farthestPoint(ArrayList<float[]> shape, float[] normal) {
 		// TODO Sort the vertices by direction and use the commented out
 		// algorithm

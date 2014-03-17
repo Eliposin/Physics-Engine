@@ -1,7 +1,11 @@
 package physics;
 
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author Christopher Dombroski and Bradley Pellegrini
+ *
+ */
 public class ComplexPhys {
 
 	static ArrayList<String> physName = new ArrayList<String>();
@@ -33,6 +37,11 @@ public class ComplexPhys {
 
 	}
 
+	/**
+	 * Turns on or off the physics of the object
+	 * @param name name of the obejct to apply physics to
+	 * @param enable true to turn on physics, false to turn off.
+	 */
 	public static void enablePhysics(String name, boolean enable) {
 
 		int index;
@@ -47,6 +56,13 @@ public class ComplexPhys {
 
 	}
 
+	/**
+	 * 
+	 * @param name object name
+	 * @param mass mass of object
+	 * @param drag drag of object
+	 * @param restitution restitution of object
+	 */
 	public static void setAttributes(String name, float mass, float drag,
 			float restitution) {
 
@@ -57,6 +73,10 @@ public class ComplexPhys {
 
 	}
 
+	/**
+	 * Updates the Physics
+	 * @param delta change in time.
+	 */
 	public static void UpdatePhysics(float delta) {
 
 		int index = 0;
@@ -72,6 +92,11 @@ public class ComplexPhys {
 
 	}
 
+	/**
+	 * gets the location of a physics object with the specified name
+	 * @param name the string representation of the object
+	 * @return the location in array form
+	 */
 	public static float[] getLocation(String name) {
 
 		int index;
@@ -81,6 +106,11 @@ public class ComplexPhys {
 
 	}
 
+	/**
+	 * Gets the physics object
+	 * @param name the name of the object
+	 * @return 
+	 */
 	public static Physics getPhysObject(String name) {
 
 		int index;

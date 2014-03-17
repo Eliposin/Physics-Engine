@@ -43,6 +43,12 @@ public class Collision {
 		return overlap;
 	}
 	
+	/**
+	 * 
+	 * @param simplex an arraylist of float arrays
+	 * @param the direction vector
+	 * @return true if origin is contained, false if the origin is not contained.
+	 */
 	public static boolean contains(ArrayList<float[]> simplex, float[] d) {
 		
 		float[] origin = new float[3];
@@ -113,6 +119,12 @@ public class Collision {
 		
 	}
 
+	/**
+	 * Builds AABB from the array given to it
+	 * 
+	 * @param vertices an array of the verticies
+	 * @return a float array representing the bounds of an AABB "hitbox"
+	 */
 	public static float[] buildAABB(float[] vertices) {
 		float[] AABB = new float[6];
 		float[] min = new float[3];

@@ -5,6 +5,12 @@ import physics.Collision;
 import physics.ComplexPhys;
 import physics.GJKCollision;
 
+/**
+ * A global class that has the index of all the Entities. It controls updating 
+ * the Entities and multithreading.
+ * @author Christopher Dombroski
+ *
+ */
 public class Manager {
 
 	static ArrayList<String> EntityName = new ArrayList<String>();
@@ -17,6 +23,13 @@ public class Manager {
 	public final static short CONSTRAINT_ROD = 3;
 	public final static short CONSTRAINT_SPRING = 4;
 
+	/**
+	 * Add an Entity into the buffer.
+	 * @param name The name of the Entity
+	 * @param type What type the Entity is. e.g. "shape" or "spring"
+	 * @param fileName The model filename
+	 * @return The index of the Entity
+	 */
 	public static int addEntity(String name, short type, String fileName) {
 		int index;
 		EntityName.add(name);
@@ -29,6 +42,10 @@ public class Manager {
 
 	}
 
+	/**
+	 * Remove an Entity from the buffer.
+	 * @param name The name of the Entity
+	 */
 	public static void removeEntity(String name) {
 
 		int index;
@@ -39,6 +56,12 @@ public class Manager {
 
 	}
 
+	/**
+	 * Enable the Entity. If it is disabled, it will still be present in RAM 
+	 * but not used
+	 * @param name The name of the Entity
+	 * @param enable
+	 */
 	public static void enableEntity(String name, boolean enable) {
 
 		int index;
@@ -87,6 +110,11 @@ public class Manager {
 	//
 	// }
 
+	/**
+	 * Return the Entity with the supplied name.
+	 * @param name the name of the Entity
+	 * @return The Entity
+	 */
 	public static Entity getEntity(String name) {
 
 		int index;
@@ -96,6 +124,10 @@ public class Manager {
 
 	}
 
+	/**
+	 * Update all the Entities. Updating includes orientation, sector mapping, 
+	 * and collision detection.
+	 */
 	public static void update() {
 		Collision.clearSectors();
 		for (int i = 0; i < Entity.size(); i++) {

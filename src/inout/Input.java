@@ -1,8 +1,15 @@
-package com;
+package inout;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+/**
+ * Get all the keyboard and mouse data. It can tell if a key state has 
+ * changed, what its current state is now. It can read and write from a key 
+ * mapping file and is fully configurable. 
+ * @author Christopher Dombroski
+ *
+ */
 public class Input {
 
 	public final static byte PRESSED = 1;
@@ -56,7 +63,9 @@ public class Input {
 	public static byte gridChanged;
 	public static byte settingsChanged;
 
-	// Update the key's status
+	/**
+	 *  Update the key and mouse status.
+	 */
 	public static void refresh() {
 		
 		mouseX = Mouse.getX();

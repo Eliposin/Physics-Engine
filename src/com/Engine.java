@@ -7,6 +7,9 @@ package com;
  * 	https://github.com/Nyrmburk/Physics-Engine
  */
 
+import inout.Input;
+import inout.Logger;
+
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -22,8 +25,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.Sys;
 
-import com.Logger;
-import com.Input;
 //import com.Settings;
 
 

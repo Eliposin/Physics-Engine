@@ -1,7 +1,12 @@
-package data;
+package inout;
 
 import java.io.*;
 
+/**
+ * A simple class to log any kind of data. It needs work.
+ * @author Christopher Dombroski
+ *
+ */
 public class Logger {
 	
 	File file;
@@ -10,16 +15,14 @@ public class Logger {
 	public Logger(String fileName, String[] fieldNames) throws IOException {
 
 		File directory = new File("logs\\");
-		File file = new File("logs\\" + fileName + ".txt");
-		this.file = file;
+		File file = new File("logs\\" + fileName + ".csv");
 		
 		directory.mkdir();
 		file.createNewFile();
 		
+		this.file = file;
 		writer = new FileWriter(file);
 
-		System.out.println("Created file at " + file);
-		
 		LogLine(fieldNames);
 
 	}
@@ -27,14 +30,12 @@ public class Logger {
 	public Logger(String fileName) throws IOException {
 
 		File directory = new File("logs\\");
-		File file = new File("logs\\" + fileName + ".txt");
-		this.file = file;
+		File file = new File("logs\\" + fileName + ".csv");
 		
 		directory.mkdir();
 		file.createNewFile();
 		
-		System.out.println("Created file at " + file);
-		
+		this.file = file;
 		writer = new FileWriter(file);
 
 	}
@@ -50,7 +51,7 @@ public class Logger {
 			if (i == (values.length - 1)) {
 				writer.write(String.valueOf(values[i]));
 			} else {
-				writer.write(String.valueOf(values[i]) + " ");
+				writer.write(String.valueOf(values[i]) + ", ");
 			}
 
 		}
@@ -67,7 +68,7 @@ public class Logger {
 			if (i == (values.length - 1)) {
 				writer.write(values[i]);
 			} else {
-				writer.write(values[i] + " ");
+				writer.write(values[i] + ", ");
 			}
 
 		}
@@ -84,7 +85,7 @@ public class Logger {
 			if (i == (values.length - 1)) {
 				writer.write(String.valueOf(values[i]));
 			} else {
-				writer.write(String.valueOf(values[i]) + " ");
+				writer.write(String.valueOf(values[i]) + ", ");
 			}
 
 		}

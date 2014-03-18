@@ -1,5 +1,7 @@
 package com;
 
+import inout.Model;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 

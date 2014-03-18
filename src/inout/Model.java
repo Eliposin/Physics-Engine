@@ -1,4 +1,4 @@
-package com;
+package inout;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -6,6 +6,14 @@ import java.util.List;
 
 import org.newdawn.slick.opengl.Texture;
 
+import com.Vector;
+
+/**
+ * The class that loads and is referred to for model data including vertex, 
+ * normal, texture, and others.
+ * @author Christopher Dombroski
+ *
+ */
 public class Model {
 
 	public ArrayList<float[]> verticesList = new ArrayList<float[]>(5000);
@@ -44,6 +52,11 @@ public class Model {
 	final byte VN = 1;
 	final byte VT = 2;
 	final byte VTN = 3;
+	
+	/**
+	 * Open and read the file with the supplied filename.
+	 * @param inputFileName
+	 */
 
 	public void load(String inputFileName) {
 		File f = new File("scenes\\" + inputFileName + ".obj");
@@ -84,7 +97,6 @@ public class Model {
 	 * Parse through a .obj file.
 	 * 
 	 * @param fileText
-	 * @return
 	 */
 	private void fileParser(String fileText) {
 
@@ -162,6 +174,11 @@ public class Model {
 		}
 	}
 
+	/**
+	 * A worker method to parse a String[] into a float[]
+	 * @param line A String[] containing several numbers
+	 * @return A float[] from the supplied String[]
+	 */
 	private float[] floats(String[] line) {
 		float[] f = new float[line.length - 1];
 		for (byte i = 0; i < f.length; i++) {
@@ -170,6 +187,13 @@ public class Model {
 		return f;
 	}
 
+	/**
+	 * Because a .obj file has 4 different formats for indices, face must figure 
+	 * out which one it is and parse through it. The face information represents 
+	 * the index of vertices that form a polygon on the model.
+	 * @param line A String[] of integers containing face info
+	 * @return An int[] of face info
+	 */
 	private int[] face(String[] line) {
 		int sides = line.length - 1;
 		String[] working;
@@ -231,6 +255,12 @@ public class Model {
 		return indices;
 	}
 	
+	/**
+	 * For a large number of models there is no normal data so it must be 
+	 * generated. It finds the surface normals and adds them up to find the 
+	 * vertex normal. Normal info is necessary for shading.
+	 * @return An ArrayList<float[]> containing the normals
+	 */
 	private ArrayList<float[]> genNormals() {
 
 		ArrayList<ArrayList<float[]>> normalBuffer = new ArrayList<ArrayList<float[]>>(verticesList.size());
@@ -313,7 +343,15 @@ public class Model {
 		}
 		
 	}
-
+	
+/**
+ * Take some random List of float[] and turn it into a float[] containing the 
+ * data. Useful for when a List<float[]> is not the proper format.
+ * @param list The data to be transformed.
+ * @param stride How many places the data is before it goes onto the next 
+ * List float[]
+ * @return A float[]
+ */
 	private static float[] toArray(List<float[]> list, int stride) {
 		if (stride < 1) {
 			return null;
@@ -327,6 +365,13 @@ public class Model {
 		return output;
 	}
 
+	/**
+	 * Same as toArray but for int[]
+	 * @param list How many places the data is before it goes onto the next 
+ * List int[]
+	 * @param stride
+	 * @return An int[]
+	 */
 	private static int[] toArrayI(List<int[]> list, int stride) {
 		if (stride < 1) {
 			return null;
@@ -340,6 +385,11 @@ public class Model {
 		return output;
 	}
 
+	/**
+	 * Remove the empty values for a String[]
+	 * @param line Some random String[]
+	 * @return A new String[] without empty spaces
+	 */
 	private String[] removeEmpty(String[] line) {
 		List<String> clean = new ArrayList<String>(line.length);
 		for (int i = 0; i < line.length; i++) {
@@ -353,6 +403,10 @@ public class Model {
 		return output;
 	}
 
+	/**
+	 * Do any operations needed such as transforming data for triangulating or 
+	 * generating normals.
+	 */
 	private void initAll() {
 		
 		verticesList.trimToSize();

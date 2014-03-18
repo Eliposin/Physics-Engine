@@ -109,7 +109,7 @@ public class ComplexPhys {
 	/**
 	 * Gets the physics object
 	 * @param name the name of the object
-	 * @return 
+	 * @return Physics
 	 */
 	public static Physics getPhysObject(String name) {
 

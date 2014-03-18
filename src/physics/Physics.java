@@ -183,11 +183,11 @@ public class Physics {
 	}
 
 	/**
-	 * 
+	 * @deprecated
 	 * @param deltaX 
 	 * @param resistance resistance of the object to motion
 	 * @param mass the mass of the object
-	 * @return 
+	 * @return velocity
 	 */
 	public float[] drag(float[] deltaX, float resistance, float mass) {
 

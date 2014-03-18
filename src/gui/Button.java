@@ -1,9 +1,10 @@
 package gui;
 
+import inout.Input;
+
 import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import com.Engine;
-import com.Input;
 import com.Vector;
 
 public class Button implements Runnable {

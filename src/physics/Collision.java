@@ -1,16 +1,17 @@
 package physics;
 
+import inout.Model;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import com.Entity;
-import com.Model;
 import com.Vector;
 import com.Engine;
 import physics.GJKCollision;
 
 /**
- * An all-seeing class that detects collisions and remedies them.
+ * A global class that detects collisions and remedies them.
  * 
  * @author Christopher Dombroski
  * 
@@ -45,9 +46,9 @@ public class Collision {
 	
 	/**
 	 * 
-	 * @param simplex an arraylist of float arrays
-	 * @param the direction vector
-	 * @return true if origin is contained, false if the origin is not contained.
+	 * @param simplex ArrayList of float arrays
+	 * @param d direction vector
+	 * @return true if origin is contained, false if the origin is not contained
 	 */
 	public static boolean contains(ArrayList<float[]> simplex, float[] d) {
 		
@@ -122,8 +123,8 @@ public class Collision {
 	/**
 	 * Builds AABB from the array given to it
 	 * 
-	 * @param vertices an array of the verticies
-	 * @return a float array representing the bounds of an AABB "hitbox"
+	 * @param vertices An array of vertices
+	 * @return A float array representing the bounds of an AABB "hitbox"
 	 */
 	public static float[] buildAABB(float[] vertices) {
 		float[] AABB = new float[6];

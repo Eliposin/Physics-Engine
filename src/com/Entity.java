@@ -39,12 +39,6 @@ public class Entity {
 	
 	private void initModel() {
 		
-		boolean normals = false;
-		
-		if (mdl.normals != null) {
-			normals = true;
-		}
-		
 		FloatBuffer verticesBuffer = toFloatBuffer(mdl.vertices);
 		FloatBuffer normalsBuffer = toFloatBuffer(mdl.normals);;
 		IntBuffer indicesBuffer = toIntBuffer(mdl.indices);
@@ -108,6 +102,7 @@ public class Entity {
 			GL11.glVertex3f(AABB[3], AABB[4], -AABB[5]);//2
 			GL11.glVertex3f(-AABB[3], AABB[4], -AABB[5]);//3
 			
+			
 			GL11.glVertex3f(-AABB[3], -AABB[4], AABB[5]);//4
 			GL11.glVertex3f(-AABB[3], -AABB[4], -AABB[5]);//0
 			GL11.glVertex3f(-AABB[3], -AABB[4], -AABB[5]);//0
@@ -122,12 +117,12 @@ public class Entity {
 			GL11.glVertex3f(-AABB[3], AABB[4], AABB[5]);//7
 			GL11.glVertex3f(AABB[3], AABB[4], AABB[5]);//6
 			
+			GL11.glVertex3f(AABB[3], -AABB[4], -AABB[5]);//1
 			GL11.glVertex3f(AABB[3], -AABB[4], AABB[5]);//5
-			GL11.glVertex3f(AABB[3], -AABB[4], -AABB[5]);//1
-			GL11.glVertex3f(AABB[3], -AABB[4], -AABB[5]);//1
-			GL11.glVertex3f(AABB[3], AABB[4], -AABB[5]);//2
-			GL11.glVertex3f(AABB[3], AABB[4], -AABB[5]);//2
+			GL11.glVertex3f(AABB[3], -AABB[4], AABB[5]);//5
 			GL11.glVertex3f(AABB[3], AABB[4], AABB[5]);//6
+			GL11.glVertex3f(AABB[3], AABB[4], AABB[5]);//6
+			GL11.glVertex3f(AABB[3], AABB[4], -AABB[5]);//2
 			GL11.glEnd();
 			
 			//Draw the forces on the object

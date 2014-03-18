@@ -42,7 +42,7 @@ public class Engine {
 	public static int height = 800; // window height
 	public static int depth = 1200;
 
-	public static float scale = 50; // number of pixels in 1 meter
+	public static float scale = 75; // number of pixels in 1 meter
 
 	int fps; // Actual frames per second
 	static int setFPS = 120; // Desired frames per second
@@ -139,11 +139,38 @@ public class Engine {
 		// init opengl
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, 0, height, depth, 0);
+//		GL11.glOrtho(0, width, 0, height, depth, 0);
+		GLU.gluPerspective(70, (float)width/height, 0.03f, depth);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+		
+//		FloatBuffer ambient;
+//		FloatBuffer brightAmbient;
+//		FloatBuffer light;
+//		ambient = asFloatBuffer(new float[]{0.15f, 0.15f, 0.15f, 1f});
+//		brightAmbient = asFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 1f});
+//		light = asFloatBuffer(new float[]{1.5f, 1.5f, 1.5f, 1f});
+//		GL11.glShadeModel(GL11.GL_SMOOTH);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+//		GL11.glEnable(GL11.GL_LIGHTING);
+//		GL11.glEnable(GL11.GL_LIGHT0);
+//		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, ambient);
+//		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, light);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+//		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+//		GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
+//		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, asFloatBuffer(new float[]{width/2, height/2, depth/2, 1}));
+		GLU.gluLookAt(width/2, height/2, depth/2, width/2, height/2, -depth/2, 0, 1, 0);
 
+	}
+	
+	static FloatBuffer asFloatBuffer(float[] floatArray) {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(floatArray.length);
+		buffer.put(floatArray);
+		buffer.flip();
+		return buffer;
 	}
 
 	public void renderGL() {

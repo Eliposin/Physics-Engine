@@ -2,96 +2,125 @@ package gui;
 
 import inout.Input;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import org.lwjgl.opengl.GL11;
+
 import com.Engine;
 import com.Vector;
 
-public class Button implements Runnable {
+public class Button implements ActionListener {
 
 	static ArrayList<Button> buttons = new ArrayList<Button>();
 
-	float[][] shape;
-	float[] color = { 1f, 1f, 1f };
-//	float[] color = {GameEngine.red, GameEngine.green, GameEngine.blue};
+//	float[] color = {Engine.red, Engine.green, Engine.blue};
+	float[] color = {0.75f, 0.75f, 0.75f};
+	float[] tempColor = color;
 	float colorScale = 1f;
+	
+	String text;
+	
+	boolean hover = false;
+	boolean pressed = false;
 
 	public static int buttonHeight = 32;
 	public static int buttonWidth = 64;
-	public static int buttonPadding = 2;
+	public static int buttonPadding = 1;
 
-	int locX = 0, locY = 0;
-	boolean close = false;
+	int[] location = new int[2];
 
 	public Button(int locX, int locY) {
 
-		this.locX = locX;
-		this.locY = locY;
+		location[0] = locX;
+		location[1] = locY;
+
+	}
+	
+	public Button(int[] location) {
+
+		this.location = location;
 
 	}
 
 	public void render() {
-		color[0] = Engine.red * colorScale;
-		color[1] = Engine.green * colorScale;
-		color[2] = Engine.blue * colorScale;
-		shape = new float[6][3];
-		shape[0][0] = GL11.GL_QUADS;
-		shape[1] = Vector.cScaleVector(color.clone(), colorScale);
 
-		shape[2][0] = locX + buttonPadding;
-		shape[2][1] = locY + buttonPadding;
-		shape[3][0] = locX + buttonWidth - buttonPadding;
-		shape[3][1] = locY + buttonPadding;
-		shape[4][0] = locX + buttonWidth - buttonPadding;
-		shape[4][1] = locY + buttonHeight - buttonPadding;
-		shape[5][0] = locX + buttonPadding;
-		shape[5][1] = locY + buttonHeight - buttonPadding;
-//		DrawBuffer.add(shape);
-
-		shape = new float[5][3];
-		shape[0][0] = GL11.GL_TRIANGLES;
-		shape[1] = Vector.cScaleVector(color.clone(), 0.9f * colorScale);
-
-		shape[2][0] = locX + buttonPadding;
-		shape[2][1] = locY + buttonPadding;
-		shape[3][0] = locX + buttonWidth - buttonPadding;
-		shape[3][1] = locY + buttonPadding;
-		shape[4][0] = locX + buttonWidth - buttonPadding;
-		shape[4][1] = locY + buttonHeight - buttonPadding;
-//		DrawBuffer.add(shape);
-
-		shape = new float[6][3];
-		shape[0][0] = GL11.GL_LINE_LOOP;
-		shape[1] = Vector.cScaleVector(color.clone(), 0.5f * colorScale);
-
-		shape[2][0] = locX + buttonPadding;
-		shape[2][1] = locY + buttonPadding;
-		shape[3][0] = locX + buttonWidth - buttonPadding;
-		shape[3][1] = locY + buttonPadding;
-		shape[4][0] = locX + buttonWidth - buttonPadding;
-		shape[4][1] = locY + buttonHeight - buttonPadding;
-		shape[5][0] = locX + buttonPadding;
-		shape[5][1] = locY + buttonHeight - buttonPadding;
-//		DrawBuffer.add(shape);
+		GL11.glPushMatrix();
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glTranslatef(location[0], location[1], 0);
+		
+		tempColor = Vector.cScaleVector(color.clone(), colorScale);
+		GL11.glColor3f(tempColor[0], tempColor[1], tempColor[2]);
+		GL11.glBegin(GL11.GL_QUADS);
+			GL11.glVertex2f(buttonPadding, buttonPadding);
+			GL11.glVertex2f(buttonWidth - buttonPadding, buttonPadding);
+			GL11.glVertex2f(buttonWidth - buttonPadding, buttonHeight - buttonPadding);
+			GL11.glVertex2f(buttonPadding, buttonHeight - buttonPadding);
+		GL11.glEnd();
+		
+		tempColor = Vector.cScaleVector(color.clone(), 0.9f * colorScale);
+		GL11.glColor3f(tempColor[0], tempColor[1], tempColor[2]);
+		GL11.glBegin(GL11.GL_TRIANGLES);
+			GL11.glVertex2f(buttonPadding, buttonPadding);
+			GL11.glVertex2f(buttonWidth - buttonPadding, buttonPadding);
+			GL11.glVertex2f(buttonWidth - buttonPadding, buttonHeight - buttonPadding);
+		GL11.glEnd();
+		
+		tempColor = Vector.cScaleVector(color.clone(), 0.5f * colorScale);
+		GL11.glColor3f(tempColor[0], tempColor[1], tempColor[2]);
+		GL11.glBegin(GL11.GL_LINE_LOOP);
+			GL11.glVertex2f(buttonPadding, buttonPadding);
+			GL11.glVertex2f(buttonWidth - buttonPadding, buttonPadding);
+			GL11.glVertex2f(buttonWidth - buttonPadding, buttonHeight - buttonPadding);
+			GL11.glVertex2f(buttonPadding, buttonHeight - buttonPadding);
+		GL11.glEnd();
+		
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glPopMatrix();
 
 	}
 
-	public void run() {
+	public void update() {
 
-		if (locX < Input.mouseX && Input.mouseX < locX + buttonWidth
-				&& locY < Input.mouseY
-				&& Input.mouseY < locY + buttonHeight) {
-
-			onHover();
+		if (location[0] < Input.mouseX && Input.mouseX < location[0] + buttonWidth
+				&& location[1] < Input.mouseY
+				&& Input.mouseY < location[1] + buttonHeight) {
+			
+			if (hover == false) {
+				hover = true;
+				onHover();
+			}
 			
 			if (Input.mouse0Down == true) {
-				onClick();
+				
+				if (pressed == false) {
+					pressed = true;
+					onClick();
+				}
+				
 			} else {
-				onRelease();
+				
+				if (pressed == true) {
+					pressed = false;
+					onRelease();
+				}
+				
 			}
 
 		} else {
-			onNothing();
+			
+			if (Input.mouse0Down == false) {
+				pressed = false;
+				colorScale = 1;
+				
+				if (hover == true) {
+				hover = false;
+				onNothing();
+			}
+				
+			}
+			
 		}
 
 		render();
@@ -99,22 +128,86 @@ public class Button implements Runnable {
 	}
 
 	private void onHover() {
-		buttonPadding = -1;
+		buttonPadding = 0;
+		System.out.println("hover");
 	}
 
 	private void onClick() {
+		buttonPadding = 1;
 		colorScale = 0.8f;
+		System.out.println("clicked");
 	}
 	
 	private void onRelease() {
+		buttonPadding = 0;
 		colorScale = 1f;
 		System.out.println("released");
-
 	}
 
 	private void onNothing() {
-		buttonPadding = 0;
-		colorScale = 1f;
+		buttonPadding = 1;
+//		colorScale = 1f;
+		System.out.println("nothing");
+	}
+	
+	public void setColor(float[] color) {
+		this.color = color;
+	}
+	
+	public float[] getColor() {
+		return color;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
+	}
+	
+	public String getText() {
+		return text;
+	}
+	
+	public void setSize(int width, int height) {
+		buttonWidth = width;
+		buttonHeight = height;
+	}
+	
+	public void setSize(int width, int height, int padding) {
+		buttonWidth = width;
+		buttonHeight = height;
+		buttonPadding = padding;
+	}
+	
+	public void setSize(int[] size) {
+		buttonWidth = size[0];
+		buttonHeight = size[1];
+		buttonPadding = size[2];
+	}
+	
+	public void setSize() {
+		
+	}
+	
+	public int[] getSize() {
+		return new int[]{buttonWidth, buttonHeight, buttonPadding};
+	}
+
+	public void setLocation(int width, int height) {
+		location[0] = width;
+		location[1] = height;
+	}
+	
+	public void setLocation(int[] location) {
+		this.location = location;
+	}
+	
+	public int[] getLocation() {
+		return location;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

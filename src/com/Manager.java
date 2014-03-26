@@ -146,7 +146,6 @@ public class Manager {
 							System.out.println("Actual Collision!!!!!");
 							if (GJKCollision.GJKCollide(Entity.get(i), Entity
 									.get(j))) {
-								System.out.println("Acutal Collision!!!!!");
 							}
 
 						}

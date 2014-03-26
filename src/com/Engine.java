@@ -10,11 +10,21 @@ package com;
 import inout.Input;
 import inout.Logger;
 
+import java.awt.Canvas;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.Random;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -33,6 +43,11 @@ import gui.Button;
 import physics.*;
 
 public class Engine {
+	
+	JFrame frmMain;
+	Canvas canvas;
+	
+	static boolean closing = false;
 
 	int delta; // change in milliseconds since the last frame
 	public static float timeScale = 1000; // 1 second real-time is 1000 /
@@ -47,7 +62,7 @@ public class Engine {
 	int fps; // Actual frames per second
 	static int setFPS = 120; // Desired frames per second
 	long lastFPS = 0; // last frame's fps
-	long lastFrame = getTime(); // last frame's time of creation
+	long lastFrame = 0; // last frame's time of creation
 	int frame = 0; // current frame number
 
 	public static boolean debugToggle = true; // use the debug menu
@@ -68,33 +83,29 @@ public class Engine {
 	float[] attr = { 1000, 0f, 1f }; // The attributes of the objects for
 										// physics. {Mass, Drag, Restitution}
 
-	Logger circleLogger;
-	Logger ringLogger;
+	static Logger circleLogger;
+	static Logger ringLogger;
 
 	int trailLength = 250; // max positions to use for creating a trail.
 	Trail trail = new Trail(trailLength); // create a trail
 	// Trail trail2 = new Trail(trailLength);
 
-	Button button = new Button(400, 600);
+//	Button button = new Button(0, 0);
 
 	Random random = new Random();
 
 	public void start() throws IOException {
 
 		try {
-			Display.setDisplayMode(new DisplayMode(width - 1, height));
-			Display.setTitle("Physics Engine");
-			Display.create();
+			initialise();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
 
-		initialise();
-
 		lastFPS = getTime(); // set lastFPS to current Time
 
-		while (!Display.isCloseRequested()) {
+		while (!closing) {
 
 			delta = getDelta();
 
@@ -104,14 +115,13 @@ public class Engine {
 			Display.sync(setFPS);
 			Display.update();
 		}
-
-		close();
 	}
 
-	private void initialise() throws IOException {
+	private void initialise() throws IOException, LWJGLException {
+		
+		initSystem();
+		initDisplay();
 		initGL();
-		// GLButton button = new GLButton(KeyInput.mouseX, KeyInput.mouseY);
-		// button.initGL();
 		
 		Manager.addEntity(obj1, Manager.SHAPE, "icosahedron");
 		Manager.addEntity(obj2, Manager.SHAPE, "icosahedron");
@@ -121,8 +131,9 @@ public class Engine {
 
 	}
 
-	public void close() {
+	public static void close() {
 
+		closing = true;
 		try {
 			circleLogger.close();
 			ringLogger.close();
@@ -131,19 +142,91 @@ public class Engine {
 		}
 
 		System.out.println("closed");
+	}
+	
+	private void initSystem() {
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.startsWith("win")) {
+			os = "win";
+		} else if (os.startsWith("mac")) {
+			os = "mac";
+		} else if (os.startsWith("linux")) {
+			os = "linux";
+		}
+		
+		String natives = System.getProperty("user.dir") + File.separator + "lib" + File.separator + "natives-" + os;
+		System.setProperty("org.lwjgl.librarypath", natives);
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			System.out.println("Unable to load default look and feel");
+		}
+		
+		lastFrame = getTime();
+		
+	}
+	
+	private void initDisplay() throws LWJGLException {
+		
+		frmMain = new JFrame();
+		frmMain.setSize(width, height);
+		frmMain.setResizable(false);
+		frmMain.setTitle("Physics Engine");
+//		frmMain.setLayout(manager)
+		frmMain.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		canvas = new Canvas();
+		frmMain.add(canvas);
+		
+//		MenuBar mb = new MenuBar();
+//		Menu m = new Menu();
+//		MenuItem mi = new MenuItem();
+//		mi.setLabel("Save");
+//		m.setLabel("File");
+//		m.add(mi);
+//		mb.add(m);
+//		frmMain.setMenuBar(mb);
+
+		frmMain.setVisible(true);
+		
+//		Display.setDisplayMode(new DisplayMode(width - 1, height));
+		Display.setParent(canvas);
+		Display.create();
+
+		frmMain.addWindowListener(new WindowAdapter() {
+			
+			public void windowClosing(WindowEvent e) {
+
+				JFrame frame = (JFrame) e.getSource();
+
+				int result = JOptionPane.showConfirmDialog(frame,
+						"Are you sure you want to exit the application?",
+						"Exit Application", JOptionPane.YES_NO_OPTION);
+
+				if (result == JOptionPane.YES_OPTION) {
+					close();
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				}
+
+			}
+			
+		});
 
 	}
 
-	public void initGL() {
+	private void initGL() {
 
 		// init opengl
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 //		GL11.glOrtho(0, width, 0, height, depth, 0);
-		GLU.gluPerspective(70, (float)width/height, 0.03f, depth);
+		GLU.gluPerspective(37, (float)width/height, 0.03f, 2*depth);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+
+//		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		
 //		FloatBuffer ambient;
 //		FloatBuffer brightAmbient;
@@ -152,7 +235,7 @@ public class Engine {
 //		brightAmbient = asFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 1f});
 //		light = asFloatBuffer(new float[]{1.5f, 1.5f, 1.5f, 1f});
 //		GL11.glShadeModel(GL11.GL_SMOOTH);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
+//		GL11.glEnable(GL11.GL_DEPTH_TEST);
 //		GL11.glEnable(GL11.GL_LIGHTING);
 //		GL11.glEnable(GL11.GL_LIGHT0);
 //		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, ambient);
@@ -162,7 +245,7 @@ public class Engine {
 //		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 //		GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
 //		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, asFloatBuffer(new float[]{width/2, height/2, depth/2, 1}));
-		GLU.gluLookAt(width/2, height/2, depth/2, width/2, height/2, -depth/2, 0, 1, 0);
+		GLU.gluLookAt(width/2, height/2, depth, width/2, height/2, 0, 0, 1, 0);
 
 	}
 	
@@ -177,18 +260,15 @@ public class Engine {
 
 		// Clear the screen and depth buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
+		
 		GL11.glColor3f(red, green, blue);
-
+		
 		// draw a grid every 10 pixels
 		GL11.glBegin(GL11.GL_LINES);
 		for (int i = 0; i < height / scale; i++) {
 			GL11.glVertex2f(0, i * scale);
 			GL11.glVertex2f(width, i * scale);
 		}
-		GL11.glEnd();
-
-		GL11.glBegin(GL11.GL_LINES);
 		for (int i = 0; i < width / scale; i++) {
 			GL11.glVertex2f(i * scale, 0);
 			GL11.glVertex2f(i * scale, height);
@@ -212,7 +292,6 @@ public class Engine {
 			}
 			GL11.glEnd();
 		}
-
 
 		GL11.glColor3f(red, green, blue);
 
@@ -239,45 +318,37 @@ public class Engine {
 		if (debugToggle == true) {
 
 			// Draw a frametime graph at the top of the screen
-			if (frame <= width) {
+			if (frame <= graphData.length) {
 
-				if (frame == width) {
+				if (frame == graphData.length) {
 					frame = 0;
 				}
 
 				graphData[frame] = delta * 2;
 
 				GL11.glBegin(GL11.GL_LINES);
-				for (int i = 0; i < width; i++) {
+				for (int i = 0; i < graphData.length; i++) {
 					GL11.glVertex2f(i, height);
 					GL11.glVertex2f(i, height - graphData[i]);
 				}
 				GL11.glEnd();
 
-				if (frame < width - 50) {
+				if (frame < graphData.length - 50) {
 					graphData[frame + 50] = 0;
 				} else {
-					graphData[frame - (width - 50)] = 0;
+					graphData[frame - (graphData.length - 50)] = 0;
 				}
 			}
 
 			frame++;
 		}
+		
+//		button.update();
 
 		// GL11.glPopMatrix();
 	}
 
 	public void update(int delta) throws IOException {
-
-		// button.run(); // test out a button I've been working on
-
-		// Set the location of the physics objects to something the renderer can
-		// easily get at
-		// location =
-		// Vector.cScaleVector(ComplexPhys.getLocation("Box").clone(), scale);
-		// location2 =
-		// Vector.cScaleVector(ComplexPhys.getLocation("Square").clone(),
-		// scale);
 
 		location = Vector.cScaleVector(Manager.getEntity(obj1).getPhysics()
 				.getLocation().clone(), scale);
@@ -289,14 +360,57 @@ public class Engine {
 		float log[] = { phys2.getVelocity()[0], phys2.getVelocity()[1],
 				phys2.getVelocity()[2], delta };
 		circleLogger.LogLine(log);
+		
+		if (50 > location[0]) {
+			if (phys2.velocity[0] < 0) {
+				phys2.velocity[0] *= -1;
+			}
+		}
+		if (location[0] >  width-50) {
+			if (phys2.velocity[0] > 0) {
+				phys2.velocity[0] *= -1;
+			}
+		}
+		
+		if (50 > location[1]) {
+			if (phys2.velocity[1] < 0) {
+				phys2.velocity[1] *= -1;
+			}
+		}
+		if (location[1] >  height-50) {
+			if (phys2.velocity[1] > 0) {
+				phys2.velocity[1] *= -1;
+			}
+		}
+		
 		phys2 = ComplexPhys.getPhysObject(obj2);
 		float log2[] = { phys2.getLocation()[0], phys2.getLocation()[1],
 				phys2.getLocation()[2], delta };
 		ringLogger.LogLine(log2);
 		trail.updateTrail(location);
-		// trail2.updateTrail(location2);
+//		 trail2.updateTrail(location2);
 		
+		if (50 > location2[0]) {
+			if (phys2.velocity[0] < 0) {
+				phys2.velocity[0] *= -1;
+			}
+		}
+		if (location2[0] >  width-50) {
+			if (phys2.velocity[0] > 0) {
+				phys2.velocity[0] *= -1;
+			}
+		}
 		
+		if (50 > location2[1]) {
+			if (phys2.velocity[1] < 0) {
+				phys2.velocity[1] *= -1;
+			}
+		}
+		if (location2[1] >  height-50) {
+			if (phys2.velocity[1] > 0) {
+				phys2.velocity[1] *= -1;
+			}
+		}
 
 		if (debugToggle) {
 			// TODO put stuff here
@@ -328,14 +442,13 @@ public class Engine {
 
 			int mouseX = Mouse.getX();
 			int mouseY = Mouse.getY();
+			float[] mouse = {Input.mouseX, Input.mouseY, 0};
 
 			float[] f = new float[3];
 			Physics phys = ComplexPhys.getPhysObject(obj1);
 
-			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale
-					* phys.mass / delta;
-			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale
-					* phys.mass / delta;
+			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale *1000 / delta;
+			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale *1000 / delta;
 
 			phys.addForce(f);
 		}

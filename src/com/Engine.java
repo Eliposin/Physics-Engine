@@ -10,10 +10,7 @@ package com;
 import inout.Input;
 import inout.Logger;
 
-import java.awt.Canvas;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -21,31 +18,23 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.Sys;
 
-//import com.Settings;
-
-
 import effects.Trail;
-import gui.Button;
 import physics.*;
 
 public class Engine {
 	
 	JFrame frmMain;
-	Canvas canvas;
+	Canvas cnvsDisplay;
 	
 	static boolean closing = false;
 
@@ -57,7 +46,7 @@ public class Engine {
 	public static int height = 800; // window height
 	public static int depth = 1200;
 
-	public static float scale = 75; // number of pixels in 1 meter
+	public static float scale = 100; // number of pixels in 1 meter
 
 	int fps; // Actual frames per second
 	static int setFPS = 120; // Desired frames per second
@@ -70,6 +59,8 @@ public class Engine {
 	public static float red = 0.5f;
 	public static float green = 0.5f;
 	public static float blue = 1.0f;
+	
+	Color guiColor = new Color(70, 70, 70, 255);
 
 	float[] location = { 400, 600, 0 }; // location of the first object. need to
 										// change soon.
@@ -146,6 +137,7 @@ public class Engine {
 	
 	private void initSystem() {
 		String os = System.getProperty("os.name").toLowerCase();
+		
 		if (os.startsWith("win")) {
 			os = "win";
 		} else if (os.startsWith("mac")) {
@@ -170,28 +162,57 @@ public class Engine {
 	private void initDisplay() throws LWJGLException {
 		
 		frmMain = new JFrame();
-		frmMain.setSize(width, height);
 		frmMain.setResizable(false);
 		frmMain.setTitle("Physics Engine");
-//		frmMain.setLayout(manager)
+		frmMain.setBackground(guiColor);
 		frmMain.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
-		canvas = new Canvas();
-		frmMain.add(canvas);
+		LayoutManager manager = new BorderLayout();
+		frmMain.setLayout(manager);
 		
-//		MenuBar mb = new MenuBar();
-//		Menu m = new Menu();
-//		MenuItem mi = new MenuItem();
-//		mi.setLabel("Save");
-//		m.setLabel("File");
-//		m.add(mi);
-//		mb.add(m);
-//		frmMain.setMenuBar(mb);
+		JPanel pnlToolBar = new JPanel(new GridLayout(0,2));
+		pnlToolBar.setBackground(guiColor);
+		pnlToolBar.setPreferredSize(new Dimension(40, height));
+		frmMain.add(pnlToolBar, BorderLayout.LINE_START);
+		
+		cnvsDisplay = new Canvas();
+		cnvsDisplay.setSize(width, height);
+		frmMain.add(cnvsDisplay, BorderLayout.CENTER);
+		
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setBackground(guiColor);
+		panel.setPreferredSize(new Dimension(180, height));
+		frmMain.add(panel, BorderLayout.LINE_END);
+		
+		
+		JPanel pnlTimeline = new JPanel(new FlowLayout());
+		JButton btnRecord = new JButton("Record");
+		btnRecord.setBackground(guiColor);
+		pnlTimeline.add(btnRecord);
+		JButton btnStop = new JButton("Stop");
+		btnStop.setBackground(guiColor);
+		pnlTimeline.add(btnStop);
+		JButton btnPause = new JButton("Pause");
+		btnPause.setBackground(guiColor);
+		pnlTimeline.add(btnPause);
+		JButton btnPlay = new JButton("Play");
+		btnPlay.setBackground(guiColor);
+		pnlTimeline.add(btnPlay);
+		JSlider sldr = new JSlider();
+		sldr.setBackground(guiColor);
+		sldr.setPreferredSize(new Dimension(width/2, 20));
+		pnlTimeline.add(sldr);
+		pnlTimeline.setBackground(guiColor);
+		pnlTimeline.setPreferredSize(new Dimension(0, 40));
+//		frmMain.add(pnlTimeline, BorderLayout.PAGE_END);
+		
+		initMenuBar();
 
+		frmMain.pack();
 		frmMain.setVisible(true);
 		
 //		Display.setDisplayMode(new DisplayMode(width - 1, height));
-		Display.setParent(canvas);
+		Display.setParent(cnvsDisplay);
 		Display.create();
 
 		frmMain.addWindowListener(new WindowAdapter() {
@@ -213,6 +234,90 @@ public class Engine {
 			
 		});
 
+	}
+	
+	private void initMenuBar() {
+		
+		MenuBar mb = new MenuBar();
+		
+		Menu menuFile = new Menu("File");
+		menuFile.add(new MenuItem("New"));
+		menuFile.add(new MenuItem("Open"));
+		menuFile.add(new MenuItem("Save"));
+		menuFile.add(new MenuItem("Save As..."));
+		menuFile.add(new MenuItem("Import"));
+//		menuFile.add(new MenuItem("Export"));
+		menuFile.add(new MenuItem("Reset"));
+		menuFile.addSeparator();
+		menuFile.add(new MenuItem("Record"));
+		menuFile.add(new MenuItem("Replay"));
+		menuFile.addSeparator();
+		menuFile.add(new MenuItem("Exit"));
+		mb.add(menuFile);
+		
+		Menu menuEdit = new Menu("Edit");
+		menuEdit.add(new MenuItem("Undo"));
+		menuEdit.add(new MenuItem("Redo"));
+		menuEdit.addSeparator();
+		menuEdit.add(new MenuItem("Copy"));
+		menuEdit.add(new MenuItem("Paste"));
+		menuEdit.add(new MenuItem("Cut"));
+		menuEdit.addSeparator();
+		menuEdit.add(new MenuItem("Scene"));
+		menuEdit.add(new MenuItem("Settings"));
+		mb.add(menuEdit);
+		
+		Menu menuEntity = new Menu("Entity");
+		menuEntity.add(new MenuItem("Add"));
+		menuEntity.add(new MenuItem("Remove"));
+		menuEntity.add(new MenuItem("Disable"));
+		menuEntity.addSeparator();
+		menuEntity.add(new MenuItem("Model"));
+		mb.add(menuEntity);
+		
+		Menu menuConstraint = new Menu("Constraint");
+		menuConstraint.add(new MenuItem("Add"));
+		menuConstraint.add(new MenuItem("Remove"));
+		menuConstraint.add(new MenuItem("Disable"));
+		menuConstraint.add(new MenuItem("Type"));
+		mb.add(menuConstraint);
+		
+		Menu menuSelect = new Menu("Select");
+		menuSelect.add(new MenuItem("All"));
+		menuSelect.add(new MenuItem("Deselect"));
+		menuSelect.add(new MenuItem("Reselect"));
+		menuSelect.add(new MenuItem("Inverse"));
+		menuSelect.add(new MenuItem("Entities"));
+		menuSelect.add(new MenuItem("Constraints"));
+		mb.add(menuSelect);
+		
+		Menu menuView = new Menu("View");
+		menuView.add(new MenuItem("Zoom"));
+		menuView.addSeparator();
+		menuView.add(new MenuItem("Fill"));
+		menuView.add(new MenuItem("Wireframe"));
+		menuView.add(new MenuItem("Points"));
+		menuView.addSeparator();
+		menuView.add(new MenuItem("Debug"));
+		mb.add(menuView);
+		
+		Menu menuPlugin = new Menu("Plugin");
+		menuPlugin.add(new MenuItem("generated1"));
+		menuPlugin.add(new MenuItem("generated2"));
+		menuPlugin.add(new MenuItem("generated3"));
+		menuPlugin.addSeparator();
+		menuPlugin.add(new MenuItem("Plugin Manager"));
+		mb.add(menuPlugin);
+		
+		Menu menuHelp = new Menu("Help");
+		menuHelp.add(new MenuItem("Manual"));
+		menuHelp.add(new MenuItem("Updates"));
+		menuHelp.add(new MenuItem("Report a Bug"));
+		menuHelp.addSeparator();
+		menuHelp.add(new MenuItem("About"));
+		mb.add(menuHelp);
+		frmMain.setMenuBar(mb);
+		
 	}
 
 	private void initGL() {

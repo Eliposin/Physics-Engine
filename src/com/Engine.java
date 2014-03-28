@@ -9,15 +9,18 @@ package com;
 
 import inout.Input;
 import inout.Logger;
+import inout.Dir;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.lwjgl.BufferUtils;
@@ -60,7 +63,7 @@ public class Engine {
 	public static float green = 0.5f;
 	public static float blue = 1.0f;
 	
-	Color guiColor = new Color(70, 70, 70, 255);
+	Color guiColor = new Color(80, 80, 80, 255);
 
 	float[] location = { 400, 600, 0 }; // location of the first object. need to
 										// change soon.
@@ -155,9 +158,18 @@ public class Engine {
 			System.out.println("Unable to load default look and feel");
 		}
 		
+		Dir.initPaths();
+		
 		lastFrame = getTime();
 		
 	}
+	
+	public int toolBarSize = 40;
+	public int toolBarPadding = 2;
+	public int workPanelSize = 180;
+	public int workPanelPadding = 2;
+	public int timelineSize = 40;
+	public int timelinePadding = 2;
 	
 	private void initDisplay() throws LWJGLException {
 		
@@ -166,52 +178,24 @@ public class Engine {
 		frmMain.setTitle("Physics Engine");
 		frmMain.setBackground(guiColor);
 		frmMain.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		
-		LayoutManager manager = new BorderLayout();
-		frmMain.setLayout(manager);
-		
-		JPanel pnlToolBar = new JPanel(new GridLayout(0,2));
-		pnlToolBar.setBackground(guiColor);
-		pnlToolBar.setPreferredSize(new Dimension(40, height));
-		frmMain.add(pnlToolBar, BorderLayout.LINE_START);
-		
+		frmMain.setLayout(new BorderLayout());
+
 		cnvsDisplay = new Canvas();
+		cnvsDisplay.setBackground(guiColor);
 		cnvsDisplay.setSize(width, height);
 		frmMain.add(cnvsDisplay, BorderLayout.CENTER);
 		
-		JPanel panel = new JPanel(new GridBagLayout());
-		panel.setBackground(guiColor);
-		panel.setPreferredSize(new Dimension(180, height));
-		frmMain.add(panel, BorderLayout.LINE_END);
+		initToolbar();
 		
+		initWorkPanel();
 		
-		JPanel pnlTimeline = new JPanel(new FlowLayout());
-		JButton btnRecord = new JButton("Record");
-		btnRecord.setBackground(guiColor);
-		pnlTimeline.add(btnRecord);
-		JButton btnStop = new JButton("Stop");
-		btnStop.setBackground(guiColor);
-		pnlTimeline.add(btnStop);
-		JButton btnPause = new JButton("Pause");
-		btnPause.setBackground(guiColor);
-		pnlTimeline.add(btnPause);
-		JButton btnPlay = new JButton("Play");
-		btnPlay.setBackground(guiColor);
-		pnlTimeline.add(btnPlay);
-		JSlider sldr = new JSlider();
-		sldr.setBackground(guiColor);
-		sldr.setPreferredSize(new Dimension(width/2, 20));
-		pnlTimeline.add(sldr);
-		pnlTimeline.setBackground(guiColor);
-		pnlTimeline.setPreferredSize(new Dimension(0, 40));
-//		frmMain.add(pnlTimeline, BorderLayout.PAGE_END);
+		initTimeline();
 		
 		initMenuBar();
 
 		frmMain.pack();
 		frmMain.setVisible(true);
 		
-//		Display.setDisplayMode(new DisplayMode(width - 1, height));
 		Display.setParent(cnvsDisplay);
 		Display.create();
 
@@ -236,6 +220,175 @@ public class Engine {
 
 	}
 	
+	private AbstractButton makeImageButton(AbstractButton btn, String name, String ext, Dimension size) {
+		
+		String s = File.separator;
+		File file = new File(Dir.GUIIcons + s + name + ext);
+		File fileSelected = new File(Dir.GUIIcons + s + name + "Selected" + ext);
+		File fileHover = new File(Dir.GUIIcons + s + name + "Hover" + ext);
+		
+		BufferedImage img;
+		BufferedImage imgSelected;
+		BufferedImage imgHover;
+		
+		ImageIcon icon = new ImageIcon();
+		ImageIcon iconSelected = new ImageIcon();
+		ImageIcon iconHover = new ImageIcon();
+		
+		try {
+			img = ImageIO.read(file);
+			imgSelected = ImageIO.read(fileSelected);
+			imgHover = ImageIO.read(fileHover);
+			
+			icon = new ImageIcon(img.getScaledInstance(
+					size.width, size.height, 
+					java.awt.Image.SCALE_SMOOTH));
+			iconSelected = new ImageIcon(imgSelected.getScaledInstance(
+					size.width, size.height, 
+					java.awt.Image.SCALE_SMOOTH));
+			iconHover = new ImageIcon(imgHover.getScaledInstance(
+					size.width, size.height, 
+					java.awt.Image.SCALE_SMOOTH));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		btn.setIcon(icon);
+		btn.setRolloverIcon(iconHover);
+		btn.setSelectedIcon(iconSelected);
+		
+		btn.setBorder(BorderFactory.createEmptyBorder());
+		btn.setContentAreaFilled(false);
+		btn.setName(name);
+		
+		return btn;
+		
+	}
+	
+	private void initToolbar() {
+		
+		int btnwidth = toolBarSize - 2*toolBarPadding;
+		
+		JPanel pnlToolBar = new JPanel(new FlowLayout(FlowLayout.LEADING, toolBarPadding, toolBarPadding));
+		ButtonGroup btngrp = new ButtonGroup();
+		
+		JRadioButton move= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"move", ".png", new Dimension(btnwidth, btnwidth));
+		pnlToolBar.add(move);
+		btngrp.add(move);
+		
+		JRadioButton select= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"select", ".png", new Dimension(btnwidth, btnwidth));
+		pnlToolBar.add(select);
+		btngrp.add(select);
+		
+		JRadioButton addEntity= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"addEntity", ".png", new Dimension(btnwidth, btnwidth));
+		pnlToolBar.add(addEntity);
+		btngrp.add(addEntity);
+		
+		JRadioButton addConstraint= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"addConstraint", ".png", new Dimension(btnwidth, btnwidth));
+		pnlToolBar.add(addConstraint);
+		btngrp.add(addConstraint);
+		
+		JRadioButton addForce= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"addForce", ".png", new Dimension(btnwidth, btnwidth));
+		pnlToolBar.add(addForce);
+		btngrp.add(addForce);
+
+//		pnlToolBar.setBorder(BorderFactory.createEmptyBorder(
+//				0, toolBarPadding, 0, toolBarPadding));
+		pnlToolBar.setBackground(guiColor);
+		pnlToolBar.setPreferredSize(new Dimension(toolBarSize, height));
+		frmMain.add(pnlToolBar, BorderLayout.LINE_START);
+		
+	}
+	
+	private void initWorkPanel() {
+		
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setBackground(guiColor);
+		panel.setPreferredSize(new Dimension(workPanelSize, height));
+		frmMain.add(panel, BorderLayout.LINE_END);
+		
+	}
+	
+	private void initTimeline() {
+		
+		JPanel pnlTimeline = new JPanel(new BorderLayout());
+		JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.LEADING, timelinePadding, timelinePadding));
+		pnlButtons.setBackground(guiColor);
+		
+		int btnSize = timelineSize - 2*timelinePadding;
+		
+		ButtonGroup time = new ButtonGroup();
+		
+		JPanel lSpace = new JPanel();
+		lSpace.setBackground(guiColor);
+		lSpace.setPreferredSize(new Dimension(toolBarSize, btnSize));
+		pnlButtons.add(lSpace);
+		
+		JRadioButton record= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"record", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(record);
+		time.add(record);
+
+		JRadioButton stop= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"stop", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(stop);
+		time.add(stop);
+		
+		JRadioButton pFrame= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"pFrame", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(pFrame);
+		time.add(pFrame);
+		
+		JRadioButton nFrame= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"nFrame", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(nFrame);
+		time.add(nFrame);
+		
+		JRadioButton fBackward= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"fBackward", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(fBackward);
+		time.add(fBackward);
+		
+		JRadioButton fForward= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"fForward", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(fForward);
+		time.add(fForward);
+
+		JRadioButton pause= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"pause", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(pause);
+		time.add(pause);
+		
+		JRadioButton play= (JRadioButton) makeImageButton(new JRadioButton(), 
+				"play", ".png", new Dimension(btnSize, btnSize));
+		pnlButtons.add(play);
+		time.add(play);
+		
+		pnlTimeline.add(pnlButtons, BorderLayout.LINE_START);
+		
+		JSlider sldr = new JSlider();
+		sldr.setBackground(guiColor);
+		sldr.setPreferredSize(new Dimension(width/2, btnSize));
+		pnlTimeline.add(sldr, BorderLayout.CENTER);
+		
+		JPanel rSpace = new JPanel();
+		rSpace.setBackground(guiColor);
+		rSpace.setPreferredSize(new Dimension(workPanelSize, timelineSize));
+		pnlTimeline.add(rSpace, BorderLayout.LINE_END);
+		
+		pnlTimeline.setBackground(guiColor);
+		pnlTimeline.setPreferredSize(new Dimension(0, timelineSize));
+		frmMain.add(pnlTimeline, BorderLayout.PAGE_START);
+		
+	}
+	
 	private void initMenuBar() {
 		
 		MenuBar mb = new MenuBar();
@@ -246,7 +399,6 @@ public class Engine {
 		menuFile.add(new MenuItem("Save"));
 		menuFile.add(new MenuItem("Save As..."));
 		menuFile.add(new MenuItem("Import"));
-//		menuFile.add(new MenuItem("Export"));
 		menuFile.add(new MenuItem("Reset"));
 		menuFile.addSeparator();
 		menuFile.add(new MenuItem("Record"));
@@ -292,7 +444,21 @@ public class Engine {
 		mb.add(menuSelect);
 		
 		Menu menuView = new Menu("View");
+		menuView.add(new MenuItem("Top"));
+		menuView.add(new MenuItem("Bottom"));
+		menuView.add(new MenuItem("Left"));
+		menuView.add(new MenuItem("Right"));
+		menuView.add(new MenuItem("Front"));
+		menuView.add(new MenuItem("Back"));
+		menuView.addSeparator();
+		menuView.add(new MenuItem("Camera 1"));
+		menuView.add(new MenuItem("Camera 2"));
+		menuView.add(new MenuItem("Camera n"));
+		menuView.add(new MenuItem("Camera \" name\""));
+		menuView.addSeparator();
 		menuView.add(new MenuItem("Zoom"));
+		menuView.add(new MenuItem("Zoom All"));
+		menuView.add(new MenuItem("Zoom Selection"));
 		menuView.addSeparator();
 		menuView.add(new MenuItem("Fill"));
 		menuView.add(new MenuItem("Wireframe"));
@@ -319,6 +485,7 @@ public class Engine {
 		frmMain.setMenuBar(mb);
 		
 	}
+	
 
 	private void initGL() {
 
@@ -340,7 +507,7 @@ public class Engine {
 //		brightAmbient = asFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 1f});
 //		light = asFloatBuffer(new float[]{1.5f, 1.5f, 1.5f, 1f});
 //		GL11.glShadeModel(GL11.GL_SMOOTH);
-//		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 //		GL11.glEnable(GL11.GL_LIGHTING);
 //		GL11.glEnable(GL11.GL_LIGHT0);
 //		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, ambient);

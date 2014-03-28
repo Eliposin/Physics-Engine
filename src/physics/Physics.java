@@ -30,7 +30,10 @@ public class Physics {
 	ArrayList<float[]> momentumBuffer = new ArrayList<float[]>(); 
 
 	public Physics() {
-		
+	}
+	
+	public Physics(float[] location) {
+		this.location = location;
 	}
 
 	/**

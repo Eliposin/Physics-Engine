@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<color guiColor="80, 80, 80, 255">
+
+<component frmMain="JFrame">
+
+	<attrib resizable="false"/>
+	<attrib title="Physics Engine"/>
+	<attrib background="guiColor"/>
+	<attrib defaultCloseOperation="JFrame.DO_NOTHING_ON_CLOSE"/>
+	
+	<layout bdrlayout=BorderLayout"></layout>
+		
+	<attrib layout="bdrlayout"/>
+	
+	<component cnvsDisplay="Canvas">
+	
+		<attrib background="guiColor"/>
+		<attrib size="width, height"/>
+		
+	</component>
+	
+	<component toolbar="JToolBar">
+		
+	</component>
+	
+</component>

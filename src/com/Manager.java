@@ -2,7 +2,6 @@ package com;
 
 import java.util.ArrayList;
 import physics.Collision;
-import physics.ComplexPhys;
 import physics.GJKCollision;
 
 /**
@@ -17,12 +16,6 @@ public class Manager {
 	static ArrayList<Entity> Entity = new ArrayList<Entity>();
 	static ArrayList<Boolean> isActive = new ArrayList<Boolean>();
 
-	public final static short SHAPE = 0;
-	public final static short CONSTRAINT_STRING = 1;
-	public final static short CONSTRAINT_ELASTIC = 2;
-	public final static short CONSTRAINT_ROD = 3;
-	public final static short CONSTRAINT_SPRING = 4;
-
 	/**
 	 * Add an Entity into the buffer.
 	 * @param name The name of the Entity
@@ -30,13 +23,13 @@ public class Manager {
 	 * @param fileName The model filename
 	 * @return The index of the Entity
 	 */
-	public static int addEntity(String name, short type, String fileName) {
+	
+	public static int addEntity(String name, short type, float[] location, String fileName) {
 		int index;
 		EntityName.add(name);
 		index = EntityName.indexOf(name);
 		isActive.add(index, true);
-		Entity.add(new Entity(name, type, fileName));
-		ComplexPhys.addPhysics(name, 1000, 0, 0);
+		Entity.add(new Entity(name, type, location, fileName));
 
 		return index;
 
@@ -51,6 +44,7 @@ public class Manager {
 		int index;
 
 		index = EntityName.indexOf(name);
+		EntityName.remove(index);
 		isActive.remove(index);
 		Entity.remove(index);
 
@@ -128,10 +122,11 @@ public class Manager {
 	 * Update all the Entities. Updating includes orientation, sector mapping, 
 	 * and collision detection.
 	 */
-	public static void update() {
+	public static void update(int delta) {
+		
 		Collision.clearSectors();
 		for (int i = 0; i < Entity.size(); i++) {
-			Entity.get(i).updateOrientation();
+			Entity.get(i).updateOrientation(delta);
 			// Collision.mapSectors((Entity) Entity.get(i));
 		}
 
@@ -143,15 +138,12 @@ public class Manager {
 
 						if (GJKCollision.GJKCollide(Entity.get(i), Entity
 								.get(j))) {
-							System.out.println("Actual Collision!!!!!");
-							if (GJKCollision.GJKCollide(Entity.get(i), Entity
-									.get(j))) {
-							}
 
 						}
 					}
 				}
 			}
 		}
+		
 	}
 }

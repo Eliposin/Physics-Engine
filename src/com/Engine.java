@@ -12,6 +12,8 @@ import inout.Logger;
 import inout.Dir;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -22,6 +24,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListDataListener;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -64,27 +69,23 @@ public class Engine {
 	public static float blue = 1.0f;
 	
 	Color guiColor = new Color(80, 80, 80, 255);
-
-	float[] location = { 400, 600, 0 }; // location of the first object. need to
-										// change soon.
-	float[] location2 = new float[3]; // location of the second object. ^^
-
-	String obj1 = "Circle";
-	String obj2 = "Ring";
+	
+	int tool;
+	
+	final int MOVE = 0;
+	final int SELECT = 1;
+	final int ADD_ENTITY = 2;
+	final int ADD_CONSTRAINT = 3;
+	final int ADD_FORCE = 4;
+	
+	final int START = 5;
+	final int USE = 6;
+	final int END = 7;
 
 	int[] graphData = new int[width]; // A list of frametime data.
 
 	float[] attr = { 1000, 0f, 1f }; // The attributes of the objects for
 										// physics. {Mass, Drag, Restitution}
-
-	static Logger circleLogger;
-	static Logger ringLogger;
-
-	int trailLength = 250; // max positions to use for creating a trail.
-	Trail trail = new Trail(trailLength); // create a trail
-	// Trail trail2 = new Trail(trailLength);
-
-//	Button button = new Button(0, 0);
 
 	Random random = new Random();
 
@@ -100,14 +101,17 @@ public class Engine {
 		lastFPS = getTime(); // set lastFPS to current Time
 
 		while (!closing) {
-
+			
 			delta = getDelta();
-
+			
 			update(delta);
 			renderGL();
 
+			Profiler.prof("Display.sync");
 			Display.sync(setFPS);
+			Profiler.prof("Display.sync");
 			Display.update();
+			
 		}
 	}
 
@@ -116,24 +120,12 @@ public class Engine {
 		initSystem();
 		initDisplay();
 		initGL();
-		
-		Manager.addEntity(obj1, Manager.SHAPE, "icosahedron");
-		Manager.addEntity(obj2, Manager.SHAPE, "icosahedron");
-
-		circleLogger = new Logger(obj1);
-		ringLogger = new Logger(obj2);
 
 	}
 
 	public static void close() {
 
 		closing = true;
-		try {
-			circleLogger.close();
-			ringLogger.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		System.out.println("closed");
 	}
@@ -223,9 +215,9 @@ public class Engine {
 	private AbstractButton makeImageButton(AbstractButton btn, String name, String ext, Dimension size) {
 		
 		String s = File.separator;
-		File file = new File(Dir.GUIIcons + s + name + ext);
-		File fileSelected = new File(Dir.GUIIcons + s + name + "Selected" + ext);
-		File fileHover = new File(Dir.GUIIcons + s + name + "Hover" + ext);
+		File file = new File(Dir.gui + s + name + ext);
+		File fileSelected = new File(Dir.gui + s + name + "Selected" + ext);
+		File fileHover = new File(Dir.gui + s + name + "Hover" + ext);
 		
 		BufferedImage img;
 		BufferedImage imgSelected;
@@ -269,67 +261,135 @@ public class Engine {
 	
 	private void initToolbar() {
 		
-		int btnwidth = toolBarSize - 2*toolBarPadding;
-		
-		JPanel pnlToolBar = new JPanel(new FlowLayout(FlowLayout.LEADING, toolBarPadding, toolBarPadding));
+		int btnwidth = toolBarSize - 2*toolBarPadding;;
+		JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEADING, toolBarPadding, toolBarPadding));
+		toolbar.setPreferredSize(new Dimension(toolBarSize, 0));
+		toolbar.setBackground(guiColor);
 		ButtonGroup btngrp = new ButtonGroup();
 		
 		JRadioButton move= (JRadioButton) makeImageButton(new JRadioButton(), 
 				"move", ".png", new Dimension(btnwidth, btnwidth));
-		pnlToolBar.add(move);
+		move.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+            	tool = MOVE;
+        		System.out.println("Tool move");
+			}
+		});
+		toolbar.add(move);
 		btngrp.add(move);
 		
 		JRadioButton select= (JRadioButton) makeImageButton(new JRadioButton(), 
 				"select", ".png", new Dimension(btnwidth, btnwidth));
-		pnlToolBar.add(select);
+		select.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+            	tool = SELECT;
+        		System.out.println("Tool select");
+			}
+		});
+		toolbar.add(select);
 		btngrp.add(select);
 		
 		JRadioButton addEntity= (JRadioButton) makeImageButton(new JRadioButton(), 
 				"addEntity", ".png", new Dimension(btnwidth, btnwidth));
-		pnlToolBar.add(addEntity);
+		addEntity.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+            	tool = ADD_ENTITY;
+        		System.out.println("Tool addEntity");
+            }
+        });
+		toolbar.add(addEntity);
 		btngrp.add(addEntity);
 		
 		JRadioButton addConstraint= (JRadioButton) makeImageButton(new JRadioButton(), 
 				"addConstraint", ".png", new Dimension(btnwidth, btnwidth));
-		pnlToolBar.add(addConstraint);
+		addConstraint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+            	tool = ADD_CONSTRAINT;
+        		System.out.println("Tool addConstraint");
+			}
+		});
+		toolbar.add(addConstraint);
 		btngrp.add(addConstraint);
 		
 		JRadioButton addForce= (JRadioButton) makeImageButton(new JRadioButton(), 
 				"addForce", ".png", new Dimension(btnwidth, btnwidth));
-		pnlToolBar.add(addForce);
+		addForce.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+            	tool = ADD_FORCE;
+        		System.out.println("Tool addForce");
+			}
+		});
+		toolbar.add(addForce);
 		btngrp.add(addForce);
 
-//		pnlToolBar.setBorder(BorderFactory.createEmptyBorder(
-//				0, toolBarPadding, 0, toolBarPadding));
-		pnlToolBar.setBackground(guiColor);
-		pnlToolBar.setPreferredSize(new Dimension(toolBarSize, height));
-		frmMain.add(pnlToolBar, BorderLayout.LINE_START);
+		frmMain.add(toolbar, BorderLayout.LINE_START);
 		
 	}
 	
+	int entityCount = 0;
+	DefaultListModel<String> lm = new DefaultListModel<String>();
+	JList<String> lstEntity = new JList<String>(lm);
+
 	private void initWorkPanel() {
 		
-		JPanel panel = new JPanel(new GridBagLayout());
+		JPanel panel = new JPanel(new GridLayout(4, 0));
 		panel.setBackground(guiColor);
-		panel.setPreferredSize(new Dimension(workPanelSize, height));
+		
+		JTabbedPane tabs = new JTabbedPane();
+		tabs.setForeground(guiColor.darker());
+		
+		lstEntity.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		lstEntity.setLayoutOrientation(JList.VERTICAL);
+		lstEntity.setBackground(guiColor.brighter());
+		lstEntity.setVisibleRowCount(-1);
+		JScrollPane listScroller = new JScrollPane(lstEntity);
+		listScroller.setPreferredSize(new Dimension(workPanelSize, 80));
+		
+		tabs.add("Entity", listScroller);
+		tabs.add("Constraints", new JPanel());
+		panel.add(tabs);
+		
 		frmMain.add(panel, BorderLayout.LINE_END);
 		
+	}
+	
+	private JPanel makeLayer(String name, short type) {
+
+		JPanel pnlLayer = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		pnlLayer.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		pnlLayer.setBackground(guiColor);
+		pnlLayer.setPreferredSize(new Dimension(80, 40));
+		
+		Checkbox chkEnabled = new Checkbox();
+		chkEnabled.setFocusable(false);
+		pnlLayer.add(chkEnabled);
+		
+		ImageIcon icon = new ImageIcon("res/GUI/gear_icon.png");
+		JButton btn = new JButton(icon);
+		btn.setBorder(BorderFactory.createLineBorder(guiColor.darker()));
+		btn.setContentAreaFilled(false);
+		btn.setFocusPainted(false);
+		btn.setPreferredSize(new Dimension(32, 32));
+		pnlLayer.add(btn);
+		
+		JLabel lblName = new JLabel();
+		lblName.setText(name);
+		lblName.setBackground(guiColor.brighter());
+		lblName.setForeground(guiColor.brighter().brighter());
+		pnlLayer.add(lblName);
+		
+		return pnlLayer;
 	}
 	
 	private void initTimeline() {
 		
 		JPanel pnlTimeline = new JPanel(new BorderLayout());
-		JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.LEADING, timelinePadding, timelinePadding));
+		JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.LEADING, toolBarPadding, toolBarPadding));
 		pnlButtons.setBackground(guiColor);
 		
 		int btnSize = timelineSize - 2*timelinePadding;
 		
 		ButtonGroup time = new ButtonGroup();
-		
-		JPanel lSpace = new JPanel();
-		lSpace.setBackground(guiColor);
-		lSpace.setPreferredSize(new Dimension(toolBarSize, btnSize));
-		pnlButtons.add(lSpace);
 		
 		JRadioButton record= (JRadioButton) makeImageButton(new JRadioButton(), 
 				"record", ".png", new Dimension(btnSize, btnSize));
@@ -376,15 +436,10 @@ public class Engine {
 		JSlider sldr = new JSlider();
 		sldr.setBackground(guiColor);
 		sldr.setPreferredSize(new Dimension(width/2, btnSize));
-		pnlTimeline.add(sldr, BorderLayout.CENTER);
-		
-		JPanel rSpace = new JPanel();
-		rSpace.setBackground(guiColor);
-		rSpace.setPreferredSize(new Dimension(workPanelSize, timelineSize));
-		pnlTimeline.add(rSpace, BorderLayout.LINE_END);
+		pnlTimeline.add(sldr);
 		
 		pnlTimeline.setBackground(guiColor);
-		pnlTimeline.setPreferredSize(new Dimension(0, timelineSize));
+		pnlTimeline.setPreferredSize(new Dimension(500, timelineSize));
 		frmMain.add(pnlTimeline, BorderLayout.PAGE_START);
 		
 	}
@@ -530,6 +585,8 @@ public class Engine {
 
 	public void renderGL() {
 
+		Profiler.prof("Engine.renderGL");
+		
 		// Clear the screen and depth buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		
@@ -565,8 +622,9 @@ public class Engine {
 			GL11.glEnd();
 		}
 
+		Profiler.prof("Engine.renderGL");
+		
 		GL11.glColor3f(red, green, blue);
-
 		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
 		GL11.glEnable(GL11.GL_NORMAL_ARRAY);
 		for (int i = 0; i < Manager.Entity.size(); i++) {
@@ -574,17 +632,8 @@ public class Engine {
 		}
 		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
 		GL11.glDisable(GL11.GL_NORMAL_ARRAY);
-
-		float[] trailf = { 0, 0, 0 };
-		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int i = 0; i < trailLength - 1; i++) {
-
-			trailf = trail.getTrail(i);
-
-			GL11.glVertex3f(trailf[0], trailf[1], trailf[2]);
-
-		}
-		GL11.glEnd();
+		
+		Profiler.prof("Engine.renderGL");
 
 		// Draw more stuff if debug toggle is on
 		if (debugToggle == true) {
@@ -615,132 +664,36 @@ public class Engine {
 			frame++;
 		}
 		
-//		button.update();
-
-		// GL11.glPopMatrix();
+		Profiler.prof("Engine.renderGL");
+		
 	}
 
 	public void update(int delta) throws IOException {
 
-		location = Vector.cScaleVector(Manager.getEntity(obj1).getPhysics()
-				.getLocation().clone(), scale);
-		location2 = Vector.cScaleVector(Manager.getEntity(obj2).getPhysics()
-				.getLocation().clone(), scale);
-
-		// log the object's current location
-		Physics phys2 = ComplexPhys.getPhysObject(obj1);
-		float log[] = { phys2.getVelocity()[0], phys2.getVelocity()[1],
-				phys2.getVelocity()[2], delta };
-		circleLogger.LogLine(log);
-		
-		if (50 > location[0]) {
-			if (phys2.velocity[0] < 0) {
-				phys2.velocity[0] *= -1;
-			}
-		}
-		if (location[0] >  width-50) {
-			if (phys2.velocity[0] > 0) {
-				phys2.velocity[0] *= -1;
-			}
-		}
-		
-		if (50 > location[1]) {
-			if (phys2.velocity[1] < 0) {
-				phys2.velocity[1] *= -1;
-			}
-		}
-		if (location[1] >  height-50) {
-			if (phys2.velocity[1] > 0) {
-				phys2.velocity[1] *= -1;
-			}
-		}
-		
-		phys2 = ComplexPhys.getPhysObject(obj2);
-		float log2[] = { phys2.getLocation()[0], phys2.getLocation()[1],
-				phys2.getLocation()[2], delta };
-		ringLogger.LogLine(log2);
-		trail.updateTrail(location);
-//		 trail2.updateTrail(location2);
-		
-		if (50 > location2[0]) {
-			if (phys2.velocity[0] < 0) {
-				phys2.velocity[0] *= -1;
-			}
-		}
-		if (location2[0] >  width-50) {
-			if (phys2.velocity[0] > 0) {
-				phys2.velocity[0] *= -1;
-			}
-		}
-		
-		if (50 > location2[1]) {
-			if (phys2.velocity[1] < 0) {
-				phys2.velocity[1] *= -1;
-			}
-		}
-		if (location2[1] >  height-50) {
-			if (phys2.velocity[1] > 0) {
-				phys2.velocity[1] *= -1;
-			}
-		}
-
-		if (debugToggle) {
-			// TODO put stuff here
-//			IntBuffer viewport = BufferUtils.createIntBuffer(16);
-//			GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
-//			
-//			FloatBuffer modelMatrix = BufferUtils.createFloatBuffer(16);
-//			GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelMatrix);
-//			
-//			FloatBuffer projMatrix = BufferUtils.createFloatBuffer(16);
-//			GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projMatrix);
-//			
-//			FloatBuffer obj_pos = BufferUtils.createFloatBuffer(16);
-//			
-//			boolean unProject = GLU.gluUnProject(Input.mouseX, Input.mouseY, 0.5f, modelMatrix, projMatrix, viewport, obj_pos);
-//			
-//			System.out.println(unProject);
-//			System.out.println(obj_pos.get(0) + ", " + obj_pos.get(1) + ", " + obj_pos.get(2));
-		}
-
-		// give the object a force of gravity
-		float[] f2 = { 0, (float) (-9.8 * 1000), 0 };
-		ComplexPhys.getPhysObject(obj1).addForce(f2);
-		ComplexPhys.getPhysObject(obj2).addForce(f2);
-
 		Input.refresh();
-
-		if (Input.mouse0Down == true) {
-
-			int mouseX = Mouse.getX();
-			int mouseY = Mouse.getY();
-			float[] mouse = {Input.mouseX, Input.mouseY, 0};
-
-			float[] f = new float[3];
-			Physics phys = ComplexPhys.getPhysObject(obj1);
-
-			f[0] = (mouseX - location[0] - phys.velocity[0]) * timeScale *1000 / delta;
-			f[1] = (mouseY - location[1] - phys.velocity[1]) * timeScale *1000 / delta;
-
-			phys.addForce(f);
+		
+		switch (Input.mouse0Changed) {
+			case Input.PRESSED:
+				tool(START);
+				break;
+			case Input.RELEASED:
+				tool(END);
+				break;
+			default:
+				if (Input.mouse0Down) {
+					tool(USE);
+				}
 		}
-
-		if (Input.mouse1Down == true) {
-
-			int mouseX = Mouse.getX();
-			int mouseY = Mouse.getY();
-
-			float[] f = new float[3];
-			Physics phys = ComplexPhys.getPhysObject(obj2);
-
-			f[0] = (mouseX - location2[0] - phys.velocity[0]) * timeScale
-					* phys.mass / delta;
-			f[1] = (mouseY - location2[1] - phys.velocity[1]) * timeScale
-					* phys.mass / delta;
-
-			phys.addForce(f);
+		
+		if (Input.deleteChanged == Input.RELEASED) {
+			java.util.List<String> lst = lstEntity.getSelectedValuesList();
+			System.out.println(lst);
+			for (int i = 0; i < lst.size(); i++) {
+				Manager.removeEntity(lst.get(i));
+				lm.removeElement(lst.get(i));
+			}
 		}
-
+		
 		if (Input.debugChanged == Input.PRESSED) {
 
 			if (debugToggle == false) {
@@ -810,12 +763,109 @@ public class Engine {
 		}
 
 		updateFPS();
-		ComplexPhys.UpdatePhysics(delta);
-		Manager.update();
+		Manager.update(delta);
 
 	}
+	
+	public void tool(int action) {
+		switch(tool) {
+		case MOVE: move(action);
+			break;
+		case SELECT: select(action);
+			break;
+		case ADD_ENTITY: addEntity(action);
+			break;
+		case ADD_CONSTRAINT: addConstraint(action);
+			break;
+		case ADD_FORCE: addForce(action);
+			break;
+		}
+	}
+	
+	private void move(int action) {
+		
+		switch (action) {
+		case START:
+			break;
+		case USE:
+			
+			java.util.List<String> lst = lstEntity.getSelectedValuesList();
+			for (int i = 0; i < lst.size(); i++) {
+				Entity e = Manager.getEntity(lst.get(i));
+				e.setLocation(Vector.cAddVector(e.location.clone(), new float[]{Input.deltaX, Input.deltaY, 0}));
+			}
+			
+			break;
+		case END:
+			break;
+		}
+		
+	}
+	
+	private void select(int action) {
+		
+		switch (action) {
+		case START:
+			break;
+		case USE:
+			break;
+		case END:
+			break;
+		}
+		
+	}
+	
+	private void addEntity(int action) {
+		
+		String name;
+		
+		switch (action) {
+		case START:
+			entityCount++;
+			name = "Entity " + entityCount;
+			Manager.addEntity(name, Entity.SHAPE, new float[]{Input.mouseX, Input.mouseY, 0}, "icosahedron");
+			lm.addElement(name);
+			
+			break;
+		case USE:
+			name = "Entity " + entityCount;
+			Entity e = Manager.getEntity(name);
+			e.setLocation(Vector.cAddVector(e.location.clone(), new float[]{Input.deltaX, Input.deltaY, 0}));
+			
+			break;
+		case END:
+			break;
+		}
+		
+	}
+	
+	private void addConstraint(int action) {
+		
+		switch (action) {
+		case START:
+			break;
+		case USE:
+			break;
+		case END:
+			break;
+		}
+		
+	}
+	
+	private void addForce(int action) {
+		
+		switch (action) {
+		case START:
+			break;
+		case USE:
+			break;
+		case END:
+			break;
+		}
+		
+	}
 
-	public long getTime() {
+	public static long getTime() {
 
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 
@@ -845,6 +895,8 @@ public class Engine {
 		// Calculate the FPS
 		if (getTime() - lastFPS > 1000) {
 			System.out.println("FPS: " + fps);
+			System.out.println(Profiler.getString());
+			Profiler.clear();
 			fps = 0; // reset the FPS counter
 			lastFPS += 1000; // add 1 second
 		}

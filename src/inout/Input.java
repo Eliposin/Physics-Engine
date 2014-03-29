@@ -29,8 +29,10 @@ public class Input {
 	public static int debug = Keyboard.KEY_E;
 	public static int grid = Keyboard.KEY_G;
 	public static int settings = Keyboard.KEY_T;
+	public static int delete = Keyboard.KEY_DELETE;
 
 	public static int mouseX, mouseY; // Mouse location.
+	public static int deltaX, deltaY;
 
 	// Whether or not the keys are depressed.
 	public static boolean mouse0Down;
@@ -47,6 +49,7 @@ public class Input {
 	public static boolean debugDown;
 	public static boolean gridDown;
 	public static boolean settingsDown;
+	public static boolean deleteDown;
 
 	public static byte mouse0Changed;
 	public static byte mouse1Changed;
@@ -62,6 +65,7 @@ public class Input {
 	public static byte debugChanged;
 	public static byte gridChanged;
 	public static byte settingsChanged;
+	public static byte deleteChanged;
 
 	/**
 	 *  Update the key and mouse status.
@@ -70,6 +74,8 @@ public class Input {
 		
 		mouseX = Mouse.getX();
 		mouseY = Mouse.getY();
+		deltaX = Mouse.getDX();
+		deltaY = Mouse.getDY();
 		
 		forwardChanged = NO_CHANGE;
 		backwardChanged = NO_CHANGE;
@@ -82,6 +88,7 @@ public class Input {
 		debugChanged = NO_CHANGE;
 		gridChanged = NO_CHANGE;
 		settingsChanged = NO_CHANGE;
+		deleteChanged = NO_CHANGE;
 
 		if (Mouse.isButtonDown(0)) {
 			if (mouse0Down == false) {
@@ -221,6 +228,14 @@ public class Input {
 					}
 					settingsDown = true;
 				}
+				if (Keyboard.getEventKey() == delete) {
+					if (deleteDown == false) {
+						deleteChanged = PRESSED;
+					} else {
+						deleteChanged = NO_CHANGE;
+					}
+					deleteDown = true;
+				}
 			} else {
 				if (Keyboard.getEventKey() == forward) {
 					if (forwardDown == true) {
@@ -310,6 +325,14 @@ public class Input {
 						settingsChanged = NO_CHANGE;
 					}
 					settingsDown = false;
+				}
+				if (Keyboard.getEventKey() == delete) {
+					if (deleteDown == true) {
+						deleteChanged = RELEASED;
+					} else {
+						deleteChanged = NO_CHANGE;
+					}
+					deleteDown = false;
 				}
 			}
 		}

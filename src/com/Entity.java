@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
 import physics.Collision;
-import physics.ComplexPhys;
 import physics.Physics;
 
 public class Entity {
@@ -30,8 +29,21 @@ public class Entity {
 	
 	short type;
 	
-	Entity(String name, short type, String fileName) {
+	public final static short SHAPE = 0;
+	public final static short CONSTRAINT_STRING = 1;
+	public final static short CONSTRAINT_ELASTIC = 2;
+	public final static short CONSTRAINT_ROD = 3;
+	public final static short CONSTRAINT_SPRING = 4;
+	
+	Physics phys = null;
+	
+	Entity(String name, short type, float[] location, String fileName) {
 		this.name = name;
+		this.type = type;
+		this.location = location;
+		if (type == SHAPE) {
+			phys = new Physics(Vector.cScaleVector(location, 1/Engine.scale));
+		}
 		mdl.load(fileName);
 		AABB = Collision.buildAABB(mdl.vertices);
 		initModel();
@@ -64,6 +76,8 @@ public class Entity {
 	}
 	
 	public void draw() {
+		
+		Profiler.prof("Entity.draw");
 		
 		GL11.glPushMatrix();
 		
@@ -128,7 +142,7 @@ public class Entity {
 			//Draw the forces on the object
 			GL11.glColor3f(0.2f, 0.8f, 0.2f);
 			GL11.glBegin(GL11.GL_LINES);
-			float[] acceleration = getPhysics().getAcceleration();
+			float[] acceleration = phys.getAcceleration();
 			acceleration = Vector.cScaleVector(acceleration, 1f/10);
 			GL11.glVertex3f(0, 0, 0);
 			GL11.glVertex3f(acceleration[0], acceleration[1], acceleration[2]);
@@ -136,7 +150,7 @@ public class Entity {
 			
 			//Draw the velocity of the object
 			GL11.glColor3f(0.8f, 0.8f, 0.2f);
-			float[] velocity = getPhysics().getVelocity();
+			float[] velocity = phys.getVelocity();
 			velocity = Vector.cScaleVector(velocity, 1f/10);
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glVertex3f(0, 0, 0);
@@ -148,6 +162,7 @@ public class Entity {
 		GL11.glColor3f(Engine.red, Engine.green, Engine.blue);
 		GL11.glPopMatrix();
 		
+		Profiler.prof("Entity.draw");
 	}
 	
 	private FloatBuffer toFloatBuffer(float[] floatArray) {
@@ -168,21 +183,28 @@ public class Entity {
 		return buffer;
 	}
 	
-	public Physics getPhysics() {
-		return ComplexPhys.getPhysObject(name);
-	}
-	
 	public float[] getAABB() {
 		return AABB.clone();
 	}
 	
-	public void updateOrientation() {
-		Physics phys = getPhysics();
-		AABB[0] = location[0] - phys.getLocation()[0];
-		AABB[1] = location[1] - phys.getLocation()[1];
-		AABB[2] = location[2] - phys.getLocation()[2];
-		location = Vector.cScaleVector(phys.getLocation().clone(), Engine.scale);
-//		rotation = phys.getRotation().clone;
+	public void updateOrientation(int delta) {
+		if (phys != null) {
+			phys.update(delta);
+			AABB[0] = location[0] - phys.getLocation()[0];
+			AABB[1] = location[1] - phys.getLocation()[1];
+			AABB[2] = location[2] - phys.getLocation()[2];
+			location = Vector.cScaleVector(phys.getLocation(), Engine.scale);
+			//		rotation = phys.getRotation().clone;
+
+		}
+
+	}
+	
+	public void setLocation(float[] location) {
+		
+		this.location = location;
+		phys.location = Vector.cScaleVector(location, 1/Engine.scale);
+		
 	}
 	
 }

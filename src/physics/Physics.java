@@ -2,6 +2,7 @@ package physics;
 
 import java.util.ArrayList;
 import com.Engine;
+import com.Profiler;
 import com.Vector;
 //import physics.Collision.*;
 
@@ -141,6 +142,8 @@ public class Physics {
 	 * @return the new location
 	 */
 	public float[] update(float delta) {
+		
+		Profiler.prof("Physics.update");
 
 		float[] temp = velocity.clone();
 		velocity = force(velocity, delta);
@@ -154,7 +157,7 @@ public class Physics {
 		
 		velocity = Vector.cScaleVector(velocity, Engine.timeScale / delta);
 		
-
+		Profiler.prof("Physics.update");
 		return location;
 
 	}

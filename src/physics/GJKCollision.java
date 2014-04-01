@@ -211,7 +211,7 @@ public class GJKCollision {
 		float[] ad = Vector.cSubVector(d, a);
 		float[] ao = Vector.cScaleVector(a, -1);
 		
-		float[] abc = Vector.cCrossVector(ac, ab);
+//		float[] abc = Vector.cCrossVector(ac, ab); //??? not used?
 		float[] adb = Vector.cCrossVector(ab, ad);
 		float[] acd = Vector.cCrossVector(ad, ac);
 		

@@ -1,7 +1,5 @@
 package physics;
 
-import inout.Model;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,7 +7,6 @@ import com.Entity;
 import com.Profiler;
 import com.Vector;
 import com.Engine;
-import physics.GJKCollision;
 
 /**
  * A global class that detects collisions and remedies them.

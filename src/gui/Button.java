@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import com.Engine;
 import com.Vector;
 
 public class Button implements ActionListener {
@@ -92,7 +91,7 @@ public class Button implements ActionListener {
 				onHover();
 			}
 			
-			if (Input.mouse0Down == true) {
+			if (Input.mouseDown[0] == true) {
 				
 				if (pressed == false) {
 					pressed = true;
@@ -110,7 +109,7 @@ public class Button implements ActionListener {
 
 		} else {
 			
-			if (Input.mouse0Down == false) {
+			if (Input.mouseDown[0] == false) {
 				pressed = false;
 				colorScale = 1;
 				

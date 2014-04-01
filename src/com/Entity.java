@@ -16,16 +16,16 @@ import physics.Physics;
 public class Entity {
 	
 	public String name;
-	int VAOID;
-	int VBOID;
-	int NBOID;
-	int VBOIID;
 	
-	public Model mdl = new Model();
-	
+	public boolean isActive = true;
+
 	public float[] AABB = new float[6];
 	public float[] rotation = new float[3]; // position, rotation
 	public float[] location = new float[3];
+	
+	public Model mdl = new Model();
+	
+	Physics phys = null;
 	
 	short type;
 	
@@ -35,7 +35,10 @@ public class Entity {
 	public final static short CONSTRAINT_ROD = 3;
 	public final static short CONSTRAINT_SPRING = 4;
 	
-	Physics phys = null;
+	int VAOID;
+	int VBOID;
+	int NBOID;
+	int VBOIID;
 	
 	Entity(String name, short type, float[] location, String fileName) {
 		this.name = name;

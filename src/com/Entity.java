@@ -80,8 +80,6 @@ public class Entity {
 	
 	public void draw() {
 		
-		Profiler.prof("Entity.draw");
-		
 		GL11.glPushMatrix();
 		
 		GL11.glTranslatef(location[0], location[1], location[2]);
@@ -108,6 +106,52 @@ public class Entity {
 		
 		if(Engine.debugToggle) {
 			GL11.glLineWidth(2);
+			
+			//Draw the forces on the object
+			GL11.glColor3f(0.2f, 0.8f, 0.2f);
+			GL11.glBegin(GL11.GL_LINES);
+			float[] acceleration = phys.getAcceleration();
+			acceleration = Vector.cScaleVector(acceleration, 1f/10);
+			GL11.glVertex3f(0, 0, 0);
+			GL11.glVertex3f(acceleration[0], acceleration[1], acceleration[2]);
+			GL11.glEnd();
+			
+			//Draw the velocity of the object
+			GL11.glColor3f(0.8f, 0.8f, 0.2f);
+			float[] velocity = phys.getVelocity();
+			velocity = Vector.cScaleVector(velocity, 1f/10);
+			GL11.glBegin(GL11.GL_LINES);
+			GL11.glVertex3f(0, 0, 0);
+			GL11.glVertex3f(velocity[0], velocity[1], velocity[2]);
+			GL11.glEnd();
+			
+			GL11.glPopMatrix();
+			GL11.glPushMatrix();
+			GL11.glTranslatef(AABB[0], AABB[1], AABB[2]);
+			GL11.glScalef(Engine.scale, Engine.scale, Engine.scale);
+			
+			//Draw the normals
+//			GL11.glColor3f(0.2f, 0.2f, 0.2f);
+//			GL11.glBegin(GL11.GL_LINES);
+//			int index = 0;
+//			for (int[] points : mdl.indicesList) {
+//				
+//				float[] pnt1 = new float[3];
+//				float[] point1 = mdl.verticesList.get(points[0]);
+//				float[] point2 = mdl.verticesList.get(points[1]);
+//				float[] point3 = mdl.verticesList.get(points[2]);
+//				pnt1[0] = (point1[0] + point2[0] + point3[0]) / 3;
+//				pnt1[1] = (point1[1] + point2[1] + point3[1]) / 3;
+//				pnt1[2] = (point1[2] + point2[2] + point3[2]) / 3;
+//				
+//				float[] pnt2 = Vector.cAddVector(pnt1, Vector.cScaleVector(mdl.surfNormList.get(index).clone(), 0.1f));
+//				
+//				GL11.glVertex3f(pnt1[0], pnt1[1], pnt1[2]);
+//				GL11.glVertex3f(pnt2[0], pnt2[1], pnt2[2]);
+//				
+//				index++;
+//			}
+//			GL11.glEnd();
 			
 			//Draw the AABB			
 			GL11.glColor3f(0.8f, 0.2f, 0.2f);
@@ -142,30 +186,11 @@ public class Entity {
 			GL11.glVertex3f(AABB[3], AABB[4], -AABB[5]);//2
 			GL11.glEnd();
 			
-			//Draw the forces on the object
-			GL11.glColor3f(0.2f, 0.8f, 0.2f);
-			GL11.glBegin(GL11.GL_LINES);
-			float[] acceleration = phys.getAcceleration();
-			acceleration = Vector.cScaleVector(acceleration, 1f/10);
-			GL11.glVertex3f(0, 0, 0);
-			GL11.glVertex3f(acceleration[0], acceleration[1], acceleration[2]);
-			GL11.glEnd();
-			
-			//Draw the velocity of the object
-			GL11.glColor3f(0.8f, 0.8f, 0.2f);
-			float[] velocity = phys.getVelocity();
-			velocity = Vector.cScaleVector(velocity, 1f/10);
-			GL11.glBegin(GL11.GL_LINES);
-			GL11.glVertex3f(0, 0, 0);
-			GL11.glVertex3f(velocity[0], velocity[1], velocity[2]);
-			GL11.glEnd();
-			
 			GL11.glLineWidth(1);
 		}
+		
 		GL11.glColor3f(Engine.red, Engine.green, Engine.blue);
 		GL11.glPopMatrix();
-		
-		Profiler.prof("Entity.draw");
 	}
 	
 	private FloatBuffer toFloatBuffer(float[] floatArray) {
@@ -193,12 +218,13 @@ public class Entity {
 	public void updateOrientation(int delta) {
 		if (phys != null) {
 			phys.update(delta);
-			AABB[0] = location[0] - phys.getLocation()[0];
-			AABB[1] = location[1] - phys.getLocation()[1];
-			AABB[2] = location[2] - phys.getLocation()[2];
 			location = Vector.cScaleVector(phys.getLocation(), Engine.scale);
-			//		rotation = phys.getRotation().clone;
+//			rotation = phys.getRotation().clone;
 
+			AABB[0] = location[0];
+			AABB[1] = location[1];
+			AABB[2] = location[2];
+			
 		}
 
 	}

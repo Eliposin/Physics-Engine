@@ -79,9 +79,7 @@ public class Engine {
 			update(delta);
 			renderGL();
 
-			Profiler.prof("Display.sync");
 			Display.sync(setFPS);
-			Profiler.prof("Display.sync");
 			Display.update();
 			
 		}
@@ -177,8 +175,6 @@ public class Engine {
 	}
 
 	public void renderGL() {
-
-		Profiler.prof("Engine.renderGL");
 		
 		// Clear the screen and depth buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -214,8 +210,6 @@ public class Engine {
 			}
 			GL11.glEnd();
 		}
-
-		Profiler.prof("Engine.renderGL");
 		
 		GL11.glColor3f(red, green, blue);
 		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
@@ -223,8 +217,6 @@ public class Engine {
 		Manager.render();
 		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
 		GL11.glDisable(GL11.GL_NORMAL_ARRAY);
-		
-		Profiler.prof("Engine.renderGL");
 
 		// Draw more stuff if debug toggle is on
 		if (debugToggle == true) {
@@ -254,8 +246,6 @@ public class Engine {
 
 			frame++;
 		}
-		
-		Profiler.prof("Engine.renderGL");
 		
 	}
 
@@ -388,8 +378,6 @@ public class Engine {
 		// Calculate the FPS
 		if (getTime() - lastFPS > 1000) {
 			System.out.println("FPS: " + fps);
-			System.out.println(Profiler.getString());
-			Profiler.clear();
 			fps = 0; // reset the FPS counter
 			lastFPS += 1000; // add 1 second
 		}

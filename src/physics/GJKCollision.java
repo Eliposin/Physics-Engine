@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.Engine;
 import com.Entity;
-import com.Profiler;
 import com.Vector;
 /**
  * 
@@ -25,8 +24,6 @@ public class GJKCollision {
 	 * @return true if objects intersect, false if they do not.
 	 */
 	public static boolean GJKCollide(Entity entity1, Entity entity2) {
-		
-		Profiler.prof("GJKCollision.GJKCollide");
 
 		direction = Vector.cSubVector(entity2.location, entity1.location);
 		
@@ -42,11 +39,9 @@ public class GJKCollision {
 			simplex.add(support(entity1, entity2, direction));
 
 			if (Vector.cDotVector(simplex.get(simplex.size() - 1), direction) <= 0) {
-				Profiler.prof("GJKCollision.GJKCollide");
 				return false;
 			} else {
 				if (contains()) {
-					Profiler.prof("GJKCollision.GJKCollide");
 					return true;
 				}
 				else{
@@ -56,7 +51,6 @@ public class GJKCollision {
 			
 			iterations++;
 		}
-		Profiler.prof("GJKCollision.GJKCollide");
 		return false;
 	}
 

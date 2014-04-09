@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import com.Entity;
-import com.Profiler;
 import com.Vector;
 import com.Engine;
 
@@ -25,7 +24,6 @@ public class Collision {
 	public static HashMap<Integer, short[]> overlapKeys = new HashMap<Integer, short[]>();
 
 	public static boolean AABBCollide(Entity ent1, Entity ent2) {
-		Profiler.prof("Collision.AABBCollide");
 		
 		float AABB1[] = ent1.getAABB();
 		float AABB2[] = ent2.getAABB();
@@ -41,7 +39,6 @@ public class Collision {
 		overlap = distance[0] <= 0.0F && distance[1] <= 0.0F
 				&& distance[2] <= 0.0F;
 		
-		Profiler.prof("Collision.AABBCollide");
 		return overlap;
 	}
 	
@@ -202,8 +199,6 @@ public class Collision {
 	 */
 
 	public static void mapSectors(Entity entity) {
-		
-		Profiler.prof("Collision.mapSectors");
 
 		float[] AABB = entity.getAABB();
 		short[] index = new short[3];
@@ -239,8 +234,6 @@ public class Collision {
 				}
 			}
 		}
-		
-		Profiler.prof("Collision.mapSectors");
 		
 	}
 

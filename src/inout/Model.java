@@ -18,6 +18,7 @@ public class Model {
 
 	public ArrayList<float[]> verticesList = new ArrayList<float[]>(5000);
 	public ArrayList<float[]> normalsList = new ArrayList<float[]>(5000);
+	public ArrayList<float[]> surfNormList = new ArrayList<float[]>(5000);
 	public ArrayList<float[]> textureCoordsList = new ArrayList<float[]>(5000);
 	public ArrayList<float[]> paramVerticesList = new ArrayList<float[]>(500);
 	public ArrayList<float[]> colorAmbientList = new ArrayList<float[]>(100);
@@ -261,10 +262,9 @@ public class Model {
 	 * vertex normal. Normal info is necessary for shading.
 	 * @return An ArrayList<float[]> containing the normals
 	 */
-	private ArrayList<float[]> genNormals() {
+	private void genNormals() {
 
 		ArrayList<ArrayList<float[]>> normalBuffer = new ArrayList<ArrayList<float[]>>(verticesList.size());
-		ArrayList<float[]> normals = new ArrayList<float[]>(verticesList.size());
 		
 		while (normalBuffer.size() <= verticesList.size()) {
 			normalBuffer.add(new ArrayList<float[]>());
@@ -280,14 +280,15 @@ public class Model {
 		  float[] v2 = Vector.cSubVector(p3, p1);
 		  float[] normal = Vector.cCrossVector(v1, v2);
 
-		  normal = Vector.toSpherical(normal);
-		  normal[0] = 1;
-		  normal = Vector.toCartesian(normal);
+		  normal = Vector.normalize(normal);
 
 		  // Store the face's normal for each of the vertices that make up the face.
 		  normalBuffer.get(indicesList.get(i)[0]).add(normal);
 		  normalBuffer.get(indicesList.get(i)[1]).add(normal);
 		  normalBuffer.get(indicesList.get(i)[2]).add(normal);
+		  
+		  //Store the surface normal
+		  surfNormList.add(normal);
 		}
 
 		// Now loop through each vertex vector, and average out all the normals stored.
@@ -298,15 +299,11 @@ public class Model {
 				normal = Vector.cAddVector(normal, normalBuffer.get(i).get(j));
 			}
 			
-			normal = Vector.toSpherical(normal);
-			normal[0] = 1;
-			normal = Vector.toCartesian(normal);
+			normal = Vector.normalize(normal);
 			
-			normals.add(i, normal);
+			normalsList.add(i, normal);
 				
 		}
-
-		return normals;
 	}
 	
 	/**
@@ -413,6 +410,7 @@ public class Model {
 		textureCoordsList.trimToSize();
 		indicesList.trimToSize();
 		normalsList.trimToSize();
+		surfNormList.trimToSize();
 		paramVerticesList.trimToSize();
 		colorAmbientList.trimToSize();
 		colorDiffuseList.trimToSize();
@@ -430,7 +428,8 @@ public class Model {
 		if (normalsList.size() != 0) {
 			normals = toArray(normalsList, normalStride);
 		} else {
-			normals = toArray(genNormals(), normalStride);;
+			genNormals();
+			normals = toArray(normalsList, normalStride);;
 		}
 		if (paramVerticesList.size() != 0) {
 			paramVertices = toArray(paramVerticesList,

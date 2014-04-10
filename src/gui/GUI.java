@@ -23,8 +23,8 @@ import inout.Dir;
 
 public class GUI {
 
-	private static JFrame frmMain;
-	static Canvas cnvsDisplay;
+	public static JFrame frmMain;
+	public static Canvas cnvsDisplay;
 
 	static int entityCount = 0;
 
@@ -45,7 +45,7 @@ public class GUI {
 	public static void initialize() throws LWJGLException {
 
 		frmMain = new JFrame();
-		frmMain.setResizable(false);
+//		frmMain.setResizable(false);
 		frmMain.setTitle("Physics Engine");
 		frmMain.setBackground(guiColor);
 		frmMain.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -60,7 +60,7 @@ public class GUI {
 
 		initWorkPanel();
 
-		initTimeline();
+//		initTimeline();
 
 		initMenuBar();
 

@@ -50,11 +50,10 @@ public class Engine {
 
 	public static boolean debugToggle = true; // use the debug menu
 
-	public static float red = 0.5f;
-	public static float green = 0.5f;
-	public static float blue = 1.0f;
-
-	int[] graphData = new int[width]; // A list of frametime data.
+	public static float red = 0.95f;
+	public static float green = 0.95f;
+	public static float blue = 0.95f;
+	int[] graphData = new int[300]; // A list of frametime data.
 
 	float[] attr = { 1000, 0f, 1f }; // The attributes of the objects for
 										// physics. {Mass, Drag, Restitution}
@@ -78,9 +77,16 @@ public class Engine {
 			
 			update(delta);
 			renderGL();
-
-			Display.sync(setFPS);
+			
+			if (Display.wasResized()) {
+				width = GUI.cnvsDisplay.getWidth();
+				height = GUI.cnvsDisplay.getHeight();
+				GL11.glViewport(0, 0, width, height);
+				initGL();
+			}
+			
 			Display.update();
+			Display.sync(setFPS);
 			
 		}
 	}
@@ -134,12 +140,18 @@ public class Engine {
 	}
 	
 	private void initGL() {
+		
+		float ratio = (float)width/height;
+		float near = 1;
+		float far = 2*depth;
+		float fov = (float) Math.toDegrees(2 * Math.atan2(height, far - near));
 
 		// init opengl
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-//		GL11.glOrtho(0, width, 0, height, depth, 0);
-		GLU.gluPerspective(37, (float)width/height, 0.03f, 2*depth);
+//		GL11.glOrtho(0, width, 0, height, -depth, depth);
+		
+		GLU.gluPerspective(fov, ratio, near, far);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
@@ -163,6 +175,7 @@ public class Engine {
 //		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 //		GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
 //		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, asFloatBuffer(new float[]{width/2, height/2, depth/2, 1}));
+		GL11.glLoadIdentity();
 		GLU.gluLookAt(width/2, height/2, depth, width/2, height/2, 0, 0, 1, 0);
 
 	}
@@ -209,18 +222,7 @@ public class Engine {
 						* scale);
 			}
 			GL11.glEnd();
-		}
-		
-		GL11.glColor3f(red, green, blue);
-		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
-		GL11.glEnable(GL11.GL_NORMAL_ARRAY);
-		Manager.render();
-		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
-		GL11.glDisable(GL11.GL_NORMAL_ARRAY);
-
-		// Draw more stuff if debug toggle is on
-		if (debugToggle == true) {
-
+			
 			// Draw a frametime graph at the top of the screen
 			if (frame <= graphData.length) {
 
@@ -232,6 +234,15 @@ public class Engine {
 
 				GL11.glBegin(GL11.GL_LINES);
 				for (int i = 0; i < graphData.length; i++) {
+					
+					if (graphData[i] < 34) {
+						GL11.glColor3f(0, 0.75f, 0);
+					} else if (graphData[i] < 68) {
+						GL11.glColor3f(0.9f, 0.9f, 0);
+					} else {
+						GL11.glColor3f(0.75f, 0, 0);
+					}
+					
 					GL11.glVertex2f(i, height);
 					GL11.glVertex2f(i, height - graphData[i]);
 				}
@@ -245,7 +256,25 @@ public class Engine {
 			}
 
 			frame++;
+			
 		}
+
+		GL11.glColor3f(red, green, blue);
+		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
+		GL11.glEnable(GL11.GL_NORMAL_ARRAY);
+		Manager.render();
+		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
+		GL11.glDisable(GL11.GL_NORMAL_ARRAY);
+		
+//		Draw the triangle of death?
+//		GL11.glBegin(GL11.GL_TRIANGLES);
+//		GL11.glColor3f(1, 0, 0);
+//		GL11.glVertex3f(450, 660, 1);
+//		GL11.glColor3f(0, 1, 0);
+//		GL11.glVertex3f(450, 140, 1);
+//		GL11.glColor3f(0, 0, 1);
+//		GL11.glVertex3f(900, 400, 1);
+//		GL11.glEnd();
 		
 	}
 
@@ -279,10 +308,8 @@ public class Engine {
 
 			if (debugToggle == false) {
 				debugToggle = true;
-				System.out.println("debug is ON");
 			} else {
 				debugToggle = false;
-				System.out.println("debug is OFF");
 			}
 
 		}

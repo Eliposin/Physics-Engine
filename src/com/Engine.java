@@ -75,8 +75,9 @@ public class Engine {
 			
 			delta = getDelta();
 			
-			update(delta);
 			renderGL();
+			update(delta);
+//			renderGL();
 			
 			if (Display.wasResized()) {
 				width = GUI.cnvsDisplay.getWidth();

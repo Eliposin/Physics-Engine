@@ -151,7 +151,6 @@ public class Engine {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 //		GL11.glOrtho(0, width, 0, height, -depth, depth);
-		
 		GLU.gluPerspective(fov, ratio, near, far);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);

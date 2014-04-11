@@ -40,6 +40,30 @@ public class GJKCollision {
 			GL11.glBegin(GL11.GL_POINTS);
 			GL11.glVertex3f(Engine.width/2, Engine.height/2, 0);
 			GL11.glEnd();
+			
+			GL11.glColor3f(1, 1, 0);
+			GL11.glPointSize(3);
+			float[] vert1 = entity1.mdl.vertices.clone();
+			float[] vert2 = entity2.mdl.vertices.clone();
+			vert1 = Vector.cScaleVector(vert1.clone(), Engine.scale);
+			vert2 = Vector.cScaleVector(vert2.clone(), Engine.scale);
+			
+			for (int i = 0; i < vert1.length; i = i+3) {
+				vert1[i] = vert1[i] + entity1.location[0];
+				vert1[i+1] = vert1[i+1] + entity1.location[1];
+				vert1[i+2] = vert1[i+2] + entity1.location[2];
+			}
+			for (int i = 0; i < vert2.length; i = i+3) {
+				vert2[i] = vert2[i] + entity2.location[0];
+				vert2[i+1] = vert2[i+1] + entity2.location[1];
+				vert2[i+2] = vert2[i+2] + entity2.location[2];
+			}
+			GL11.glBegin(GL11.GL_POINTS);
+			float[] mink = Collision.minkowski(vert1, vert2, 3, false);
+			for (int i = 0; i < mink.length; i = i+3) {
+				GL11.glVertex3f(Engine.width/2+mink[i], Engine.height/2+mink[i+1], mink[i+2]);
+			}
+			GL11.glEnd();
 		}
 
 

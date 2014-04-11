@@ -133,8 +133,18 @@ public class Physics {
 
 		return momentum;
 	}
-
 	
+	public static float[] distToForce(float[] distVect, int delta, float mass) {
+		
+		float[] force = new float[3];
+		
+		force = Vector.cScaleVector(distVect.clone(), mass);
+//		force = Vector.cScaleVector(force, 10000/delta);// * (float)delta/1000);
+//		force = Vector.cScaleVector(force, (float)delta/1000 * (float)delta/1000);
+		
+		return force;
+	}
+
 	/**
 	 * 
 	 * @param delta the change in time for the object

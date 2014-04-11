@@ -42,6 +42,15 @@ public class Collision {
 		return overlap;
 	}
 	
+	public static boolean intersecting(float[] distVect) {
+		
+		if (Vector.cLength(distVect.clone()) < 1) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * 
 	 * @param simplex ArrayList of float arrays

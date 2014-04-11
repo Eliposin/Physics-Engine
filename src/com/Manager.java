@@ -3,6 +3,7 @@ package com;
 import java.util.ArrayList;
 import physics.Collision;
 import physics.GJKCollision;
+import physics.Physics;
 
 /**
  * A global class that has the index of all the Entities. It controls updating 
@@ -85,9 +86,19 @@ public class Manager {
 				for (int j = i + 1; j < entity.size(); j++) {
 					if (Collision.AABBCollide(entity.get(i), entity.get(j))) {
 
-						if (GJKCollision.GJKCollide(entity.get(i), entity
-								.get(j))) {
-
+//						if (GJKCollision.GJKCollide(entity.get(i), entity
+//								.get(j))) {
+//
+//						}
+						float[] distVect = Vector.cSubVector(entity.get(j).location, entity.get(i).location);
+						Vector.cScaleVector(distVect, 1/Engine.scale);
+						if (Collision.intersecting(distVect)) {
+							distVect = Vector.cSubVector(Vector.normalize(distVect.clone()), distVect);
+							float[] force = Physics.distToForce(distVect, delta, 1000);
+							force = Vector.cScaleVector(force, Engine.scale);
+							entity.get(j).phys.addForce(force.clone());
+							force = Vector.cScaleVector(force, -1);
+							entity.get(i).phys.addForce(force);
 						}
 					}
 				}

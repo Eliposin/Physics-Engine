@@ -2,6 +2,7 @@ package gui;
 
 import inout.Input;
 
+import com.Engine;
 import com.Entity;
 import com.Manager;
 import com.Vector;
@@ -15,16 +16,19 @@ public class Tool {
 	final static int ADD_ENTITY = 2;
 	final static int ADD_CONSTRAINT = 3;
 	final static int ADD_FORCE = 4;
+	final static int DRAG = 5;
 	
 	public final static int START = 5;
 	public final static int USE = 6;
 	public final static int END = 7;
-
+	
 	public static void useTool(int action) {
 		switch(currentTool) {
 		case MOVE: move(action);
 			break;
 		case SELECT: select(action);
+			break;
+		case DRAG: drag(action);
 			break;
 		case ADD_ENTITY: addEntity(action);
 			break;
@@ -67,6 +71,28 @@ public class Tool {
 		}
 		
 	}
+	
+	private static void drag(int action) {
+		
+		switch (action) {
+		case START:
+			break;
+		case USE:
+			
+			java.util.List<String> lst = GUI.lstEntity.getSelectedValuesList();
+			for (int i = 0; i < lst.size(); i++) {
+				Entity e = Manager.getEntity(lst.get(i));
+				float[] distance = Vector.cSubVector(new float[]{Input.mouseX, Input.mouseY, 0}, e.location);
+				distance = Vector.cScaleVector(distance.clone(), Engine.scale);
+				e.phys.addForce(distance);
+			}
+			
+			break;
+		case END:
+			break;
+		}
+		
+	}	
 	
 	private static void addEntity(int action) {
 		

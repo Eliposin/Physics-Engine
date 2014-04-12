@@ -20,7 +20,7 @@ public class Manager {
 	 * @param name The name of the Entity
 	 * @param type What type the Entity is. e.g. "shape" or "spring"
 	 * @param fileName The model filename
-	 * @return The index of the Entity
+	 * @return The hashcode of the Entity
 	 */
 	public static int addEntity(String name, short type, float[] location, String fileName) {
 		
@@ -73,6 +73,7 @@ public class Manager {
 	 * and collision detection.
 	 */
 	public static void update(int delta) {
+		//TODO make parts of this multithreaded
 		
 		Collision.clearSectors();
 		for (int i = 0; i < entity.size(); i++) {

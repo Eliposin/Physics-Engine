@@ -25,7 +25,7 @@ public class Entity {
 	
 	public Model mdl = new Model();
 	
-	Physics phys = null;
+	public Physics phys = null;
 	
 	short type;
 	
@@ -38,7 +38,12 @@ public class Entity {
 	int VAOID;
 	int VBOID;
 	int NBOID;
+	int CBOID;
 	int VBOIID;
+	
+	boolean normals;
+	boolean textures;
+	boolean colors;
 	
 	Entity(String name, short type, float[] location, String fileName) {
 		this.name = name;
@@ -54,26 +59,54 @@ public class Entity {
 	
 	private void initModel() {
 		
-		FloatBuffer verticesBuffer = toFloatBuffer(mdl.vertices);
-		FloatBuffer normalsBuffer = toFloatBuffer(mdl.normals);;
-		IntBuffer indicesBuffer = toIntBuffer(mdl.indices);
+		if (mdl.normalsList != null) {
+			normals = true;
+		}
+		if (mdl.colorAmbient != null) {
+			colors = true;
+		}
+		if (mdl.textureCoords != null) {
+			textures = true;
+		}
 		
 		VAOID = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(VAOID);
+		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
+		GL11.glEnable(GL11.GL_NORMAL_ARRAY);
+		
+		FloatBuffer verticesBuffer = toFloatBuffer(mdl.vertices);
 		VBOID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOID);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
 		GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-		
-		NBOID = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, NBOID);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
-		GL11.glNormalPointer(GL11.GL_FLOAT, 0, 0);
 
+		if (normals) {
+			FloatBuffer normalsBuffer = toFloatBuffer(mdl.normals);
+			NBOID = GL15.glGenBuffers();
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, NBOID);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
+			GL11.glNormalPointer(GL11.GL_FLOAT, 0, 0);
+		}
+		
+		if (colors) {
+			FloatBuffer colorBuffer = toFloatBuffer(mdl.colorAmbient);
+			CBOID = GL15.glGenBuffers();
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, CBOID);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuffer, GL15.GL_STATIC_DRAW);
+			GL11.glColorPointer(3, GL11.GL_FLOAT, 0, 0);
+		}
+		
+		if (textures) {
+			//TODO
+		}
+		
+		IntBuffer indicesBuffer = toIntBuffer(mdl.indices);
 		VBOIID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOIID);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		GL30.glBindVertexArray(0);
+		
 		GL30.glBindVertexArray(0);
 		
 	}
@@ -86,12 +119,6 @@ public class Entity {
 		GL11.glScalef(Engine.scale, Engine.scale, Engine.scale);
 		
 		GL30.glBindVertexArray(VAOID);
-		
-		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOID);
-		GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, VBOIID);
 		
 		// Draw the vertices
@@ -100,9 +127,6 @@ public class Entity {
 		// Put everything back to default (deselect)
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		GL30.glBindVertexArray(0);
-		
-		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
-		GL11.glDisable(GL11.GL_NORMAL_ARRAY);
 		
 		if(Engine.debugToggle) {
 			GL11.glLineWidth(2);

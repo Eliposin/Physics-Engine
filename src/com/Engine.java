@@ -23,6 +23,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.Sys;
 
@@ -32,7 +33,7 @@ public class Engine {
 	
 	static boolean closing = false;
 
-	int delta; // change in milliseconds since the last frame
+	public static int delta; // change in milliseconds since the last frame
 	public static float timeScale = 1000; // 1 second real-time is 1000 /
 											// (timeScale) seconds in engine
 
@@ -75,9 +76,8 @@ public class Engine {
 			
 			delta = getDelta();
 			
-			renderGL();
 			update(delta);
-//			renderGL();
+			renderGL();
 			
 			if (Display.wasResized()) {
 				width = GUI.cnvsDisplay.getWidth();
@@ -158,23 +158,20 @@ public class Engine {
 
 //		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		
-//		FloatBuffer ambient;
-//		FloatBuffer brightAmbient;
-//		FloatBuffer light;
-//		ambient = asFloatBuffer(new float[]{0.15f, 0.15f, 0.15f, 1f});
-//		brightAmbient = asFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 1f});
-//		light = asFloatBuffer(new float[]{1.5f, 1.5f, 1.5f, 1f});
-//		GL11.glShadeModel(GL11.GL_SMOOTH);
+		FloatBuffer ambient = asFloatBuffer(new float[]{0.2f, 0.2f, 0.2f, 1f});
+		FloatBuffer light = asFloatBuffer(new float[]{1f, 1f, 1f, 1f});
+		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-//		GL11.glEnable(GL11.GL_LIGHTING);
-//		GL11.glEnable(GL11.GL_LIGHT0);
-//		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, ambient);
-//		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, light);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_LIGHT0);
+		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, ambient);
+		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, light);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
-//		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-//		GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
-//		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, asFloatBuffer(new float[]{width/2, height/2, depth/2, 1}));
+		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+		GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
+		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, asFloatBuffer(new float[]{width/2, height/2, depth/2, 1}));
 		GL11.glLoadIdentity();
 		GLU.gluLookAt(width/2, height/2, depth, width/2, height/2, 0, 0, 1, 0);
 
@@ -258,13 +255,9 @@ public class Engine {
 			frame++;
 			
 		}
-
+		
 		GL11.glColor3f(red, green, blue);
-		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
-		GL11.glEnable(GL11.GL_NORMAL_ARRAY);
 		Manager.render();
-		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
-		GL11.glDisable(GL11.GL_NORMAL_ARRAY);
 		
 //		Draw the triangle of death?
 //		GL11.glBegin(GL11.GL_TRIANGLES);

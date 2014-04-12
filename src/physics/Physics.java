@@ -133,6 +133,16 @@ public class Physics {
 
 		return momentum;
 	}
+	
+	public static float[] distToForce(float[] distVect, int delta, float mass) {
+
+		float[] force = new float[3];
+
+		force = Vector.cScaleVector(distVect.clone(), mass);
+		force = Vector.cScaleVector(force, (float)delta/1000 * (float)delta/1000);
+
+		return force;
+	}
 
 	
 	/**
@@ -142,17 +152,11 @@ public class Physics {
 	 */
 	public float[] update(float delta) {
 		
-
 		float[] temp = velocity.clone();
 		velocity = force(velocity, delta);
 		acceleration =  Vector.cScaleVector(Vector.cSubVector(velocity.clone(), temp), Engine.timeScale / delta);
-//		lastLocation = location.clone();
 		location = Vector.cAddVector(location,
 				Vector.cScaleVector(velocity, delta / Engine.timeScale));
-
-//		float[] deltaX = Vector.cSubVector(location, lastLocation);
-//		velocity = Vector.cScaleVector(deltaX, GameEngine.timeScale / delta);
-		
 		velocity = Vector.cScaleVector(velocity, Engine.timeScale / delta);
 		
 		return location;

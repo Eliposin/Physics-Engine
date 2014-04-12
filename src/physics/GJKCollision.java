@@ -2,8 +2,6 @@ package physics;
 
 import java.util.ArrayList;
 
-import org.lwjgl.opengl.GL11;
-
 import com.Engine;
 import com.Entity;
 import com.Vector;
@@ -35,64 +33,63 @@ public class GJKCollision {
 
 		direction = Vector.cScaleVector(direction, -1f);
 		
-		if (Engine.debugToggle) {
-			GL11.glPointSize(8);
-			GL11.glBegin(GL11.GL_POINTS);
-			GL11.glVertex3f(Engine.width/2, Engine.height/2, 0);
-			GL11.glEnd();
-			
-			GL11.glColor3f(1, 1, 0);
-			GL11.glPointSize(3);
-			float[] vert1 = entity1.mdl.vertices.clone();
-			float[] vert2 = entity2.mdl.vertices.clone();
-			vert1 = Vector.cScaleVector(vert1.clone(), Engine.scale);
-			vert2 = Vector.cScaleVector(vert2.clone(), Engine.scale);
-			
-			for (int i = 0; i < vert1.length; i = i+3) {
-				vert1[i] = vert1[i] + entity1.location[0];
-				vert1[i+1] = vert1[i+1] + entity1.location[1];
-				vert1[i+2] = vert1[i+2] + entity1.location[2];
-			}
-			for (int i = 0; i < vert2.length; i = i+3) {
-				vert2[i] = vert2[i] + entity2.location[0];
-				vert2[i+1] = vert2[i+1] + entity2.location[1];
-				vert2[i+2] = vert2[i+2] + entity2.location[2];
-			}
-			GL11.glBegin(GL11.GL_POINTS);
-			float[] mink = Collision.minkowski(vert1, vert2, 3, false);
-			for (int i = 0; i < mink.length; i = i+3) {
-				GL11.glVertex3f(Engine.width/2+mink[i], Engine.height/2+mink[i+1], mink[i+2]);
-			}
-			GL11.glEnd();
-		}
-
+//		if (Engine.debugToggle) {
+//			GL11.glPointSize(8);
+//			GL11.glBegin(GL11.GL_POINTS);
+//			GL11.glVertex3f(Engine.width/2, Engine.height/2, 0);
+//			GL11.glEnd();
+//			
+//			GL11.glColor3f(1, 1, 0);
+//			GL11.glPointSize(3);
+//			float[] vert1 = entity1.mdl.vertices.clone();
+//			float[] vert2 = entity2.mdl.vertices.clone();
+//			vert1 = Vector.cScaleVector(vert1.clone(), Engine.scale);
+//			vert2 = Vector.cScaleVector(vert2.clone(), Engine.scale);
+//			
+//			for (int i = 0; i < vert1.length; i = i+3) {
+//				vert1[i] = vert1[i] + entity1.location[0];
+//				vert1[i+1] = vert1[i+1] + entity1.location[1];
+//				vert1[i+2] = vert1[i+2] + entity1.location[2];
+//			}
+//			for (int i = 0; i < vert2.length; i = i+3) {
+//				vert2[i] = vert2[i] + entity2.location[0];
+//				vert2[i+1] = vert2[i+1] + entity2.location[1];
+//				vert2[i+2] = vert2[i+2] + entity2.location[2];
+//			}
+//			GL11.glBegin(GL11.GL_POINTS);
+//			float[] mink = Collision.minkowski(vert1, vert2, 3, false);
+//			for (int i = 0; i < mink.length; i = i+3) {
+//				GL11.glVertex3f(Engine.width/2+mink[i], Engine.height/2+mink[i+1], mink[i+2]);
+//			}
+//			GL11.glEnd();
+//		}
 
 		int iterations = 0;
 		while (iterations < 100) {
 
 			simplex.add(support(entity1, entity2, direction));
 			
-			switch (simplex.size()) {
-			case 2:
-				GL11.glPointSize(4);
-				GL11.glColor3f(1, 0, 0);
-				break;
-			case 3:
-				GL11.glPointSize(8);
-				GL11.glColor3f(0, 0, 1);
-				break;
-			case 4: 
-				GL11.glPointSize(12);
-				GL11.glColor3f(0, 1, 0);
-			}
-			
-			if (Engine.debugToggle) {
-				GL11.glBegin(GL11.GL_POINTS);
-				for (float[] p : simplex) {
-					GL11.glVertex3f(Engine.width/2+p[0], Engine.height/2+p[1], p[2]);
-				}
-				GL11.glEnd();
-			}
+//			switch (simplex.size()) {
+//			case 2:
+//				GL11.glPointSize(4);
+//				GL11.glColor3f(1, 0, 0);
+//				break;
+//			case 3:
+//				GL11.glPointSize(8);
+//				GL11.glColor3f(0, 0, 1);
+//				break;
+//			case 4: 
+//				GL11.glPointSize(12);
+//				GL11.glColor3f(0, 1, 0);
+//			}
+//			
+//			if (Engine.debugToggle) {
+//				GL11.glBegin(GL11.GL_POINTS);
+//				for (float[] p : simplex) {
+//					GL11.glVertex3f(Engine.width/2+p[0], Engine.height/2+p[1], p[2]);
+//				}
+//				GL11.glEnd();
+//			}
 
 			if (Vector.cDotVector(simplex.get(simplex.size() - 1), direction) <= 0) {
 				return false;
@@ -165,13 +162,13 @@ public class GJKCollision {
 			direction = ao;
 		}
 		
-		if (Engine.debugToggle) {
-			GL11.glColor3f(1, 0, 0);
-			GL11.glBegin(GL11.GL_LINES);
-			GL11.glVertex3f(Engine.width/2+simplex.get(0)[0], Engine.height/2+simplex.get(0)[1], simplex.get(0)[2]);
-			GL11.glVertex3f(Engine.width/2+simplex.get(1)[0], Engine.height/2+simplex.get(1)[1], simplex.get(1)[2]);
-			GL11.glEnd();
-		}
+//		if (Engine.debugToggle) {
+//			GL11.glColor3f(1, 0, 0);
+//			GL11.glBegin(GL11.GL_LINES);
+//			GL11.glVertex3f(Engine.width/2+simplex.get(0)[0], Engine.height/2+simplex.get(0)[1], simplex.get(0)[2]);
+//			GL11.glVertex3f(Engine.width/2+simplex.get(1)[0], Engine.height/2+simplex.get(1)[1], simplex.get(1)[2]);
+//			GL11.glEnd();
+//		}
 	}
 	/**
 	 * finds direction to the origin from a triangle
@@ -252,16 +249,16 @@ public class GJKCollision {
 			
 		}
 		
-		if (Engine.debugToggle) {
-			if (simplex.size() == 3) {
-				GL11.glColor3f(0, 0, 1);
-				GL11.glBegin(GL11.GL_LINE_LOOP);
-				GL11.glVertex3f(Engine.width/2+simplex.get(0)[0], Engine.height/2+simplex.get(0)[1], simplex.get(0)[2]);
-				GL11.glVertex3f(Engine.width/2+simplex.get(1)[0], Engine.height/2+simplex.get(1)[1], simplex.get(1)[2]);
-				GL11.glVertex3f(Engine.width/2+simplex.get(2)[0], Engine.height/2+simplex.get(2)[1], simplex.get(2)[2]);
-				GL11.glEnd();
-			}
-		}
+//		if (Engine.debugToggle) {
+//			if (simplex.size() == 3) {
+//				GL11.glColor3f(0, 0, 1);
+//				GL11.glBegin(GL11.GL_LINE_LOOP);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(0)[0], Engine.height/2+simplex.get(0)[1], simplex.get(0)[2]);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(1)[0], Engine.height/2+simplex.get(1)[1], simplex.get(1)[2]);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(2)[0], Engine.height/2+simplex.get(2)[1], simplex.get(2)[2]);
+//				GL11.glEnd();
+//			}
+//		}
 	}
 	/**
 	 * finds the direction of the origin from a Tetrahedron
@@ -302,19 +299,19 @@ public class GJKCollision {
 			
 		}
 		
-		if (Engine.debugToggle) {
-			if (simplex.size() == 4) {
-				GL11.glColor3f(0, 1, 0);
-				GL11.glBegin(GL11.GL_LINES);
-				GL11.glVertex3f(Engine.width/2+simplex.get(3)[0], Engine.height/2+simplex.get(3)[1], simplex.get(3)[2]);
-				GL11.glVertex3f(Engine.width/2+simplex.get(0)[0], Engine.height/2+simplex.get(0)[1], simplex.get(0)[2]);
-				GL11.glVertex3f(Engine.width/2+simplex.get(3)[0], Engine.height/2+simplex.get(3)[1], simplex.get(3)[2]);
-				GL11.glVertex3f(Engine.width/2+simplex.get(1)[0], Engine.height/2+simplex.get(1)[1], simplex.get(1)[2]);
-				GL11.glVertex3f(Engine.width/2+simplex.get(3)[0], Engine.height/2+simplex.get(3)[1], simplex.get(3)[2]);
-				GL11.glVertex3f(Engine.width/2+simplex.get(2)[0], Engine.height/2+simplex.get(2)[1], simplex.get(2)[2]);
-				GL11.glEnd();
-			}
-		}
+//		if (Engine.debugToggle) {
+//			if (simplex.size() == 4) {
+//				GL11.glColor3f(0, 1, 0);
+//				GL11.glBegin(GL11.GL_LINES);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(3)[0], Engine.height/2+simplex.get(3)[1], simplex.get(3)[2]);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(0)[0], Engine.height/2+simplex.get(0)[1], simplex.get(0)[2]);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(3)[0], Engine.height/2+simplex.get(3)[1], simplex.get(3)[2]);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(1)[0], Engine.height/2+simplex.get(1)[1], simplex.get(1)[2]);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(3)[0], Engine.height/2+simplex.get(3)[1], simplex.get(3)[2]);
+//				GL11.glVertex3f(Engine.width/2+simplex.get(2)[0], Engine.height/2+simplex.get(2)[1], simplex.get(2)[2]);
+//				GL11.glEnd();
+//			}
+//		}
 		
 	}
 	/**

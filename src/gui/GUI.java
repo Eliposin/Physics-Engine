@@ -123,12 +123,24 @@ public class GUI {
 		});
 		toolbar.add(select);
 		btngrp.add(select);
+		
+		JRadioButton drag = (JRadioButton) makeImageButton(
+				new JRadioButton(), "drag", ".png", new Dimension(
+						btnwidth, btnwidth));
+		drag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Tool.currentTool = Tool.DRAG;
+				System.out.println("Tool drag");
+			}
+		});
+		toolbar.add(drag);
+		btngrp.add(drag);
 
 		JRadioButton addEntity = (JRadioButton) makeImageButton(
 				new JRadioButton(), "addEntity", ".png", new Dimension(
 						btnwidth, btnwidth));
 		addEntity.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
+			public void actionPerformed(ActionEvent e) {
 				Tool.currentTool = Tool.ADD_ENTITY;
 				System.out.println("Tool addEntity");
 			}
@@ -199,74 +211,74 @@ public class GUI {
 
 	}
 
-	private static void initTimeline() {
-
-		JPanel pnlTimeline = new JPanel(new BorderLayout());
-		JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.LEADING,
-				toolBarPadding, toolBarPadding));
-		pnlButtons.setBackground(guiColor);
-
-		int btnSize = timelineSize - 2 * timelinePadding;
-
-		ButtonGroup time = new ButtonGroup();
-
-		JRadioButton record = (JRadioButton) makeImageButton(
-				new JRadioButton(), "record", ".png", new Dimension(btnSize,
-						btnSize));
-		pnlButtons.add(record);
-		time.add(record);
-
-		JRadioButton stop = (JRadioButton) makeImageButton(new JRadioButton(),
-				"stop", ".png", new Dimension(btnSize, btnSize));
-		pnlButtons.add(stop);
-		time.add(stop);
-
-		JRadioButton pFrame = (JRadioButton) makeImageButton(
-				new JRadioButton(), "pFrame", ".png", new Dimension(btnSize,
-						btnSize));
-		pnlButtons.add(pFrame);
-		time.add(pFrame);
-
-		JRadioButton nFrame = (JRadioButton) makeImageButton(
-				new JRadioButton(), "nFrame", ".png", new Dimension(btnSize,
-						btnSize));
-		pnlButtons.add(nFrame);
-		time.add(nFrame);
-
-		JRadioButton fBackward = (JRadioButton) makeImageButton(
-				new JRadioButton(), "fBackward", ".png", new Dimension(btnSize,
-						btnSize));
-		pnlButtons.add(fBackward);
-		time.add(fBackward);
-
-		JRadioButton fForward = (JRadioButton) makeImageButton(
-				new JRadioButton(), "fForward", ".png", new Dimension(btnSize,
-						btnSize));
-		pnlButtons.add(fForward);
-		time.add(fForward);
-
-		JRadioButton pause = (JRadioButton) makeImageButton(new JRadioButton(),
-				"pause", ".png", new Dimension(btnSize, btnSize));
-		pnlButtons.add(pause);
-		time.add(pause);
-
-		JRadioButton play = (JRadioButton) makeImageButton(new JRadioButton(),
-				"play", ".png", new Dimension(btnSize, btnSize));
-		pnlButtons.add(play);
-		time.add(play);
-
-		pnlTimeline.add(pnlButtons, BorderLayout.LINE_START);
-
-		JSlider sldr = new JSlider();
-		sldr.setBackground(guiColor);
-		sldr.setPreferredSize(new Dimension(Engine.width / 2, btnSize));
-		pnlTimeline.add(sldr);
-
-		pnlTimeline.setBackground(guiColor);
-		pnlTimeline.setPreferredSize(new Dimension(500, timelineSize));
-		frmMain.add(pnlTimeline, BorderLayout.PAGE_START);
-
-	}
+//	private static void initTimeline() {
+//
+//		JPanel pnlTimeline = new JPanel(new BorderLayout());
+//		JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.LEADING,
+//				toolBarPadding, toolBarPadding));
+//		pnlButtons.setBackground(guiColor);
+//
+//		int btnSize = timelineSize - 2 * timelinePadding;
+//
+//		ButtonGroup time = new ButtonGroup();
+//
+//		JRadioButton record = (JRadioButton) makeImageButton(
+//				new JRadioButton(), "record", ".png", new Dimension(btnSize,
+//						btnSize));
+//		pnlButtons.add(record);
+//		time.add(record);
+//
+//		JRadioButton stop = (JRadioButton) makeImageButton(new JRadioButton(),
+//				"stop", ".png", new Dimension(btnSize, btnSize));
+//		pnlButtons.add(stop);
+//		time.add(stop);
+//
+//		JRadioButton pFrame = (JRadioButton) makeImageButton(
+//				new JRadioButton(), "pFrame", ".png", new Dimension(btnSize,
+//						btnSize));
+//		pnlButtons.add(pFrame);
+//		time.add(pFrame);
+//
+//		JRadioButton nFrame = (JRadioButton) makeImageButton(
+//				new JRadioButton(), "nFrame", ".png", new Dimension(btnSize,
+//						btnSize));
+//		pnlButtons.add(nFrame);
+//		time.add(nFrame);
+//
+//		JRadioButton fBackward = (JRadioButton) makeImageButton(
+//				new JRadioButton(), "fBackward", ".png", new Dimension(btnSize,
+//						btnSize));
+//		pnlButtons.add(fBackward);
+//		time.add(fBackward);
+//
+//		JRadioButton fForward = (JRadioButton) makeImageButton(
+//				new JRadioButton(), "fForward", ".png", new Dimension(btnSize,
+//						btnSize));
+//		pnlButtons.add(fForward);
+//		time.add(fForward);
+//
+//		JRadioButton pause = (JRadioButton) makeImageButton(new JRadioButton(),
+//				"pause", ".png", new Dimension(btnSize, btnSize));
+//		pnlButtons.add(pause);
+//		time.add(pause);
+//
+//		JRadioButton play = (JRadioButton) makeImageButton(new JRadioButton(),
+//				"play", ".png", new Dimension(btnSize, btnSize));
+//		pnlButtons.add(play);
+//		time.add(play);
+//
+//		pnlTimeline.add(pnlButtons, BorderLayout.LINE_START);
+//
+//		JSlider sldr = new JSlider();
+//		sldr.setBackground(guiColor);
+//		sldr.setPreferredSize(new Dimension(Engine.width / 2, btnSize));
+//		pnlTimeline.add(sldr);
+//
+//		pnlTimeline.setBackground(guiColor);
+//		pnlTimeline.setPreferredSize(new Dimension(500, timelineSize));
+//		frmMain.add(pnlTimeline, BorderLayout.PAGE_START);
+//
+//	}
 
 	private static void initMenuBar() {
 

@@ -195,6 +195,7 @@ public class Vector {
 		return scalar;
 	}
 	
+	@SuppressWarnings("null")
 	public static float cDotVector(float[] vector1, float[] vector2) {
 		
 		float scalar = 0;

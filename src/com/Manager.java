@@ -1,8 +1,10 @@
 package com;
 
 import java.util.ArrayList;
+
 import physics.Collision;
 import physics.GJKCollision;
+import physics.Solver;
 
 /**
  * A global class that has the index of all the Entities. It controls updating 
@@ -88,6 +90,8 @@ public class Manager {
 
 						if (GJKCollision.GJKCollide(entity.get(i), entity
 								.get(j))) {
+							
+							Solver.collision(entity.get(i).phys, entity.get(j).phys);
 
 						}
 					}

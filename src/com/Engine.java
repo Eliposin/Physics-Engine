@@ -76,8 +76,9 @@ public class Engine {
 			
 			delta = getDelta();
 			
-			update(delta);
+			
 			renderGL();
+			update(delta);
 			
 			if (Display.wasResized()) {
 				width = GUI.cnvsDisplay.getWidth();
@@ -125,7 +126,7 @@ public class Engine {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			System.out.println("Unable to load default look and feel");
+			System.out.println("Unable to load system look and feel");
 		}
 		
 		Dir.initPaths();

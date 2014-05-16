@@ -117,7 +117,6 @@ public class Input {
 		for (int i = 0; i < buttonCount; i++) {
 
 			if (Mouse.isButtonDown(i)) {
-				
 				if (mouseDown[i] == false) {
 					mouseChanged[i] = PRESSED;
 				} else {

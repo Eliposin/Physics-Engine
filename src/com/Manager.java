@@ -76,6 +76,7 @@ public class Manager {
 	 */
 	public static void update(int delta) {
 		//TODO make parts of this multithreaded
+		int kineticEnergy = 0;
 		
 		Collision.clearSectors();
 		for (int i = 0; i < entity.size(); i++) {
@@ -91,12 +92,14 @@ public class Manager {
 						if (GJKCollision.GJKCollide(entity.get(i), entity
 								.get(j))) {
 							
-							Solver.collision(entity.get(i).phys, entity.get(j).phys);
+							Solver.collision(entity.get(i).phys, entity.get(j).phys, delta);
 
 						}
 					}
 				}
+				kineticEnergy += Vector.cLength(entity.get(i).phys.getMomentum());
 			}
 		}
+		System.out.println(kineticEnergy);
 	}
 }

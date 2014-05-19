@@ -1,30 +1,25 @@
 package physics;
 
+//import com.Engine;
 import com.Vector;
 
 public class Solver {
-	
-	public static void collision(Physics phys1, Physics phys2) {
+
+	public static void collision(Physics phys1, Physics phys2, int delta) {
+
+		float[] momentum = Vector.cAddVector(phys1.getMomentum(), phys2.getMomentum());
+		float restitution = 1 + (phys1.restitution + phys2.restitution) / 2;
+//		float magnitude = (Vector.cLength(momentum) / (Engine.timeScale / delta)) * restitution;
+		float magnitude = (Vector.cLength(momentum) * (100 / delta)) * restitution;
+//		float magnitude = (Vector.cLength(momentum) * delta) * restitution;
+//		float magnitude = Vector.cLength(momentum) * restitution;
+		float[] normal = Vector.cSubVector(phys1.getLocation(), phys2.getLocation());
+		normal = Vector.normalize(normal.clone());
+		float[] force = Vector.cScaleVector(normal.clone(), magnitude);
 		
-		float mass1 = phys1.mass;
-		float mass2 = phys2.mass;
-		float restitution = 1;
-		
-		float[] normal = Vector.cSubVector(phys2.location, phys1.location);
-		
-		float[] velocity = Vector.cSubVector(phys1.velocity.clone(), phys2.velocity.clone());
-		
-		float[] impulse = Vector.cScaleVector(normal.clone(), 1 + restitution);
-		float temp = Vector.cDotVector(velocity, normal);
-		impulse = Vector.cScaleVector(impulse.clone(), temp);
-//		temp = (1/mass1 + 1/mass2);
-//		impulse = Vector.cScaleVector(impulse.clone(), temp);
-		
-		float[] force1 = Vector.cScaleVector(impulse.clone(), mass1 * 75);
-		float[] force2 = Vector.cScaleVector(impulse.clone(), -mass2 * 75);
-		
-		phys1.addForce(force2);
-		phys2.addForce(force1);
+		phys1.addForce(force.clone());
+		force = Vector.cScaleVector(force.clone(), -1);
+		phys2.addForce(force.clone());
 		
 	}
 

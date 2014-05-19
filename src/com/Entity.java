@@ -130,6 +130,7 @@ public class Entity {
 		
 		if(Engine.debugToggle) {
 			GL11.glLineWidth(2);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
 			
 			//Draw the forces on the object
 			GL11.glColor3f(0.2f, 0.8f, 0.2f);
@@ -153,6 +154,8 @@ public class Entity {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(AABB[0], AABB[1], AABB[2]);
 			GL11.glScalef(Engine.scale, Engine.scale, Engine.scale);
+			
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			
 			//Draw the normals
 //			GL11.glColor3f(0.2f, 0.2f, 0.2f);

@@ -11,11 +11,15 @@ public class Solver {
 		float restitution = 1 + (phys1.restitution + phys2.restitution) / 2;
 //		float magnitude = (Vector.cLength(momentum) / (Engine.timeScale / delta)) * restitution;
 		float magnitude = (Vector.cLength(momentum) * (100 / delta)) * restitution;
-//		float magnitude = (Vector.cLength(momentum) * delta) * restitution;
-//		float magnitude = Vector.cLength(momentum) * restitution;
 		float[] normal = Vector.cSubVector(phys1.getLocation(), phys2.getLocation());
 		normal = Vector.normalize(normal.clone());
-		float[] force = Vector.cScaleVector(normal.clone(), magnitude);
+		
+		float dot = Vector.cDotVector(momentum.clone(), normal.clone());
+		float size = Vector.cLength(momentum);
+		float angle = (float) Math.abs(Math.acos(dot / (size + 1)) - Math.PI/2);
+		float scaleFactor = (float) (angle / (Math.PI/2));
+		
+		float[] force = Vector.cScaleVector(normal.clone(), magnitude * scaleFactor);
 		
 		phys1.addForce(force.clone());
 		force = Vector.cScaleVector(force.clone(), -1);

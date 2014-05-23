@@ -427,35 +427,40 @@ public class GUI {
 	 * @throws IOException 
 	 */
 	protected static void pluginDialog() throws IOException {
+		/////////////////////////////////////////////////////
+		////////We should try to take all scripting /////////
+		////////out of GUI and move it to the 		/////////
+		////////Plugin class.						/////////
+		/////////////////////////////////////////////////////
 
-		JFileChooser fc = new JFileChooser(GUI.class.getClassLoader()
-				.getResource("").getPath());
+		JFileChooser fc = new JFileChooser(Dir.paths.get("plugins"));
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"JavaScript files", "js");
 		fc.setFileFilter(filter);
 		int returnVal = fc.showOpenDialog(fc);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			Charset charset = Charset.forName("US-ASCII");
+			Charset charset = Charset.forName("UTF-8");
 			try (BufferedReader reader = Files.newBufferedReader(fc
 					.getSelectedFile().toPath(), charset)) {
 				String line = null;
 				StringBuilder sb = new StringBuilder();
 				while ((line = reader.readLine()) != null) {
-					sb.append(line);
+					sb.append(line + "\r\n");
 				}
 				ScriptEngineManager factory = new ScriptEngineManager();
 				ScriptEngine engine = factory.getEngineByName("JavaScript");
 				try {
 					engine.eval(sb.toString());
 				} catch (ScriptException e) {
+					e.printStackTrace();
 					JOptionPane
 							.showMessageDialog(frmMain,
 									"There is an error with the script file",
 									"Plugin Manager Error",
 									JOptionPane.WARNING_MESSAGE);
 				}
-			} catch (IOException x) {
-				System.err.format("IOException: %s%n", x);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

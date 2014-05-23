@@ -3,7 +3,7 @@ package inout;
 import java.io.*;
 import java.util.zip.*;
 import javax.swing.*;
-import sun.org.mozilla.javascript.internal.xml.*;
+import javax.xml.*;
 
 /**
  * 

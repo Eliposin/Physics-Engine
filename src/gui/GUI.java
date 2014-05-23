@@ -6,9 +6,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.script.ScriptEngine;
@@ -16,6 +26,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -301,7 +312,15 @@ public class GUI {
 //		menuFile.add(new MenuItem("Record"));
 //		menuFile.add(new MenuItem("Replay"));
 //		menuFile.addSeparator();
-		menuFile.add(new MenuItem("Exit"));
+		MenuItem exit = new MenuItem();
+		exit.setName("Exit");
+		exit.setLabel(exit.getName());
+		exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);;
+			}
+		});
+		menuFile.add(exit);
 		mb.add(menuFile);
 		
 		
@@ -388,7 +407,12 @@ public class GUI {
 		pluginManager.setLabel(pluginManager.getName());
 		pluginManager.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				pluginDialog();
+				try {
+					pluginDialog();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		menuPlugin.add(pluginManager);
@@ -400,21 +424,40 @@ public class GUI {
 	 * Processes a simple JavaScript call; future
 	 * functionality will process external
 	 * scripts as plugins
+	 * @throws IOException 
 	 */
-	protected static void pluginDialog() {
-		// TODO Auto-generated method stub
-		// create a script engine manager
-		ScriptEngineManager factory = new ScriptEngineManager();
-		// create a JavaScript engine
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
-		// evaluate JavaScript code from String
-		try {
-			engine.eval("print('Hello, World')");
-		} catch (ScriptException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	protected static void pluginDialog() throws IOException {
 
+		JFileChooser fc = new JFileChooser(GUI.class.getClassLoader()
+				.getResource("plugins/").getPath());
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"JavaScript files", "js");
+		fc.setFileFilter(filter);
+		int returnVal = fc.showOpenDialog(fc);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			Charset charset = Charset.forName("US-ASCII");
+			try (BufferedReader reader = Files.newBufferedReader(fc
+					.getSelectedFile().toPath(), charset)) {
+				String line = null;
+				StringBuilder sb = new StringBuilder();
+				while ((line = reader.readLine()) != null) {
+					sb.append(line);
+				}
+				ScriptEngineManager factory = new ScriptEngineManager();
+				ScriptEngine engine = factory.getEngineByName("JavaScript");
+				try {
+					engine.eval(sb.toString());
+				} catch (ScriptException e) {
+					JOptionPane
+							.showMessageDialog(frmMain,
+									"There is an error with the script file",
+									"Plugin Manager Error",
+									JOptionPane.WARNING_MESSAGE);
+				}
+			} catch (IOException x) {
+				System.err.format("IOException: %s%n", x);
+			}
+		}
 	}
 
 	@SuppressWarnings("unused")

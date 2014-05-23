@@ -100,6 +100,6 @@ public class Manager {
 				kineticEnergy += Vector.cLength(entity.get(i).phys.getMomentum());
 			}
 		}
-		System.out.println(kineticEnergy);
+		//System.out.println(kineticEnergy);
 	}
 }

@@ -429,7 +429,7 @@ public class GUI {
 	protected static void pluginDialog() throws IOException {
 
 		JFileChooser fc = new JFileChooser(GUI.class.getClassLoader()
-				.getResource("plugins/").getPath());
+				.getResource("").getPath());
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"JavaScript files", "js");
 		fc.setFileFilter(filter);

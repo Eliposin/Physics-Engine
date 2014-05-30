@@ -97,9 +97,9 @@ public class Manager {
 						}
 					}
 				}
-				kineticEnergy += Vector.cLength(entity.get(i).phys.getMomentum());
+				kineticEnergy += Vector.cLength(entity.get(i).phys.getMomentum()) / Engine.scale;
 			}
 		}
-		//System.out.println(kineticEnergy);
+		System.out.println(kineticEnergy + " uN s");
 	}
 }

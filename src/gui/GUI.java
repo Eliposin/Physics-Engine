@@ -302,16 +302,16 @@ public class GUI {
 		MenuBar mb = new MenuBar();
 
 		Menu menuFile = new Menu("File");
-//		menuFile.add(new MenuItem("New"));
-//		menuFile.add(new MenuItem("Open"));
-//		menuFile.add(new MenuItem("Save"));
-//		menuFile.add(new MenuItem("Save As..."));
-//		menuFile.add(new MenuItem("Import"));
-//		menuFile.add(new MenuItem("Reset"));
-//		menuFile.addSeparator();
-//		menuFile.add(new MenuItem("Record"));
-//		menuFile.add(new MenuItem("Replay"));
-//		menuFile.addSeparator();
+		menuFile.add(new MenuItem("New"));
+		menuFile.add(new MenuItem("Open"));
+		menuFile.add(new MenuItem("Save"));
+		menuFile.add(new MenuItem("Save As..."));
+		menuFile.add(new MenuItem("Import"));
+		menuFile.add(new MenuItem("Reset"));
+		menuFile.addSeparator();
+		menuFile.add(new MenuItem("Record"));
+		menuFile.add(new MenuItem("Replay"));
+		menuFile.addSeparator();
 		MenuItem exit = new MenuItem();
 		exit.setName("Exit");
 		exit.setLabel(exit.getName());
@@ -323,85 +323,71 @@ public class GUI {
 		menuFile.add(exit);
 		mb.add(menuFile);
 		
-		
-		
+		Menu menuEdit = new Menu("Edit");
+		menuEdit.add(new MenuItem("Undo"));
+		menuEdit.add(new MenuItem("Redo"));
+		menuEdit.addSeparator();
+		menuEdit.add(new MenuItem("Copy"));
+		menuEdit.add(new MenuItem("Paste"));
+		menuEdit.add(new MenuItem("Cut"));
+		menuEdit.addSeparator();
+		menuEdit.add(new MenuItem("Scene"));
+		menuEdit.add(new MenuItem("Settings"));
+		mb.add(menuEdit);
 
-//		Menu menuEdit = new Menu("Edit");
-//		menuEdit.add(new MenuItem("Undo"));
-//		menuEdit.add(new MenuItem("Redo"));
-//		menuEdit.addSeparator();
-//		menuEdit.add(new MenuItem("Copy"));
-//		menuEdit.add(new MenuItem("Paste"));
-//		menuEdit.add(new MenuItem("Cut"));
-//		menuEdit.addSeparator();
-//		menuEdit.add(new MenuItem("Scene"));
-//		menuEdit.add(new MenuItem("Settings"));
-//		mb.add(menuEdit);
-//
-//		Menu menuEntity = new Menu("Entity");
-//		menuEntity.add(new MenuItem("Add"));
-//		menuEntity.add(new MenuItem("Remove"));
-//		menuEntity.add(new MenuItem("Disable"));
-//		menuEntity.addSeparator();
-//		menuEntity.add(new MenuItem("Model"));
-//		mb.add(menuEntity);
-//
-//		Menu menuConstraint = new Menu("Constraint");
-//		menuConstraint.add(new MenuItem("Add"));
-//		menuConstraint.add(new MenuItem("Remove"));
-//		menuConstraint.add(new MenuItem("Disable"));
-//		menuConstraint.add(new MenuItem("Type"));
-//		mb.add(menuConstraint);
-//
-//		Menu menuSelect = new Menu("Select");
-//		menuSelect.add(new MenuItem("All"));
-//		menuSelect.add(new MenuItem("Deselect"));
-//		menuSelect.add(new MenuItem("Reselect"));
-//		menuSelect.add(new MenuItem("Inverse"));
-//		menuSelect.add(new MenuItem("Entities"));
-//		menuSelect.add(new MenuItem("Constraints"));
-//		mb.add(menuSelect);
-//
-//		Menu menuView = new Menu("View");
-//		menuView.add(new MenuItem("Top"));
-//		menuView.add(new MenuItem("Bottom"));
-//		menuView.add(new MenuItem("Left"));
-//		menuView.add(new MenuItem("Right"));
-//		menuView.add(new MenuItem("Front"));
-//		menuView.add(new MenuItem("Back"));
-//		menuView.addSeparator();
-//		menuView.add(new MenuItem("Camera 1"));
-//		menuView.add(new MenuItem("Camera 2"));
-//		menuView.add(new MenuItem("Camera n"));
-//		menuView.add(new MenuItem("Camera \" name\""));
-//		menuView.addSeparator();
-//		menuView.add(new MenuItem("Zoom"));
-//		menuView.add(new MenuItem("Zoom All"));
-//		menuView.add(new MenuItem("Zoom Selection"));
-//		menuView.addSeparator();
-//		menuView.add(new MenuItem("Fill"));
-//		menuView.add(new MenuItem("Wireframe"));
-//		menuView.add(new MenuItem("Points"));
-//		menuView.addSeparator();
-//		menuView.add(new MenuItem("Debug"));
-//		mb.add(menuView);
+		Menu menuEntity = new Menu("Entity");
+		menuEntity.add(new MenuItem("Add"));
+		menuEntity.add(new MenuItem("Remove"));
+		menuEntity.add(new MenuItem("Disable"));
+		menuEntity.addSeparator();
+		menuEntity.add(new MenuItem("Model"));
+		mb.add(menuEntity);
 
-		
-		
+		Menu menuConstraint = new Menu("Constraint");
+		menuConstraint.add(new MenuItem("Add"));
+		menuConstraint.add(new MenuItem("Remove"));
+		menuConstraint.add(new MenuItem("Disable"));
+		menuConstraint.add(new MenuItem("Type"));
+		mb.add(menuConstraint);
 
-		Menu menuHelp = new Menu("Help");
-		menuHelp.add(new MenuItem("Manual"));
-		menuHelp.add(new MenuItem("Updates"));
-		menuHelp.add(new MenuItem("Report a Bug"));
-		menuHelp.addSeparator();
-		menuHelp.add(new MenuItem("About"));
-		mb.add(menuHelp);
+		Menu menuSelect = new Menu("Select");
+		menuSelect.add(new MenuItem("All"));
+		menuSelect.add(new MenuItem("Deselect"));
+		menuSelect.add(new MenuItem("Reselect"));
+		menuSelect.add(new MenuItem("Inverse"));
+		menuSelect.add(new MenuItem("Entities"));
+		menuSelect.add(new MenuItem("Constraints"));
+		mb.add(menuSelect);
+
+		Menu menuView = new Menu("View");
+		menuView.add(new MenuItem("Top"));
+		menuView.add(new MenuItem("Bottom"));
+		menuView.add(new MenuItem("Left"));
+		menuView.add(new MenuItem("Right"));
+		menuView.add(new MenuItem("Front"));
+		menuView.add(new MenuItem("Back"));
+		menuView.addSeparator();
+		menuView.add(new MenuItem("Camera 1"));
+		menuView.add(new MenuItem("Camera 2"));
+		menuView.add(new MenuItem("Camera n"));
+		menuView.add(new MenuItem("Camera \" name\""));
+		menuView.addSeparator();
+		menuView.add(new MenuItem("Zoom"));
+		menuView.add(new MenuItem("Zoom All"));
+		menuView.add(new MenuItem("Zoom Selection"));
+		menuView.addSeparator();
+		menuView.add(new MenuItem("Fill"));
+		menuView.add(new MenuItem("Wireframe"));
+		menuView.add(new MenuItem("Points"));
+		menuView.addSeparator();
+		menuView.add(new MenuItem("Debug"));
+		mb.add(menuView);
 		
 		Menu menuPlugin = new Menu("Plugin");
-		// menuPlugin.add(new MenuItem("generated1"));
-		// menuPlugin.add(new MenuItem("generated2"));
-		// menuPlugin.add(new MenuItem("generated3"));
-		// menuPlugin.addSeparator();
+		 menuPlugin.add(new MenuItem("generated1"));
+		 menuPlugin.add(new MenuItem("generated2"));
+		 menuPlugin.add(new MenuItem("generated3"));
+		 menuPlugin.addSeparator();
 		MenuItem pluginManager = new MenuItem();
 		pluginManager.setName("Plugin Manager");
 		pluginManager.setLabel(pluginManager.getName());
@@ -418,6 +404,15 @@ public class GUI {
 		menuPlugin.add(pluginManager);
 		mb.add(menuPlugin);
 		frmMain.setMenuBar(mb);
+
+		Menu menuHelp = new Menu("Help");
+		menuHelp.add(new MenuItem("Manual"));
+		menuHelp.add(new MenuItem("Updates"));
+		menuHelp.add(new MenuItem("Report a Bug"));
+		menuHelp.addSeparator();
+		menuHelp.add(new MenuItem("About"));
+		mb.add(menuHelp);
+		
 	}
 
 	/**

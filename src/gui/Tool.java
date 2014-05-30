@@ -50,6 +50,7 @@ public class Tool {
 			for (int i = 0; i < lst.size(); i++) {
 				Entity e = Manager.getEntity(lst.get(i));
 				e.setLocation(Vector.cAddVector(e.location.clone(), new float[]{Input.deltaX, Input.deltaY, 0}));
+				e.phys.addForce(Vector.cScaleVector(e.phys.getMomentum(), -1000/Engine.delta));
 			}
 			
 			break;

@@ -24,9 +24,13 @@ public class Physics {
 	
 	Collision collision;
 
-	// hold all the possible momentums acting on the object
+	/**
+	 *  hold all the possible momentums acting on the object
+	 */
 	ArrayList<float[]> forceBuffer = new ArrayList<float[]>();
-	// hold all the possible forces acting on the object
+	/**
+	 *  hold all the possible forces acting on the object
+	 */
 	ArrayList<float[]> momentumBuffer = new ArrayList<float[]>(); 
 
 	public Physics() {
@@ -57,14 +61,6 @@ public class Physics {
 	 */
 	public void addForce(float[] f) {
 		forceBuffer.add(f);
-	}
-
-	/**
-	 * 
-	 * @param p float array of momentum
-	 */
-	public void addMomentum(float[] p) {
-		forceBuffer.add(p);
 	}
 
 	/**

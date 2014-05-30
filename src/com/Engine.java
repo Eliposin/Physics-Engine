@@ -357,12 +357,6 @@ public class Engine {
 			}
 		}
 
-		if (Input.keyChanged.get("settings") == Input.PRESSED) {
-
-			com.Settings.editSettings();
-
-		}
-
 		updateFPS();
 		Manager.update(delta);
 

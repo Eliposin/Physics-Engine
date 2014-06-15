@@ -2,7 +2,11 @@ package com;
 
 import java.io.IOException;
 
-
+/**
+ * Main class of Physics engine.  Doesn't do much.
+ * @author Bradley
+ *
+ */
 public class PhysicsEngine implements Runnable {
 	
 	Thread t = new Thread(this, "GUI");

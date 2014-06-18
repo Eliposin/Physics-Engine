@@ -76,7 +76,10 @@ public class Manager {
 	 */
 	public static void update(int delta) {
 		//TODO make parts of this multithreaded
-		int kineticEnergy = 0;
+		int count = entity.size();
+		int[] kineticEnergy;
+		kineticEnergy = new int[count];
+		int totalkineticEnergy = 0;
 		
 		Collision.clearSectors();
 		for (int i = 0; i < entity.size(); i++) {
@@ -93,13 +96,19 @@ public class Manager {
 								.get(j))) {
 							
 							Solver.collision(entity.get(i).phys, entity.get(j).phys, delta);
-
+							
 						}
+						
 					}
 				}
-				kineticEnergy += Vector.cLength(entity.get(i).phys.getMomentum()) / Engine.scale;
+				kineticEnergy[i] = (int) (Vector.cLength(entity.get(i).phys.getMomentum()) / Engine.scale);
+				//System.out.println("entity " + i + " has " + kineticEnergy[i] + " uN s");
+				totalkineticEnergy += kineticEnergy[i];
+				
 			}
 		}
-		System.out.println(kineticEnergy + " uN s");
+		
+		 System.out.println(totalkineticEnergy + " uN s Total");
+		 
 	}
 }
